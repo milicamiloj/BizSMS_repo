@@ -1,0 +1,96 @@
+﻿using BizSMS.Attributes;
+using BizSMS.Models;
+using Microsoft.AspNet.Identity;
+using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Results;
+
+namespace BizSMS.Controllers.API
+{
+    //[AuthorizeUser]
+    public class HomeController : ApiController
+    {
+        [HttpGet]
+        public IHttpActionResult GetGroups()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            var userID = User.Identity.GetUserId();
+            var clientID = db.Users.Where(user => user.Id == userID).FirstOrDefault().ClientID;
+
+            var groups = db.Group
+                .Where(g => g.ClientID == clientID)
+                .Select(g => new
+                {
+                    Text = g.Name, 
+                    Value = g.GroupID,
+                    Default = g.Default
+                })
+                .ToList();
+
+            return Ok(groups);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetNumbers(string id)
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            var gnumbers = (from numbers in db.GroupNumbers
+                            where numbers.GroupID.ToString() == id
+                            select new
+                            {
+                                NumberID = numbers.Numbers.NumberID,
+                                Number = numbers.Numbers.Number,
+                                Name = numbers.Numbers.Name
+                            }).ToList();
+
+            return Ok(gnumbers);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetAlphanumerics()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            var userID = User.Identity.GetUserId();
+            //var clientID = db.Users.Where(user => user.Id == userID).FirstOrDefault().ClientID;
+            var clientID = db.Users.Where(u => u.Id == userID).Select(u => u.ClientID).First();
+            var alphanumerics = db.Alphanumeric
+                .Where(a => a.ClientID == clientID)
+                .Select(a =>
+                new
+                {
+                    Text = a.Alphanumeric,
+                    Value = a.AlphanumericID
+                });
+
+            return Ok(alphanumerics);
+        }
+
+        [HttpGet]
+        public IHttpActionResult GetTestNumber()
+        {
+            ApplicationDbContext db = new ApplicationDbContext();
+
+            var userID = User.Identity.GetUserId();
+
+            var number = db.Users.Where(u => u.Id == userID).Select(u => u.PhoneNumber).First();
+
+            return Ok(number);
+        }
+
+        private class TestSMSData
+        {
+            public string PhoneNumber { get; set; }
+            public string Alphanumeric { get; set; }
+            public string Message { get; set; }
+        }
+
+        [HttpPost]
+        public IHttpActionResult SendTestSMS(TestSMSData data)
+        {
+            return Ok(data);
+        }
+    }
+}

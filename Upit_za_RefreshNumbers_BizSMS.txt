@@ -1,0 +1,125 @@
+USE [BizSMS]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_RefreshNumbers]    Script Date: 18-Feb-21 15:27:45 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Ivan Trickovic, Milan Milosavljevic
+-- Create date: 18.02.2021
+-- Description:	Procedure for refreshing
+-- numbers from TIS
+-- =============================================
+ALTER PROCEDURE [dbo].[sp_RefreshNumbers]
+@nContractID NVARCHAR(50),
+@iAffectedNumbersCount INT = 0 OUTPUT
+AS
+DECLARE
+		@sQuery NVARCHAR(MAX),
+		@iClientID INT,
+		@sContract NVARCHAR(1000),
+		@dDate NVARCHAR(30),
+		@iLocalProcessNumbersCount INT,
+		@iVPNinsertCount INT;
+
+		-- temp table
+	DECLARE @t TABLE (
+		PRODAJNI_UGOVOR_ID NVARCHAR(50),
+		BROJ_TELEFONA NVARCHAR(15),
+		AKCIJA NVARCHAR(1),
+		DATUM DATETIME
+	  );
+	  
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	INSERT INTO BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_RefreshNumbers', 'EnterToProcedure', 'Update', @nContractID);
+
+	--prepare contractId for query
+	SET @sContract = '''''' + @nContractID + '''''';
+	   
+	SELECT 
+	--@dDate = CONVERT(VARCHAR(12), Synchronization_Date, 104) + ' ' + CONVERT(VARCHAR(8), Synchronization_Date, 114),
+	--FORMAT(Synchronization_Date, 'dd.MM.yyyy HH:mm:ss'),
+	@iClientID = Client_ID 
+	FROM BST_CLIENT_CONTRACTS
+	WHERE Contract_ID = @nContractID;
+	   
+	-- upit koji vadi sve aktuelne brojeve sa akcijom + iz tisa
+	SET @sQuery = 'SELECT * FROM OPENQUERY(EBILTISRAZ, ''SELECT * FROM ftpro.bizsms_sync bizM WHERE Akcija = ''''+'''' AND prodajni_ugovor_id = ''''' + @nContractId + ''''' AND BROJ_TELEFONA NOT IN ( SELECT BROJ_TELEFONA FROM ftpro.bizsms_sync bizC WHERE bizC.BROJ_TELEFONA = bizM.BROJ_TELEFONA AND prodajni_ugovor_id = ''''' + @nContractId + ''''' AND Akcija = ''''-'''' AND bizM.Datum < bizC.Datum)'')';
+
+	--execute query
+	INSERT INTO @t
+		EXEC(@sQuery);
+
+	-------UVOZ NOVIH BROJEVA IZ TIS------
+
+	-- Insert statements for procedure here
+	SELECT @iLocalProcessNumbersCount = COUNT(*) FROM @t WHERE BROJ_TELEFONA NOT IN (SELECT [Number] FROM BST_NUMBERS WHERE [Client_ID] = @iClientID);
+
+	--insert new numbers
+	INSERT INTO BST_NUMBERS ([Number], [Send_allowed], [Check_Date], [Number_Type_ID], [Client_ID], [Active], [Insert_Date], [Contract_ID])
+	SELECT tt.BROJ_TELEFONA, 1, GETDATE(), 1, @iClientID, 1, GETDATE(), @nContractID FROM @t tt
+	WHERE tt.BROJ_TELEFONA NOT IN (SELECT [Number] FROM BST_NUMBERS WHERE [Client_ID] = @iClientID);--(napomena: ukoliko je klijent vec ubacio preko aplikacije neke brojeve koji su zatim dodati u ugovor u TIS, procedura ih nece ponovo dodati kao VPN brojeve da se ne bi duplirali brojevi)
+
+	-- log action and count of imported numbers
+	INSERT INTO BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_RefreshNumbers', @nContractID, 'Insert', @iLocalProcessNumbersCount);
+
+	SET @iAffectedNumbersCount = @iLocalProcessNumbersCount;
+
+	-------DEAKTIVACIJA POSTOJECIH BROJEVA AKO JE AKTUELAN BROJ U TIS SA AKCIJOM (-) ILI SE BROJ IZ BIZSMS UOPSTE NE NALAZI U TIS ------
+
+	-- count numbers for update (Deaktivation)
+	SELECT @iLocalProcessNumbersCount = COUNT(*) FROM BST_NUMBERS
+	WHERE Client_ID = @iClientID AND Contract_ID = @nContractId AND [Active] = 1 AND [Number_Type_ID] = 1 AND [Number] NOT IN (
+	SELECT BROJ_TELEFONA FROM @t);
+
+	--deaktivation
+	UPDATE BST_NUMBERS
+	SET [Active] = 0, [Check_Date] = GETDATE()
+	WHERE (Client_ID = @iClientID AND Contract_ID = @nContractId AND [Active] = 1 AND [Number_Type_ID] = 1 AND [Number] NOT IN (
+	SELECT BROJ_TELEFONA FROM @t));--kod deaktivacije posmatraju se aktivni VPN brojevi; ovaj upit vadi sve brojeve iz bizsms koji se ne nalaze u aktuelnim tis brojevima sa akcijom +
+
+	SET @iAffectedNumbersCount = @iAffectedNumbersCount + @iLocalProcessNumbersCount;
+
+	-- log action and count of updated (deaktivated) numbers
+	INSERT INTO BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_RefreshNumbers', @nContractID, 'Deaktivation', @iLocalProcessNumbersCount);
+
+	-------DODAVANJE BROJEVA U ODGOVARAJUCE VPN GRUPE U BST_GROUP_NUMBER------
+
+	SELECT @iVPNinsertCount = COUNT(*) FROM [BizSMS].[dbo].BST_NUMBERS n
+	INNER JOIN @t tt ON tt.BROJ_TELEFONA = n.Number
+	INNER JOIN [BizSMS].[dbo].BST_GROUPS g ON n.Client_ID = g.Client_ID AND g.[Default] = 1
+	WHERE n.Client_ID = @iClientID AND n.Contract_ID = @nContractId AND n.Number_Type_ID = 1 AND n.Number_ID NOT IN (
+		SELECT Number_ID FROM [BizSMS].[dbo].BST_GROUP_NUMBER gn
+		INNER JOIN [BizSMS].[dbo].BST_GROUPS g ON gn.Group_ID = g.Group_ID AND g.[Default] = 1
+		WHERE g.Client_ID = @iClientID);
+
+	-- Insert new numbers to default group
+	INSERT INTO BST_GROUP_NUMBER (Group_ID, Number_ID, Insert_Date)
+	SELECT g.Group_ID, n.Number_ID, GETDATE() FROM BST_NUMBERS n
+	INNER JOIN @t tt ON tt.BROJ_TELEFONA = n.Number
+	INNER JOIN BST_GROUPS g ON n.Client_ID = g.Client_ID AND g.[Default] = 1
+	WHERE n.Client_ID = @iClientID AND n.Contract_ID = @nContractId AND n.Number_Type_ID = 1 AND n.Number_ID NOT IN (
+		SELECT Number_ID FROM BST_GROUP_NUMBER gn
+		INNER JOIN BST_GROUPS g ON gn.Group_ID = g.Group_ID AND g.[Default] = 1
+		WHERE g.Client_ID = @iClientID);
+		
+	-- log action and count of numbers to insert into VPN group
+	INSERT INTO [BizSMS].[dbo].BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_RefreshNumbers', @nContractID, 'Insert into VPN group', @iVPNinsertCount);
+
+	-- update synchronization date
+	UPDATE BST_CLIENT_CONTRACTS  
+	SET Synchronization_Date = GETDATE()
+	WHERE Contract_ID = @nContractID;
+
+	RETURN @iAffectedNumbersCount;
+
+	END

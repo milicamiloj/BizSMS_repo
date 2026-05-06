@@ -1,0 +1,97 @@
+﻿@model IEnumerable<BizSMS.Models.AlphanumericModel>
+
+@{
+    ViewBag.Title = Resources.Resources.Alphanumerics;
+}
+
+<h2>@Resources.Resources.Alphanumerics</h2>
+<h4>@Resources.Resources.ClientName: @ViewBag.Client</h4>
+<p>@Ajax.ActionLink(Resources.Resources.CreateNew, "CreateAlphanumeric", "AdminManage",
+               routeValues: new { id = ViewContext.RouteData.Values["id"] },
+               ajaxOptions: new AjaxOptions()
+               {
+                   HttpMethod = "GET",
+                   AllowCache = false,
+                   InsertionMode = InsertionMode.Replace,
+                   UpdateTargetId = "alphanumerics-wrapper"
+               }, htmlAttributes: null)</p>
+<div class="container">
+    <div class="col-md-4">
+        <h4>@Resources.Resources.Select</h4>
+        <hr />
+        
+        <ul class="list-group">
+            @foreach (var item in Model)
+            {
+                <li class="list-group-item">
+                    
+                    @Ajax.ActionLink(item.Alphanumeric, "EditAlphanumeric", "AdminManage",
+                       routeValues: new { id = item.AlphanumericID },
+                       ajaxOptions: new AjaxOptions()
+                       {
+                           HttpMethod = "GET",
+                           AllowCache = false,
+                           InsertionMode = InsertionMode.Replace,
+                           UpdateTargetId = "alphanumerics-wrapper"
+                       },
+                       htmlAttributes: null)
+
+                    <a href="#" class="js-delete-alphanumeric" style="color:black;"
+                       data-alphanumeric-id="@item.AlphanumericID"
+                       data-yes="@Resources.Resources.Yes"
+                       data-no="@Resources.Resources.No"
+                       data-question="@Resources.Resources.QuestionDeleteAlphanumeric">
+                        <span class="glyphicon glyphicon-trash pull-right"></span>
+                    </a>
+                  </li>
+            }
+                
+        </ul>
+    </div>
+    <div class="col-md-offset-2 col-md-6" id="alphanumerics-wrapper"></div>
+</div>
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToList, "ManageClients")
+</div>
+
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $(".js-delete-alphanumeric").click(function (e) {
+                var link = $(e.target).parent("a");
+                bootbox.confirm({
+                    message: link.attr("data-question"),
+                    buttons: {
+                        confirm: {
+                            label: link.attr("data-yes"),
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: link.attr("data-no"),
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+
+                            $.ajax({
+                                url: "/api/adminmanage/deletealphanumeric/" + link.attr("data-alphanumeric-id"),
+                                method: "DELETE"
+                            })
+                            .done(function () {
+                                link.parents("li").fadeOut(function () {
+                                    $(this).remove();
+                                });
+                                $("#alphanumerics-wrapper").empty();
+                            })
+                            .fail(function (data) {
+                                alert(data);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    }

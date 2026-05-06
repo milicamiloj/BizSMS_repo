@@ -1,0 +1,250 @@
+﻿@model IEnumerable<BizSMS.Models.AdminManageNumbersViewModel>
+
+@{
+    ViewBag.Title = @Resources.Resources.Numbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+    //var groupId = ViewContext.RouteData.Values["id"];
+    var clientId = ViewBag.ClientID;
+
+}
+
+    <h2>@Resources.Resources.ClientName: @ViewBag.ClientName</h2>
+<div class="container" id="numbers-wraper">
+    <div class="row pull-right">
+        @if (ViewBag.NumCount == 0)
+        {
+            <a href="#" data-client-id="@ViewContext.RouteData.Values["id"]" id="importNumbers">@Resources.Resources.ImportNumbersToVPN</a>
+            @*@:|*@
+        }
+        else
+        {
+            <a href="#" data-client-id="@ViewContext.RouteData.Values["id"]" id="importNumbers">@Resources.Resources.RefreshVPNnumbers</a>
+            @*@:|*@
+        }
+        @*@Ajax.ActionLink(Resources.Resources.AddNumber, "CreateNumber", "AdminManage",
+                routeValues: new { id = ViewContext.RouteData.Values["id"] },
+                    ajaxOptions: new AjaxOptions()
+                    {
+                        HttpMethod = "GET",
+                        AllowCache = false,
+                        InsertionMode = InsertionMode.Replace,
+                        UpdateTargetId = "numbers-wraper"
+                    })*@
+    </div>
+    <table class="table" id="numbersTable" data-language="@culture">
+        <thead>
+            <tr>
+                @*<th>
+            @Html.DisplayNameFor(model => model.Group)
+        </th>*@
+                <th>
+                    @Html.DisplayNameFor(model => model.NumberType)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Number)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th class="sendAllow">
+                    @Html.DisplayNameFor(model => model.SendAllowed)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DeniedReason)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div>
+        @Html.ActionLink(Resources.Resources.BackToList, "Groups")
+    </div>
+</div>
+
+<div class="modal fade spinner-test-sms" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@Resources.Resources.ImportNumbers</h4>
+            </div>
+            <div class="modal-body">
+                <p><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> @Resources.Resources.Loading</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+    @Scripts.Render("~/bundles/jqueryval")
+
+<script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            //$.fn.dataTable.ext.errMode = 'throw';
+            var link = $("#numbersTable");
+            link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                "ajax": "/api/adminmanage/GetNumbers?clientId=@clientId",
+                stateSave: true,
+                columns: [
+                    //{ "data": "Group" },
+                    { "data": "NumberType" },
+                    { "data": "Number" },
+                    { "data": "Name" },
+                    { "data": "SendAllowed" },
+                    { "data": "DeniedReason" },
+                    { "data": "EditSection" }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/dt-@culture" + ".json"
+                }
+            });
+
+            $(document).on("click", ".stop-allow-sending", function (e) {
+                var numberRow = $(e.target);
+                if (numberRow.text() === "@Resources.Resources.DenySending") {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "/api/adminmanage/getnumberstatus/" + numberRow.attr("data-number-id"),
+                        method: "GET"
+                    })
+                        .done(function (data) {
+                            if (data === true) {
+                                bootbox.prompt({
+                                    title: "@Resources.Resources.ReasonForDenySending",
+                                    inputType: "textarea",
+                                    inputOptions: [{
+                                        required: true
+                                    }],
+                                    buttons: {
+                                        cancel: {
+                                            label: "@Resources.Resources.Cancel",
+                                            className: 'btn-primary'
+                                        },
+                                        confirm: {
+                                            label: "@Resources.Resources.Submit",
+                                            className: 'btn-success'
+                                        }
+                                    },
+                                    callback: function (result) {
+                                        notOnlyWhiteSpace = /\S/.test(result); //vraca true u slucaju da postoji jos nesto osim white space ili line break
+                                        //sledeci if je true kad se klikne na Cancel tj u tom slucaju result === null
+                                        if (result === null) {
+                                            return true;
+                                        }
+
+                                        if (notOnlyWhiteSpace) {
+                                            //console.log(notOnlyWhiteSpace);
+                                            $.ajax({
+                                                url: "/api/adminmanage/denysending/",
+                                                method: "POST",
+                                                data: { NumberId: numberRow.attr("data-number-id"), Reason: result }
+                                            })
+                                                .done(function (data) {
+                                                    window.location.href = numberRow[0].href;
+                                                })
+                                                .fail(function (data) {
+                                                    bootbox.alert("@Resources.Resources.ErrorMessage")
+                                                });
+                                        } else {
+                                            if ($("textarea").parent().find("span").length === 0) {
+
+                                                $("textarea").parent().append('<span class="field-validation-valid text-danger">@Resources.Resources.Required</span>');
+
+                                                if ($._data($("textarea").get(0), "events") === undefined) {
+                                                    $("textarea").on("keyup", function (e) {
+                                                        var textarea = $(e.target);
+                                                        if (textarea.val().length > 0) {
+                                                            $("textarea").parent().find("span").remove();
+                                                        } else {
+                                                            if ($("textarea").parent().find("span").length === 0) {
+                                                                $("textarea").parent().append('<span class="field-validation-valid text-danger">@Resources.Resources.Required</span>');
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                            return false;
+                                        }
+                                    }
+                                });
+                            }
+                            else if (data === false) {
+                                $(function () {
+                                bootbox.alert({
+                                    message: "@Resources.Resources.UserAlreadyUnsubscribed",
+                                    callback: function () { location.reload(true); }
+                                    })
+                                });
+                            }
+                        })
+                        .fail(function () {
+                            bootbox.alert({
+                                message: "@Resources.Resources.ErrorContactAdmin",
+                                callback: function () { location.reload(true); }
+                            })
+                        });
+
+                } else {
+                    e.preventDefault();
+                    $.ajax({
+                        url: "/api/adminmanage/denysending/",
+                        method: "POST",
+                        data: { NumberId: numberRow.attr("data-number-id") }
+                    })
+                        .done(function (data) {
+                            window.location.href = numberRow[0].href;
+                        })
+                        .fail(function (data) {
+                            bootbox.alert("@Resources.Resources.ErrorMessage")
+                        });
+                }
+            });
+
+            $("#importNumbers").on("click", function () {
+                var sending = bootbox.dialog({
+                    message: $('.modal-content').html(),
+                    closeButton: false
+                });
+                $.ajax({
+                    url: "/api/adminmanage/importnumbers/" + $("#importNumbers").attr('data-client-id'),
+                    method: "POST"
+                })
+                    .done(function (data) {
+                    sending.modal('hide');
+                    if (data !== null && data !== '0') {
+                        $(function () {
+                            bootbox.alert({
+                                message: data + " " + "@Resources.Resources.SuccessNewNumbersUpdate",
+                                callback: function () { location.reload(true); }
+                            })
+                        });
+                    }
+                    if (data === '0' || data === null)
+                    {
+                        $(function () {
+                            bootbox.alert({
+                                message: "@Resources.Resources.NoNewNumbersToUpdate",
+                                callback: function () { location.reload(true); }
+                            })
+                        });
+                    }
+                })
+                .fail(function () {
+                    sending.modal('hide');
+                    bootbox.alert({
+                        message: "@Resources.Resources.ErrorContactAdmin",
+                        callback: function () { location.reload(true); }
+                    })
+                });
+            });
+        });
+</script>
+}

@@ -1,0 +1,4 @@
+log4net:ERROR XmlHierarchyConfigurator: No appender named [HangfireLoggerAppender] could be found.
+log4net:ERROR Appender named [HangfireLoggerAppender] not found.
+log4net:ERROR XmlHierarchyConfigurator: No appender named [HangfireLoggerAppender] could be found.
+log4net:ERROR Appender named [HangfireLoggerAppender] not found.

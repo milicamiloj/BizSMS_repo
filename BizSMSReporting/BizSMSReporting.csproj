@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Connected Services\SendEmailService\**" />
+    <Compile Remove="Connected Services\SendEmailWebService\**" />
+    <Compile Remove="Connected Services\SendEmailWS\**" />
+    <Compile Remove="OpenAPIs\**" />
+    <EmbeddedResource Remove="Connected Services\SendEmailService\**" />
+    <EmbeddedResource Remove="Connected Services\SendEmailWebService\**" />
+    <EmbeddedResource Remove="Connected Services\SendEmailWS\**" />
+    <EmbeddedResource Remove="OpenAPIs\**" />
+    <None Remove="Connected Services\SendEmailService\**" />
+    <None Remove="Connected Services\SendEmailWebService\**" />
+    <None Remove="Connected Services\SendEmailWS\**" />
+    <None Remove="OpenAPIs\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Connected Services\SendEmailService\Reference.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Connected Services\SendEmailService\ConnectedService.json" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.8.1" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </None>
+  </ItemGroup>
+  
+</Project>

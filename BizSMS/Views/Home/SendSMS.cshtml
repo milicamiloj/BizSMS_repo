@@ -1,0 +1,248 @@
+﻿@{
+    ViewBag.Title = Resources.Resources.SendSMS;
+}
+<br />
+<div class="container-fluid">
+    <div class="stepwizard">
+        <div class="stepwizard-row setup-panel">
+            <div class="stepwizard-step">
+                <a href="#step-1" type="button" class="btn btn-info btn-circle">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                </a>
+                <p>@Resources.Resources.Groups</p>
+            </div>
+            <div class="stepwizard-step">
+                <a href="#step-2" type="button" class="btn btn-default btn-circle disabled" disabled="disabled">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                </a>
+                <p>@Resources.Resources.Message</p>
+            </div>
+            <div class="stepwizard-step">
+                <a href="#step-3" type="button" class="btn btn-default btn-circle disabled" disabled="disabled">
+                    <span class="glyphicon glyphicon-ok"></span>
+                </a>
+                <p>@Resources.Resources.Test</p>
+            </div>
+            <div class="stepwizard-step">
+                <a href="#step-4" type="button" class="btn btn-default btn-circle disabled" disabled="disabled">
+                    <span class="glyphicon glyphicon-phone"></span>
+                </a>
+                <p>@Resources.Resources.Sending</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row setup-content panel panel-primary" id="step-1">
+        <div class="panel-heading" style="background-color:#c74854; font-size: 1.5em; font-weight:bold;">@Resources.Resources.Groups</div>
+        <div class="col-xs-12 col-md-12">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4> @Resources.Resources.NumbersInGroup </h4>
+                    <div class="dual-list list-right">
+                        <div class="well">
+                            <div class="row">
+                                <div class="col-md-12 form-group" id="groupDropDown" data-default-group="@Resources.Resources.DefaultGroups" data-custom-group="@Resources.Resources.CustomGroups">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12" align="center">
+                                    <button class="btn btn-default" id="send-sms-to-group">@Resources.Resources.SendSMSToGroup</button>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-12 form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon glyphicon glyphicon-search" style="top: 0px;"></span>
+                                        <input type="text" name="SearchDualList" class="form-control" placeholder="@Resources.Resources.Search">
+                                        <span class="input-group-addon glyphicon glyphicon-unchecked selector" style="cursor: pointer; top: 0px;" title="@Resources.Resources.SelectAll"></span>
+                                        <span class="input-group-addon glyphicon glyphicon-plus move-left" style="cursor: pointer; top: 0px;" title="@Resources.Resources.AddSelected"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <ul class="list-group" id="dual-list-right"></ul>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-md-6">
+                        <h4> @Resources.Resources.SelectedNumbers </h4>
+                        <div class="dual-list list-left">
+                            <div class="well text-right">
+                                <div class="row">
+                                    <div class="col-md-12 form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon glyphicon glyphicon-search" style="top: 0px;"></span>
+                                            <input type="text" name="SearchDualList" class="form-control" placeholder="@Resources.Resources.Search">
+                                            <span class="input-group-addon glyphicon glyphicon-unchecked selector" style="cursor: pointer; top: 0px;" title="@Resources.Resources.SelectAll"></span>
+                                            <span class="input-group-addon glyphicon glyphicon-minus move-right" style="cursor: pointer; top: 0px;" title="@Resources.Resources.RemoveSelected"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <ul class="list-group" id="dual-list-left"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <select id="dual-list-options" name="dual-list-options[]" multiple="multiple" style="display: none;" size="10"></select>
+
+                </div>
+            <hr/>
+            <nav aria-label="step-2">
+                <ul class="pager">
+                    <li class="next nextBtn disabled" id="step-1-next" disabled="disabled" @*data-no-num-sender="@Resources.Resources.NoNumericSender"*@>
+                    <a href="#"><strong>@Resources.Resources.Next</strong> <span aria-hidden="true">&rarr;</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row setup-content panel panel-primary" id="step-2">
+        <div class="panel-heading" style="background-color:#c74854; font-size: 1.5em; font-weight:bold;">@Resources.Resources.Message</div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="control-label">@Resources.Resources.Alphanumeric</label>
+                <select class="form-control" id="alphanumericDropdown"></select>
+            </div>
+            <div class="form-group">
+                <span>
+                    <p>@Resources.Resources.UnsubTextMts </p><p id="inMts"></p>
+                    <p>@Resources.Resources.UnsubTextNotInMts </p><p id="notInMts"></p>
+                </span>
+                <label class="control-label">@Resources.Resources.Message</label>
+                <textarea id="message" maxlength="765" rows="10" cols="50" class="form-control" placeholder="@Resources.Resources.EnterMessage" required="required"></textarea>
+                <span id="charCount">0/160 (1)</span>
+            </div>
+            <hr />
+            <nav aria-label="step-2">
+                <ul class="pager">
+                    <li class="previous prevBtn" id="prevBtn-step-2"><a href="#"><span aria-hidden="true">&larr;</span><strong> @Resources.Resources.Previous</strong></a></li>
+                    <li class="next nextBtn disabled" id="step-2-next" disabled="disabled"><a href="#"><strong>@Resources.Resources.Next </strong><span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+    <div class="row setup-content panel panel-primary" id="step-3">
+        <div class="modal fade spinner-test-sms" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">@Resources.Resources.SendingTestSMS</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p><span class="glyphicon glyphicon-refresh glyphicon-refresh-animate"></span> Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-heading" style="background-color:#c74854; font-size: 1.5em; font-weight:bold;">@Resources.Resources.Test</div>
+        <div class="panel-body">
+            <div class="form-group col-md-12">
+                <div class="control-label"><strong>@Resources.Resources.ToNumber:</strong></div>
+                <div class="form-control col-md-6" id="test-number" style="max-width: 400px;"></div>
+            </div>
+
+            <div class="col-md-12"><hr /></div>
+           
+            <div class="form-group col-md-12">
+                <div class="control-label"><strong>@Resources.Resources.Alphanumeric:</strong></div>
+                <div class="form-control col-md-6 alphanumeric-for-send" style="max-width: 400px;"></div>
+            </div>
+            <div class="form-group col-md-12">
+                <div class="control-label" style="font-weight:bold;"><strong>@Resources.Resources.MessageText:</strong></div>
+                <div class="form-control col-md-6 message-to-send" style="max-width: 400px; height:auto; word-break: break-all; overflow-wrap: break-word;"></div>
+            </div>
+            <div class="form-group">
+                <div>
+                    <button class="btn btn-default" id="send-test-sms"
+                            data-yes="@Resources.Resources.Yes"
+                            data-no="@Resources.Resources.No"
+                            data-question="@Resources.Resources.QuestionSendTestMessage"
+                            data-fail="@Resources.Resources.SendTestSMSFail">
+                        @Resources.Resources.SendTestSMS
+                    </button>
+                </div>
+            </div>
+            <hr />
+            <nav aria-label="step-3">
+                <ul class="pager">
+                    <li class="previous prevBtn" id="prevButton"><a href="#"><span aria-hidden="true">&larr;</span><strong> @Resources.Resources.Previous</strong></a></li>
+                    <li class="next nextBtn disabled" id="step-3-next" disabled="disabled"><a href="#"><strong>@Resources.Resources.Next</strong> <span aria-hidden="true">&rarr;</span></a></li>
+                    <li class="next nextBtn" id="skip-test-sms"><a href="#"><strong>@Resources.Resources.SkipTestSMS</strong> <span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row setup-content panel panel-primary" id="step-4">
+        <div class="panel-heading" style="background-color:#c74854; font-size: 1.5em; font-weight:bold;">@Resources.Resources.Sending</div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <div class="control-label" id="sms-or-groupSms"
+                         data-sms-to-group="@Resources.Resources.MessageSentToGroup"
+                         data-sms-to-numbers="@Resources.Resources.MessageSentToNumbers"><strong> </strong></div>
+                    </div>
+                </div>
+            <div class="row" id="show-numbers-to-send">
+                <div class="form-group col-md-12">
+                    <div class="well" style="max-width: 400px;" id="numbers-list"></div>
+                </div>
+            </div>
+
+            <div class="row" id="show-group-to-send">
+                <div class="form-group col-md-12">
+                    <div class="well" style="max-width: 400px;" id="group-numbers" align="center"><strong> </strong></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <div class="control-label"><strong>@Resources.Resources.Alphanumeric:</strong></div>
+                    <div class="form-control col-md-6 alphanumeric" style="max-width: 400px;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <div class="control-label" style="font-weight:bold;"><strong>@Resources.Resources.MessageText:</strong></div>
+                    <div class="form-control col-md-6 message-to-send" style="max-width: 400px; height:auto; word-break: break-all; overflow-wrap: break-word;"></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-12">
+                    <button class="btn btn-default" id="send-sms"
+                            data-fail-default="@Resources.Resources.GetDataFail"
+                            data-done="@Resources.Resources.SendSMSDone"
+                            data-fail="@Resources.Resources.SendSMSFail"
+                            data-required-field="@Resources.Resources.Required"
+                            data-wrong-date="@Resources.Resources.WrongDate">
+                        @Resources.Resources.StartSending
+                    </button>
+                    <button class="btn btn-default" id="schedule-sms"
+                            data-confirm="@Resources.Resources.Confirm"
+                            data-cancel="@Resources.Resources.Cancel">
+                        @Resources.Resources.ScheduleSending
+                    </button>
+                </div>
+            </div>
+                <hr />
+                <nav aria-label="step-4">
+                    <ul class="pager">
+                        <li class="previous prevBtn"><a href="#"><span aria-hidden="true">&larr;</span><strong> @Resources.Resources.Previous</strong></a></li>
+                    </ul>
+                </nav>
+            </div>
+    </div>
+</div>
+
+@section styles {
+    @Styles.Render("~/Content/datetime-picker")
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/bundles/datetime-picker")
+    @Scripts.Render("~/bundles/custom")
+}

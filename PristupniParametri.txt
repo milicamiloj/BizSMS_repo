@@ -1,0 +1,9 @@
+Link za aktivaciju usluge:
+https://services.mondo.rs/sms-admin/index.php
+user:Telekom
+password:Proba
+
+link koji koriste korisnici:
+https://services.mondo.rs/bizsms/password.php
+user: test1
+password: test1

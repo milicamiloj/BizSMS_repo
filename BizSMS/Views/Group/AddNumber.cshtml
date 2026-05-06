@@ -1,0 +1,76 @@
+﻿@model BizSMS.Models.UserAddNumberViewModel
+
+@{
+    ViewBag.Title = Resources.Resources.AddNumber;
+}
+
+<h2>@Resources.Resources.AddNumber</h2>
+
+@using (Html.BeginForm()) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.GroupID)
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="Email">@Resources.Resources.Search</label>
+            <div class="col-md-10">
+                <input class="form-control text-box single-line" type="text" id="filter" />
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.NumberID, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.NumberID, Model.Numbers, htmlAttributes: new { @class = "form-control", style="min-height: 150px;", multiple="multiple" })
+                @Html.ValidationMessageFor(model => model.NumberID, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="@Resources.Resources.Add" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToList, "Numbers", routeValues: new { id = Model.GroupID }, htmlAttributes: null)
+</div>
+
+@section scripts{
+    <script>
+        jQuery.fn.filterByText = function (textbox) {
+            return this.each(function () {
+                var select = this;
+                var options = [];
+                $(select).find('option').each(function () {
+                    options.push({ value: $(this).val(), text: $(this).text() });
+                });
+                $(select).data('options', options);
+
+                $(textbox).bind('change keyup', function () {
+                    var options = $(select).empty().data('options');
+                    var search = $.trim($(this).val());
+                    var regex = new RegExp(search, "gi");
+
+                    $.each(options, function (i) {
+                        var option = options[i];
+                        if (option.text.match(regex) !== null) {
+                            $(select).append(
+                                $('<option>').text(option.text).val(option.value)
+                            );
+                        }
+                    });
+                });
+            });
+        };
+
+        $(function () {
+            $('select').filterByText($('input'));
+        })
+    </script>    
+}

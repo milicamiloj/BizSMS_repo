@@ -1,0 +1,141 @@
+﻿@model IEnumerable<BizSMS.Models.UserManageNumbersViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.ListNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+    var groupId = ViewContext.RouteData.Values["id"];
+}
+
+<h2>@Resources.Resources.ListNumbers @Resources.Resources.ForGroup.ToLower(): @ViewBag.GroupName</h2>
+@if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers) || !String.IsNullOrEmpty(ViewBag.BadNumbers) || !String.IsNullOrEmpty(ViewBag.BadGroup))
+{
+    <div class="alert alert-danger fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+        @if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers))
+        {
+            <p>
+                @Resources.Resources.ExistingNumbers @ViewBag.ExistingNumbers
+            </p>
+        }
+
+        @if (!String.IsNullOrEmpty(ViewBag.BadNumbers))
+        {
+            <p>
+                @Resources.Resources.BadFormatNumbers @ViewBag.BadNumbers
+            </p>
+        }
+
+        @if (!String.IsNullOrEmpty(ViewBag.BadGroup))
+        {
+            <p>
+                @Resources.Resources.BadGroupNumbers @ViewBag.BadGroup
+            </p>
+        }
+    </div>
+    <hr />
+}
+<p>
+    @if (!ViewBag.isDefaultGroup)
+    {
+        @Html.ActionLink(Resources.Resources.AddVpnNumber, "AddNumber", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: new { @class = "pull-right" })
+        <span class="pull-right">&nbsp;|&nbsp;</span>
+        @Html.ActionLink(Resources.Resources.UploadNumbers, "UploadNumbers", "Group", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: new { @class = "pull-right" })
+        <span class="pull-right">&nbsp;|&nbsp;</span>
+        @Html.ActionLink(Resources.Resources.AddOneNumber, "AddOneNumber", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: new { @class = "pull-right" })
+
+    }
+</p>
+<table class="table" id="numbersTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+
+</table>
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToGroups, "Index")
+</div>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+<script>
+        $(document).ready(function () {
+            var table_link = $("#numbersTable");
+            table_link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                "ajax": "/api/Group/GetNumbers/@groupId",
+                columns: [
+                    { "data": "Number" },
+                    { "data": "Name" },
+                    { "data": "NumberType" },
+                    { "data": "EditLink" }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/dt-@culture" + ".json"
+                },
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+
+            $(document).on("click", ".js-delete-number", function (e) {
+                var link = $(e.target);
+                bootbox.confirm({
+                    message: link.attr("data-question"),
+                    buttons: {
+                        confirm: {
+                            label: link.attr("data-yes"),
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: link.attr("data-no"),
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var dataRequest = { GroupID: link.attr("data-group-id"), NumberID: link.attr("data-number-id") };
+                            $.ajax({
+                                url: "/api/user/removenumberfromgroup/",
+                                data: dataRequest,
+                                method: "DELETE"
+                            })
+                            .done(function () {
+                                link.parents("tr").fadeOut(function () {
+                                    $(this).remove();
+                                });
+                                
+                                bootbox.alert({
+                                    message: "@Resources.Resources.NumberDeleted",
+                                    callback: function () { location.reload(true); }
+                                });
+                            })
+                            .fail(function (data) {
+                                bootbox.alert(link.attr("data-error"));
+                            });
+                        }
+                    }
+                });
+            });
+        });
+</script>
+}

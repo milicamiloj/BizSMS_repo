@@ -1,0 +1,81 @@
+﻿@model IEnumerable<BizSMS.Models.UserManageNumbersViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.ListNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.ListNumbers</h2>
+
+<table class="table" id="numbersTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--sledeci segment je zakomentarisan jer se u script poziva metoda sa API za izlistavanje brojeva-->
+        @*@foreach (var item in Model)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberType)
+                </td>
+                <td>test</td>
+            </tr>
+            }*@
+    </tbody>
+
+</table>
+
+@*<div>
+        @Html.ActionLink(Resources.Resources.BackToList, "Index")
+    </div>*@
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            var table_link = $("#numbersTable");
+            table_link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                "ajax": "/api/Group/GetListNumbers",
+                stateSave: true,
+                columns: [
+                    { "data": "Number" },
+                    { "data": "Name" },
+                    { "data": "NumberType" },
+                    { "data": "EditLink" }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/dt-" + table_link.attr("data-language") + ".json"
+                },
+                "iDisplayLength": 10,
+                "info": true,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+        });
+    </script>
+}

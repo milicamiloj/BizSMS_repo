@@ -1,0 +1,876 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddNumber" xml:space="preserve">
+    <value>Add number in group:</value>
+  </data>
+  <data name="Alphanumeric" xml:space="preserve">
+    <value>Alphanumeric</value>
+  </data>
+  <data name="Alphanumerics" xml:space="preserve">
+    <value>Alphanumerics</value>
+  </data>
+  <data name="BackToHomePage" xml:space="preserve">
+    <value>Back to home page</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Back to list</value>
+  </data>
+  <data name="BadRequest" xml:space="preserve">
+    <value>Bad request</value>
+  </data>
+  <data name="BadRequestMessage" xml:space="preserve">
+    <value>The server cannot or will not process the request due to an apparent client error</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Canceled</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Change password</value>
+  </data>
+  <data name="ClientName" xml:space="preserve">
+    <value>Client name</value>
+  </data>
+  <data name="ClientNameIsRequired" xml:space="preserve">
+    <value>Client name is required</value>
+  </data>
+  <data name="ClientRegister" xml:space="preserve">
+    <value>Register client</value>
+  </data>
+  <data name="ClientSelectList" xml:space="preserve">
+    <value>Select client</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateClient" xml:space="preserve">
+    <value>Create new client</value>
+  </data>
+  <data name="CreateGroup" xml:space="preserve">
+    <value>Create new group</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Create new user</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Current password</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Delete user</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditGroup" xml:space="preserve">
+    <value>Edit group</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Edit user</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="EmailIsRequired" xml:space="preserve">
+    <value>Email is required</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>An error occurred. Please try again later.</value>
+  </data>
+  <data name="FieldMustBeNumeric" xml:space="preserve">
+    <value>Numerik</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Group name</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Hello</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>The {0} is not a valid e-mail address</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Invalid login attempt</value>
+  </data>
+  <data name="InvalidPhone" xml:space="preserve">
+    <value>The {0} is not a valid phone number</value>
+  </data>
+  <data name="IsNotGreaterThan" xml:space="preserve">
+    <value>{0} must be greater than {1}</value>
+  </data>
+  <data name="IsRequired" xml:space="preserve">
+    <value>{0} is required</value>
+  </data>
+  <data name="LengthValidation" xml:space="preserve">
+    <value>The {0} must be at least {2} characters long.</value>
+  </data>
+  <data name="LengthValidationOtp" xml:space="preserve">
+    <value>The {0} must be {2} characters long.</value>
+  </data>
+  <data name="ListNumbers" xml:space="preserve">
+    <value>List numbers</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Lock</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Log In</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="ManageClients" xml:space="preserve">
+    <value>Manage clients</value>
+  </data>
+  <data name="ManageUsers" xml:space="preserve">
+    <value>Manage users</value>
+  </data>
+  <data name="MessageCost" xml:space="preserve">
+    <value>Message cost</value>
+  </data>
+  <data name="MtsID" xml:space="preserve">
+    <value>MTS ID</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Page not found</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="NumberOfMessagesFrom" xml:space="preserve">
+    <value>Number of messages from</value>
+  </data>
+  <data name="NumberOfMessagesTo" xml:space="preserve">
+    <value>Number of messages to</value>
+  </data>
+  <data name="Numbers" xml:space="preserve">
+    <value>Numbers</value>
+  </data>
+  <data name="NumberType" xml:space="preserve">
+    <value>Number type</value>
+  </data>
+  <data name="PageNotExist" xml:space="preserve">
+    <value>Page you are looking for doesn't exist</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordsDontMatch" xml:space="preserve">
+    <value>The password and confirmation password do not match.</value>
+  </data>
+  <data name="PhoneNotValid" xml:space="preserve">
+    <value>The {0} field is not a valid phone number.</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="PhoneNumberIsRequired" xml:space="preserve">
+    <value>Phone number is required</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price (RSD)</value>
+  </data>
+  <data name="PropertyValueInvalid" xml:space="preserve">
+    <value>Test123</value>
+  </data>
+  <data name="QuestionDeleteAlphanumeric" xml:space="preserve">
+    <value>Are you sure you want to delete this alphanumeric?</value>
+  </data>
+  <data name="QuestionDeleteClient" xml:space="preserve">
+    <value>Are you sure you want to delete this client?</value>
+  </data>
+  <data name="QuestionDeleteUser" xml:space="preserve">
+    <value>Are you sure you want to delete this user?</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Remember me?</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="SelectClient" xml:space="preserve">
+    <value>Select client</value>
+  </data>
+  <data name="SelectNumberType" xml:space="preserve">
+    <value>Select number type</value>
+  </data>
+  <data name="SendAllowed" xml:space="preserve">
+    <value>Send allowed</value>
+  </data>
+  <data name="TotalOfNumbers" xml:space="preserve">
+    <value>Total of numbers</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="UnauthorizedMessage" xml:space="preserve">
+    <value>You are not authorized to view this page</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Unlock</value>
+  </data>
+  <data name="UserDeleted" xml:space="preserve">
+    <value>Deleted user</value>
+  </data>
+  <data name="UserDeletedMessage" xml:space="preserve">
+    <value>User with this username is deleted. Please log in with valid username.</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="UsernameIsRequired" xml:space="preserve">
+    <value>Username is required</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Welcome</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Administration</value>
+  </data>
+  <data name="SendSMS" xml:space="preserve">
+    <value>Send SMS</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="AddSelected" xml:space="preserve">
+    <value>Add selected</value>
+  </data>
+  <data name="RemoveSelected" xml:space="preserve">
+    <value>Remove selected</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="QuestionDeleteGroup" xml:space="preserve">
+    <value>Are you sure you want to delete this group?</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Edit number</value>
+  </data>
+  <data name="QuestionDeleteNumber" xml:space="preserve">
+    <value>Are you sure you want to delete this number?</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>For</value>
+  </data>
+  <data name="ChooseNumberFromList" xml:space="preserve">
+    <value>Choose number from list</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="NumberOfSentMessages" xml:space="preserve">
+    <value>Number of sent messages</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Send SMS reports </value>
+  </data>
+  <data name="CustomGroups" xml:space="preserve">
+    <value>Custom groups</value>
+  </data>
+  <data name="DefaultGroups" xml:space="preserve">
+    <value>Default groups</value>
+  </data>
+  <data name="EnterMessage" xml:space="preserve">
+    <value>Enter message</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="MessageSentToNumbers" xml:space="preserve">
+    <value>Message will be sent to these numbers:</value>
+  </data>
+  <data name="MessageText" xml:space="preserve">
+    <value>Message text</value>
+  </data>
+  <data name="NumbersInGroup" xml:space="preserve">
+    <value>Numbers in group</value>
+  </data>
+  <data name="ScheduleSending" xml:space="preserve">
+    <value>Schedule sending</value>
+  </data>
+  <data name="SelectedNumbers" xml:space="preserve">
+    <value>Selected numbers</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Sending</value>
+  </data>
+  <data name="SendTestSMS" xml:space="preserve">
+    <value>Send test SMS</value>
+  </data>
+  <data name="StartSending" xml:space="preserve">
+    <value>Start sending</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="ToNumber" xml:space="preserve">
+    <value>To number</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="SMSReport" xml:space="preserve">
+    <value>Sent SMS report</value>
+  </data>
+  <data name="ErrorContactAdmin" xml:space="preserve">
+    <value>Error. Please contact administrator.</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>{0} already exists</value>
+  </data>
+  <data name="AllowSending" xml:space="preserve">
+    <value>Allow sending</value>
+  </data>
+  <data name="DenySending" xml:space="preserve">
+    <value>Deny sending</value>
+  </data>
+  <data name="LockedMessage" xml:space="preserve">
+    <value>This account has been locked out, please try again later.</value>
+  </data>
+  <data name="PasswordChangedMessage" xml:space="preserve">
+    <value>Your password has been changed.</value>
+  </data>
+  <data name="IncorrectPassword" xml:space="preserve">
+    <value>Incorrect password.</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Home page</value>
+  </data>
+  <data name="SendMonth" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="UploadData" xml:space="preserve">
+    <value>Upload data</value>
+  </data>
+  <data name="UploadNumbers" xml:space="preserve">
+    <value>Upload list of numbers</value>
+  </data>
+  <data name="ConfirmUploadNumbers" xml:space="preserve">
+    <value>Confirm numbers to upload</value>
+  </data>
+  <data name="SelectFile" xml:space="preserve">
+    <value>Select file</value>
+  </data>
+  <data name="CheckNumbers" xml:space="preserve">
+    <value>Check numbers</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="SMSReportDetail" xml:space="preserve">
+    <value>SMS report - detail</value>
+  </data>
+  <data name="InMTS" xml:space="preserve">
+    <value>In MTS</value>
+  </data>
+  <data name="OutMTS" xml:space="preserve">
+    <value>Out MTS</value>
+  </data>
+  <data name="SendDate" xml:space="preserve">
+    <value>Send date</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="VPN" xml:space="preserve">
+    <value>VPN</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Not sent</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="QuestionSendTestMessage" xml:space="preserve">
+    <value>Is message received and is it in correct format?</value>
+  </data>
+  <data name="MonthReport" xml:space="preserve">
+    <value>Monthly report</value>
+  </data>
+  <data name="ForMonth" xml:space="preserve">
+    <value>For month</value>
+  </data>
+  <data name="MonthReportDetail" xml:space="preserve">
+    <value>Monthly report - detail</value>
+  </data>
+  <data name="Delivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="NumberOfDeliveredMessages" xml:space="preserve">
+    <value>Number of delivered sms messages</value>
+  </data>
+  <data name="SendTestSMSFail" xml:space="preserve">
+    <value>Send test SMS failed. Please try again later. If problem persist, please contact administrator.</value>
+  </data>
+  <data name="SendSMSDone" xml:space="preserve">
+    <value>All messages are successfully added to send queue. You can check status on Sent SMS Report.</value>
+  </data>
+  <data name="SendSMSFail" xml:space="preserve">
+    <value>Send SMS failed. Please try again later. If problem persist, please contact administrator.</value>
+  </data>
+  <data name="NumberOfSentSMSes" xml:space="preserve">
+    <value>Number of sent sms messages</value>
+  </data>
+  <data name="SendingTestSMS" xml:space="preserve">
+    <value>Sending test SMS</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>Processing</value>
+  </data>
+  <data name="Qued" xml:space="preserve">
+    <value>Qued</value>
+  </data>
+  <data name="Scheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="GetDataFail" xml:space="preserve">
+    <value>Something went wrong. Please try again. If problem persist, please contact administrator.</value>
+  </data>
+  <data name="NumberTypeIsNotBelong" xml:space="preserve">
+    <value>Selected number type can not be added in choosen group.</value>
+  </data>
+  <data name="AlphanumericRegExValidation" xml:space="preserve">
+    <value>Alphanumeric can contain minimum 3 and maximum 11 english letters, numbers, space and special characters (- and _)</value>
+  </data>
+  <data name="DownloadTemplate" xml:space="preserve">
+    <value>Download template</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import file</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Required field</value>
+  </data>
+  <data name="OverlapingRange" xml:space="preserve">
+    <value>Ranges must not overlap with existing ones</value>
+  </data>
+  <data name="QuestionDeleteMessageCost" xml:space="preserve">
+    <value>Are you sure you want to delete selected message cost?</value>
+  </data>
+  <data name="ResetClientPassword" xml:space="preserve">
+    <value>Reset client password</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset password</value>
+  </data>
+  <data name="ResetPasswordSuccess" xml:space="preserve">
+    <value>Password is reseted successfuly</value>
+  </data>
+  <data name="AllowedNumbersForUpload" xml:space="preserve">
+    <value>You can upload following numbers:</value>
+  </data>
+  <data name="BadFormatNumbers" xml:space="preserve">
+    <value>Bad format numbers:</value>
+  </data>
+  <data name="BadGroupNumbers" xml:space="preserve">
+    <value>Bad group numbers:</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="AddMessageCost" xml:space="preserve">
+    <value>Add new message cost range</value>
+  </data>
+  <data name="PriceError" xml:space="preserve">
+    <value>Price can not be bigger then price with smaller range</value>
+  </data>
+  <data name="WrongDate" xml:space="preserve">
+    <value>Wrong date</value>
+  </data>
+  <data name="IndexText" xml:space="preserve">
+    <value>Send SMS to numbers within and outside your Biznet group</value>
+  </data>
+  <data name="ContractID" xml:space="preserve">
+    <value>Contract number</value>
+  </data>
+  <data name="SMS" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Manual" xml:space="preserve">
+    <value>User Manual</value>
+  </data>
+  <data name="ImportCount" xml:space="preserve">
+    <value>Imported numbers count:</value>
+  </data>
+  <data name="ImportNumbers" xml:space="preserve">
+    <value>Import numbers</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="ClientContracts" xml:space="preserve">
+    <value>Client contracts</value>
+  </data>
+  <data name="AddContract" xml:space="preserve">
+    <value>Add new contract</value>
+  </data>
+  <data name="DeleteContract" xml:space="preserve">
+    <value>Delete contract</value>
+  </data>
+  <data name="EditContract" xml:space="preserve">
+    <value>Edit contract</value>
+  </data>
+  <data name="UserCreatedSuccessfully" xml:space="preserve">
+    <value>User created successfully</value>
+  </data>
+  <data name="FreeOfCharge" xml:space="preserve">
+    <value>Free of charge</value>
+  </data>
+  <data name="MessageLength" xml:space="preserve">
+    <value>Message length</value>
+  </data>
+  <data name="UserUpdatedSuccessfully" xml:space="preserve">
+    <value>User updated successfully</value>
+  </data>
+  <data name="RefreshNumbers" xml:space="preserve">
+    <value>Refresh numbers</value>
+  </data>
+  <data name="SendSMSToGroup" xml:space="preserve">
+    <value>Send SMS To Group</value>
+  </data>
+  <data name="MessageSentToGroup" xml:space="preserve">
+    <value>Message will be sent to this group:</value>
+  </data>
+  <data name="SkipTestSMS" xml:space="preserve">
+    <value>Skip this step</value>
+  </data>
+  <data name="ExistingNumbers" xml:space="preserve">
+    <value>Number/s already exist in the group:</value>
+  </data>
+  <data name="NumbersToBeUploaded" xml:space="preserve">
+    <value>Following number/s will be uploaded:</value>
+  </data>
+  <data name="UploadTableNumbersFail" xml:space="preserve">
+    <value>Number/s to upload have not arrived! Try again later or contact your administrator.</value>
+  </data>
+  <data name="AddOneNumber" xml:space="preserve">
+    <value>Add one number</value>
+  </data>
+  <data name="EnterNameForNumber" xml:space="preserve">
+    <value>Name for this number</value>
+  </data>
+  <data name="RequiredNumberFormat" xml:space="preserve">
+    <value>Required field! Please insert a number in format: 06XXXXXXX</value>
+  </data>
+  <data name="AddVpnNumber" xml:space="preserve">
+    <value>Add number/s from VPN group</value>
+  </data>
+  <data name="ErrorTryLaterContactAdmin" xml:space="preserve">
+    <value>There has been an error, please try again later. If this repeats please contact your administrator.</value>
+  </data>
+  <data name="ReasonForDenySending" xml:space="preserve">
+    <value>Please enter a deny sending reason!</value>
+  </data>
+  <data name="AlreadyExistsInGroup" xml:space="preserve">
+    <value>This number already exists in the group, or the SMS sending to this number is denied due to unsubscription from service.</value>
+  </data>
+  <data name="ClientNumbers" xml:space="preserve">
+    <value>Client numbers</value>
+  </data>
+  <data name="DeniedReason" xml:space="preserve">
+    <value>Description of change | Date | Changed by admin</value>
+  </data>
+  <data name="ReasonByUser" xml:space="preserve">
+    <value>By user:</value>
+  </data>
+  <data name="NumberOfDeliveredMessagesLength" xml:space="preserve">
+    <value>Total of delivered SMS (including multiple messages)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="BackToGroup" xml:space="preserve">
+    <value>Back to group</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Create new Alphanumeric</value>
+  </data>
+  <data name="ForGroup" xml:space="preserve">
+    <value>For group</value>
+  </data>
+  <data name="NoEmptySpaceOrSpecChars" xml:space="preserve">
+    <value>Username cannot have empty space or special characters</value>
+  </data>
+  <data name="PriceOfDeliveredMessagesLength" xml:space="preserve">
+    <value>Price total (including multiple messages length)</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ScheduledSMS" xml:space="preserve">
+    <value>Scheduled SMS</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="QuestionCancelScheduledSMS" xml:space="preserve">
+    <value>Are you sure you want to cancel this scheduled SMS?</value>
+  </data>
+  <data name="ScheduledSendingCanceled" xml:space="preserve">
+    <value>Canceled!</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="CanceledBy" xml:space="preserve">
+    <value>Canceled by</value>
+  </data>
+  <data name="NotInMTS" xml:space="preserve">
+    <value>Not in MTS</value>
+  </data>
+  <data name="UnsubTextMts" xml:space="preserve">
+    <value>* To all messages sent to numbers of type "U MTS" will be added unsubscription text: </value>
+  </data>
+  <data name="UnsubTextNotInMts" xml:space="preserve">
+    <value>** To all messages sent to numbers of type "VAN MTS" will be added unsubscription text:</value>
+  </data>
+  <data name="MessageAlreadySent" xml:space="preserve">
+    <value>Message has already been sent!</value>
+  </data>
+  <data name="UserAlreadyUnsubscribed" xml:space="preserve">
+    <value>User already unsubscribed!</value>
+  </data>
+  <data name="NoNumericSender" xml:space="preserve">
+    <value>In your database there is no sender/alphanumeric defined in the format of a phone number which is needed for the SMS to be sent outside of MTS network. Please contact administrator to input one.</value>
+  </data>
+  <data name="DuplicateNumbers" xml:space="preserve">
+    <value>Duplicate numbers found in uploaded list:</value>
+  </data>
+  <data name="BackToGroups" xml:space="preserve">
+    <value>Back to Groups</value>
+  </data>
+  <data name="AddNumbersToVPN" xml:space="preserve">
+    <value>Add numbers to VPN group</value>
+  </data>
+  <data name="ImportNumbersToVPN" xml:space="preserve">
+    <value>Import numbers to VPN group</value>
+  </data>
+  <data name="RefreshVPNnumbers" xml:space="preserve">
+    <value>Refresh VPN numbers</value>
+  </data>
+  <data name="SuccessNewNumbersUpdate" xml:space="preserve">
+    <value>number/numbers successfully updated!</value>
+  </data>
+  <data name="NoNewNumbersToUpdate" xml:space="preserve">
+    <value>No new numbers to update.</value>
+  </data>
+  <data name="DeactivatedNumbers" xml:space="preserve">
+    <value>Deactivated numbers</value>
+  </data>
+  <data name="SendDeniedNumbers" xml:space="preserve">
+    <value>Number(s) that are not allowed to be added because they have unregistered from the list of SMS recepients: </value>
+  </data>
+  <data name="NumberDeleted" xml:space="preserve">
+    <value>Number is deleted from the group!</value>
+  </data>
+  <data name="MaxNumberOfCharacters" xml:space="preserve">
+    <value>Maximum number of characters is 30 (including spaces)</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>Enter verification code</value>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>InvalidCode</value>
+  </data>
+  <data name="RememberBrowser" xml:space="preserve">
+    <value>Remember this browser?</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="VerifyOTP" xml:space="preserve">
+    <value>Verify Phone Number</value>
+  </data>
+  <data name="PonoviKod" xml:space="preserve">
+    <value>Resend code</value>
+  </data>
+</root>

@@ -1,0 +1,122 @@
+﻿@model IEnumerable<BizSMS.Models.ClientManageUsersViewModel>
+
+@{
+    ViewBag.Title = @Resources.Resources.ManageUsers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+
+<link href="/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<h2>@Resources.Resources.ManageUsers</h2>
+<p class="text-success">@ViewBag.StatusMessage</p>
+<p>
+    @if (Model.Count() < 5)
+    {
+        @Html.ActionLink(Resources.Resources.CreateUser, "ClientCreateUser", "ClientManage", null, htmlAttributes: new { @class = "pull-right" })
+    }
+</p>
+<table class="table" id="clientTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @Html.ActionLink(Resources.Resources.Edit, "ClientEditUser", new { id = item.UserID }) |
+                    @Html.ActionLink(Resources.Resources.ResetPassword, "ResetPassword", "Account", new { id = item.UserID }, htmlAttributes: null) |
+                    <a href="#" class="js-delete-user"
+                       data-yes="@Resources.Resources.Yes"
+                       data-no="@Resources.Resources.No"
+                       data-question="@Resources.Resources.QuestionDeleteUser"
+                       data-user-id="@item.UserID">
+                        @Resources.Resources.Delete
+                    </a>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+    <script>
+        $(document).ready(function () {
+            var table_link = $("#clientTable");
+            var table = table_link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                "aoColumns": [
+                 null,
+                 null,
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+            $(".js-delete-user").click(function (e) {
+                var link = $(e.target);
+                bootbox.confirm({
+                    message: link.attr("data-question"),
+                    buttons: {
+                        confirm: {
+                            label: link.attr("data-yes"),
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: link.attr("data-no"),
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            
+                            $.ajax({
+                                url: "/api/clientmanage/cancel/" + link.attr("data-user-id"),
+                                method: "DELETE"
+                            })
+                            .done(function () {
+                                link.parents("tr").fadeOut(function () {
+                                    $(this).remove();
+                                });
+                            })
+                            .fail(function (data) {
+                                alert(data);
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

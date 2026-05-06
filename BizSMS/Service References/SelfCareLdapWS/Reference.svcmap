@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="64b3247b-4d6a-4364-af45-fc583b55d22a" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="LdapCheck.xsd" MetadataType="Schema" ID="0e3bb9d6-c748-43a3-b5d4-2158e8e3227b" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?xsd=xsd0" />
+    <MetadataFile FileName="LdapCheck1.xsd" MetadataType="Schema" ID="940f4903-59d2-4ed1-93d4-55448f87d09a" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?xsd=xsd1" />
+    <MetadataFile FileName="LdapCheck.wsdl" MetadataType="Wsdl" ID="2650cb49-403f-4114-a82b-e4d4cf9d0b64" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?wsdl" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @RenderSection("styles", required: false)
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                @*<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>*@
+                @Html.ActionLink("BizSMS", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    @if (User.IsInRole("Client") || User.IsInRole("User"))
+                    {
+                        <li>@Html.ActionLink(Resources.Resources.SendSMS, "SendSMS", "Home")</li>
+                        <li>@Html.ActionLink(Resources.Resources.Groups, "Index", "Group")</li>
+                        <li>@Html.ActionLink(Resources.Resources.Numbers, "ListNumbers", "Group")</li>
+                        <li>@Html.ActionLink(Resources.Resources.MonthReport, "SentSmsReport", "Home")</li>
+                        <li>@Html.ActionLink(Resources.Resources.SMSReport, "SentSMSJobReport", "Home")</li>
+                    }
+                    else if (User.IsInRole("Administrator"))
+                    {
+                        <li>@Html.ActionLink(Resources.Resources.Report, "SentSmsClientList", "Report")</li>
+                    }
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - Telekom Srbija A.D.</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jquery-unobtrusive")
+    @Scripts.Render("~/bundles/jquery-validate-unobtrusive")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            // GLOBALNI HANDLER (401)
+            $(document).ajaxError(function (event, xhr) {
+
+                if (xhr.status === 401) {
+
+                    // spreči duplo otvaranje popup-a
+                    if (window.sessionExpiredHandled) return;
+                    window.sessionExpiredHandled = true;
+
+                    bootbox.alert({
+                        message: "Vaša sesija je istekla. Molimo prijavite se ponovo.",
+                        callback: function () {
+                            window.location.href = '/Account/Login';
+                        }
+                    });
+                }
+            });
+
+
+            // SESSION WATCHER
+            if (!window.sessionWatcherStarted) {
+
+                window.sessionWatcherStarted = true;
+
+                var lastActivityTime = Date.now();
+
+                // sve što znači "korisnik je aktivan"
+                document.addEventListener("mousemove", resetTimer);
+                document.addEventListener("keypress", resetTimer);
+                document.addEventListener("click", resetTimer);
+                document.addEventListener("scroll", resetTimer);
+
+                function resetTimer() {
+                    lastActivityTime = Date.now();
+                }
+
+                setInterval(function () {
+
+                    var now = Date.now();
+                    var idleTime = now - lastActivityTime;
+
+                    // 2 minuta = 120000 ms na raz/qa
+                    // 15 minuta = 900000 ms na produkciji
+                    if (idleTime > 900000) {
+
+                        // logout bez AJAX-a
+                        window.location.href = "/Account/Login?sessionExpired=true";
+                    }
+
+                }, 10000); // proverava svakih 10s
+            }
+
+        </script>
+    }
+    </body>
+</html>

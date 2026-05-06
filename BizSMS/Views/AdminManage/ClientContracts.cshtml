@@ -1,0 +1,76 @@
+﻿@model BizSMS.Models.ClientContractsViewModel
+
+@{
+    ViewBag.Title = Resources.Resources.ManageClients;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.ClientContracts</h2>
+<h2>@Resources.Resources.ClientName: @Model.ClientName</h2>
+
+@Html.HiddenFor(m => m.ClientId)
+<p>
+    @Html.ActionLink(Resources.Resources.AddContract, "AddClientContract", "AdminManage", routeValues: new { id = Model.ClientId }, htmlAttributes: new { @class = "pull-right" })
+</p>
+
+<table class="table" id="clientsTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th></th>
+            <th>
+                @Resources.Resources.ContractID
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        
+    </tbody>
+</table>
+
+<p>
+    @Html.ActionLink(Resources.Resources.Back, "ManageClients", "AdminManage")
+</p>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+    <style>
+        tr:last-child {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    </style>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            console.log($("#ClientId").val());
+            var link = $("#clientsTable");
+            link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                "ajax":'/api/AdminManage/GetClientContracts/' + $("#ClientId").val(),
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + link.attr("data-language") + ".json"
+                },
+                stateSave: true,
+                columns: [
+                     {
+                         data: "ClientContractId",
+                         visible: false
+                     },
+                     {
+                         data: "ContractId"
+                     },
+                     {
+                         "data": "Edit",
+                         "bSearchable": false,
+                         "bSortable": false
+                     }
+                ]
+            });
+        });
+    </script>
+}
