@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:parlayx_common_xsd="http://www.csapi.org/schema/parlayx/common/v2_1" xmlns="http://schemas.xmlsoap.org/wsdl/" name="common_faults" targetNamespace="http://www.csapi.org/wsdl/parlayx/common/v2_0/faults" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <xsd:schema xmlns="http://schemas.xmlsoap.org/wsdl/" elementFormDefault="qualified">
+      <xsd:import schemaLocation="http://212.200.252.225:27010/ParlayXSmsAccess/services/SendSms?xsd=parlayx_common_types_2_1.xsd" namespace="http://www.csapi.org/schema/parlayx/common/v2_1" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="PolicyException">
+    <wsdl:part name="PolicyException" element="parlayx_common_xsd:PolicyException" />
+  </wsdl:message>
+  <wsdl:message name="ServiceException">
+    <wsdl:part name="ServiceException" element="parlayx_common_xsd:ServiceException" />
+  </wsdl:message>
+</wsdl:definitions>

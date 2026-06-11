@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s1="http://tempuri.org/AbstractTypes" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmail">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="subject" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="body" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmailResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="1" name="SendEmailResult" type="xsd:boolean" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmailWithBcc">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="bccAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="bccName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="subject" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="body" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmailWithBccResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="1" name="SendEmailWithBccResult" type="xsd:boolean" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmailWithAtt">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="fromName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="toName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="ccName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="bccAddress" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="bccName" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="subject" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="body" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="priority" type="tns:MailPriority" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="bAtt" type="xsd:base64Binary" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="attName" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:simpleType name="MailPriority">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Normal" />
+      <xsd:enumeration value="Low" />
+      <xsd:enumeration value="High" />
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:element ibmSchExtn:docRoot="true" name="SendEmailWithAttResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="1" name="SendEmailWithAttResult" type="xsd:boolean" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

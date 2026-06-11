@@ -1,0 +1,1046 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{76F28829-3AA9-4B09-A9E6-61385064435D}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BizSMS</RootNamespace>
+    <AssemblyName>BizSMS</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort>44338</IISExpressSSLPort>
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="EPPlus, Version=4.1.1.0, Culture=neutral, PublicKeyToken=ea159fdaa78159a1, processorArchitecture=MSIL">
+      <HintPath>..\packages\EPPlus.4.1.1\lib\net40\EPPlus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.Core, Version=1.6.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.Core.1.6.14\lib\net45\Hangfire.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Hangfire.SqlServer, Version=1.6.14.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hangfire.SqlServer.1.6.14\lib\net45\Hangfire.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="JWT, Version=1.3.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\JWT.1.3.4\lib\3.5\JWT.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Services3, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Web.Services3.3.0.0.0\lib\net20\Microsoft.Web.Services3.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.1.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ONTInstallationPlanner\ONTInstallationPlanner.Service\bin\Debug\Oracle.ManagedDataAccess.dll</HintPath>
+    </Reference>
+    <Reference Include="Otp.NET, Version=1.1.0.0, Culture=neutral, PublicKeyToken=38a48df817e173a6, processorArchitecture=MSIL">
+      <HintPath>..\packages\Otp.NET.1.1.0\lib\net45\Otp.NET.dll</HintPath>
+    </Reference>
+    <Reference Include="RestSharp, Version=105.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RestSharp.105.2.2\lib\net45\RestSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.7\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Cors, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Cors.5.2.7\lib\net45\System.Web.Http.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.Owin, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Owin.5.2.3\lib\net45\System.Web.Http.Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.3\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNet.Identity.Core">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Core.2.2.1\lib\net45\Microsoft.AspNet.Identity.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.Owin">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.Owin.2.2.1\lib\net45\Microsoft.AspNet.Identity.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNet.Identity.EntityFramework">
+      <HintPath>..\packages\Microsoft.AspNet.Identity.EntityFramework.2.2.1\lib\net45\Microsoft.AspNet.Identity.EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Owin">
+      <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin">
+      <HintPath>..\packages\Microsoft.Owin.3.0.1\lib\net45\Microsoft.Owin.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Host.SystemWeb">
+      <HintPath>..\packages\Microsoft.Owin.Host.SystemWeb.3.0.1\lib\net45\Microsoft.Owin.Host.SystemWeb.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security">
+      <HintPath>..\packages\Microsoft.Owin.Security.3.0.1\lib\net45\Microsoft.Owin.Security.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Facebook">
+      <HintPath>..\packages\Microsoft.Owin.Security.Facebook.3.0.1\lib\net45\Microsoft.Owin.Security.Facebook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Cookies">
+      <HintPath>..\packages\Microsoft.Owin.Security.Cookies.3.0.1\lib\net45\Microsoft.Owin.Security.Cookies.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.OAuth">
+      <HintPath>..\packages\Microsoft.Owin.Security.OAuth.3.0.1\lib\net45\Microsoft.Owin.Security.OAuth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Google">
+      <HintPath>..\packages\Microsoft.Owin.Security.Google.3.0.1\lib\net45\Microsoft.Owin.Security.Google.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.Twitter">
+      <HintPath>..\packages\Microsoft.Owin.Security.Twitter.3.0.1\lib\net45\Microsoft.Owin.Security.Twitter.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Owin.Security.MicrosoftAccount">
+      <HintPath>..\packages\Microsoft.Owin.Security.MicrosoftAccount.3.0.1\lib\net45\Microsoft.Owin.Security.MicrosoftAccount.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_GlobalResources\Validation.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Validation.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_GlobalResources\Validation.sr.designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Validation.sr.resx</DependentUpon>
+    </Compile>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\IdentityConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Attributes\AuthorizeAttributes.cs" />
+    <Compile Include="Attributes\ChangeFirstPasswordAttribute.cs" />
+    <Compile Include="Attributes\CompareAttributes.cs" />
+    <Compile Include="Attributes\DefaultApiLoggingAttribute.cs" />
+    <Compile Include="Attributes\RequireHttpsAttribute.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminManageController.cs" />
+    <Compile Include="Controllers\API\AdminManageController.cs" />
+    <Compile Include="Controllers\API\ClientManageController.cs" />
+    <Compile Include="Controllers\API\GroupController.cs" />
+    <Compile Include="Controllers\API\HomeController.cs" />
+    <Compile Include="Controllers\API\SessionController.cs" />
+    <Compile Include="Controllers\ReportController.cs" />
+    <Compile Include="Helpers\Enums.cs" />
+    <Compile Include="Helpers\SendSMS.cs" />
+    <Compile Include="Migrations\201706151110565_ErrorLog_Added.cs" />
+    <Compile Include="Migrations\201706151110565_ErrorLog_Added.Designer.cs">
+      <DependentUpon>201706151110565_ErrorLog_Added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706200959544_messageCost-seed.cs" />
+    <Compile Include="Migrations\201706200959544_messageCost-seed.Designer.cs">
+      <DependentUpon>201706200959544_messageCost-seed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706210717479_Delivered_data_type_int.cs" />
+    <Compile Include="Migrations\201706210717479_Delivered_data_type_int.Designer.cs">
+      <DependentUpon>201706210717479_Delivered_data_type_int.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201706270637453_status_added_in_messageModel.cs" />
+    <Compile Include="Migrations\201706270637453_status_added_in_messageModel.Designer.cs">
+      <DependentUpon>201706270637453_status_added_in_messageModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711071206152_TempImportTableAdded.cs" />
+    <Compile Include="Migrations\201711071206152_TempImportTableAdded.Designer.cs">
+      <DependentUpon>201711071206152_TempImportTableAdded.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711071233355_TempImportTableAdded1.cs" />
+    <Compile Include="Migrations\201711071233355_TempImportTableAdded1.Designer.cs">
+      <DependentUpon>201711071233355_TempImportTableAdded1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711111739123_ActiveFieldAddedToNumbersModel.cs" />
+    <Compile Include="Migrations\201711111739123_ActiveFieldAddedToNumbersModel.Designer.cs">
+      <DependentUpon>201711111739123_ActiveFieldAddedToNumbersModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201711141338043_IsDeletedFieldAddedToApplicationUser.cs" />
+    <Compile Include="Migrations\201711141338043_IsDeletedFieldAddedToApplicationUser.Designer.cs">
+      <DependentUpon>201711141338043_IsDeletedFieldAddedToApplicationUser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712191231268_name_field_added_to_temp_model.cs" />
+    <Compile Include="Migrations\201712191231268_name_field_added_to_temp_model.Designer.cs">
+      <DependentUpon>201712191231268_name_field_added_to_temp_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712250935092_log_table_renamed.cs" />
+    <Compile Include="Migrations\201712250935092_log_table_renamed.Designer.cs">
+      <DependentUpon>201712250935092_log_table_renamed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712250938137_log_table_removed.cs" />
+    <Compile Include="Migrations\201712250938137_log_table_removed.Designer.cs">
+      <DependentUpon>201712250938137_log_table_removed.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201712250940549_log_table_added.cs" />
+    <Compile Include="Migrations\201712250940549_log_table_added.Designer.cs">
+      <DependentUpon>201712250940549_log_table_added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810281911512_ContractIDAddet.cs" />
+    <Compile Include="Migrations\201810281911512_ContractIDAddet.Designer.cs">
+      <DependentUpon>201810281911512_ContractIDAddet.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201810282137195_ClientNameLengthIncreased.cs" />
+    <Compile Include="Migrations\201810282137195_ClientNameLengthIncreased.Designer.cs">
+      <DependentUpon>201810282137195_ClientNameLengthIncreased.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811021047430_ClientContractModel_Added.cs" />
+    <Compile Include="Migrations\201811021047430_ClientContractModel_Added.Designer.cs">
+      <DependentUpon>201811021047430_ClientContractModel_Added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811021231424_TableName_for_client_contracts_modified.cs" />
+    <Compile Include="Migrations\201811021231424_TableName_for_client_contracts_modified.Designer.cs">
+      <DependentUpon>201811021231424_TableName_for_client_contracts_modified.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811101813025_Charged_property_added_to_message_and_messageNumber_model.cs" />
+    <Compile Include="Migrations\201811101813025_Charged_property_added_to_message_and_messageNumber_model.Designer.cs">
+      <DependentUpon>201811101813025_Charged_property_added_to_message_and_messageNumber_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811211457583_SynchronizationDate_added_to_ClientContracts.cs" />
+    <Compile Include="Migrations\201811211457583_SynchronizationDate_added_to_ClientContracts.Designer.cs">
+      <DependentUpon>201811211457583_SynchronizationDate_added_to_ClientContracts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811222040078_ContractId_added_to_NumberModel.cs" />
+    <Compile Include="Migrations\201811222040078_ContractId_added_to_NumberModel.Designer.cs">
+      <DependentUpon>201811222040078_ContractId_added_to_NumberModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202001211253493_fix_GropupId_column_name_in_tempImport_model.cs" />
+    <Compile Include="Migrations\202001211253493_fix_GropupId_column_name_in_tempImport_model.Designer.cs">
+      <DependentUpon>202001211253493_fix_GropupId_column_name_in_tempImport_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002051129167_deny_sending_reason_model_added.cs" />
+    <Compile Include="Migrations\202002051129167_deny_sending_reason_model_added.Designer.cs">
+      <DependentUpon>202002051129167_deny_sending_reason_model_added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202002121451272_SendAllowed_added_to_DenySendingReason.cs" />
+    <Compile Include="Migrations\202002121451272_SendAllowed_added_to_DenySendingReason.Designer.cs">
+      <DependentUpon>202002121451272_SendAllowed_added_to_DenySendingReason.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004191822022_scheduled_sms_model_added.cs" />
+    <Compile Include="Migrations\202004191822022_scheduled_sms_model_added.Designer.cs">
+      <DependentUpon>202004191822022_scheduled_sms_model_added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202004281204520_change_User_Cancel_to_foreign_key_in_ScheduledSms.cs" />
+    <Compile Include="Migrations\202004281204520_change_User_Cancel_to_foreign_key_in_ScheduledSms.Designer.cs">
+      <DependentUpon>202004281204520_change_User_Cancel_to_foreign_key_in_ScheduledSms.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202006050910513_Add_MessageNumberTypeLength_column_to_MessageNumbers_table.cs" />
+    <Compile Include="Migrations\202006050910513_Add_MessageNumberTypeLength_column_to_MessageNumbers_table.Designer.cs">
+      <DependentUpon>202006050910513_Add_MessageNumberTypeLength_column_to_MessageNumbers_table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202008201546092_Changed_column_name_MessageNumberTypeLength_to_MessageLengthNT_in_MessageNumber_table.cs" />
+    <Compile Include="Migrations\202008201546092_Changed_column_name_MessageNumberTypeLength_to_MessageLengthNT_in_MessageNumber_table.Designer.cs">
+      <DependentUpon>202008201546092_Changed_column_name_MessageNumberTypeLength_to_MessageLengthNT_in_MessageNumber_table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\AddPhoneCodeSentAt.cs" />
+    <Compile Include="Models\SendSMSModel.cs" />
+    <Compile Include="Controllers\API\UserController.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\ClientManageController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\GroupController.cs" />
+    <Compile Include="Controllers\ValidationController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\CultureHelper.cs" />
+    <Compile Include="Helpers\DbContextExtensions.cs" />
+    <Compile Include="Helpers\LDAP.cs" />
+    <Compile Include="Helpers\Logger.cs" />
+    <Compile Include="Migrations\201612191148043_InitialCreate.cs" />
+    <Compile Include="Migrations\201612191148043_InitialCreate.Designer.cs">
+      <DependentUpon>201612191148043_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612191151261_Birthdate.cs" />
+    <Compile Include="Migrations\201612191151261_Birthdate.Designer.cs">
+      <DependentUpon>201612191151261_Birthdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612271406542_GroupModel_Added.cs" />
+    <Compile Include="Migrations\201612271406542_GroupModel_Added.Designer.cs">
+      <DependentUpon>201612271406542_GroupModel_Added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201612271430430_GroupModel_UserID_ForeignKey.cs" />
+    <Compile Include="Migrations\201612271430430_GroupModel_UserID_ForeignKey.Designer.cs">
+      <DependentUpon>201612271430430_GroupModel_UserID_ForeignKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701110825031_GroupModel-test-EF.cs" />
+    <Compile Include="Migrations\201701110825031_GroupModel-test-EF.Designer.cs">
+      <DependentUpon>201701110825031_GroupModel-test-EF.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701110856558_Table_name_BST_GROUPS.cs" />
+    <Compile Include="Migrations\201701110856558_Table_name_BST_GROUPS.Designer.cs">
+      <DependentUpon>201701110856558_Table_name_BST_GROUPS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701110939369_ClientModel.cs" />
+    <Compile Include="Migrations\201701110939369_ClientModel.Designer.cs">
+      <DependentUpon>201701110939369_ClientModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701110957314_MessageModel.cs" />
+    <Compile Include="Migrations\201701110957314_MessageModel.Designer.cs">
+      <DependentUpon>201701110957314_MessageModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701111110572_WholeModel.cs" />
+    <Compile Include="Migrations\201701111110572_WholeModel.Designer.cs">
+      <DependentUpon>201701111110572_WholeModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701160740418_add_IsCanceled_field_in_IdentityModels.cs" />
+    <Compile Include="Migrations\201701160740418_add_IsCanceled_field_in_IdentityModels.Designer.cs">
+      <DependentUpon>201701160740418_add_IsCanceled_field_in_IdentityModels.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701171440180_IsCanceled_added_to_Client_model.cs" />
+    <Compile Include="Migrations\201701171440180_IsCanceled_added_to_Client_model.Designer.cs">
+      <DependentUpon>201701171440180_IsCanceled_added_to_Client_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701231420184_EndDate_set_to_nullable.cs" />
+    <Compile Include="Migrations\201701231420184_EndDate_set_to_nullable.Designer.cs">
+      <DependentUpon>201701231420184_EndDate_set_to_nullable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701261150472_UserId_FK_Removed_from_Group.cs" />
+    <Compile Include="Migrations\201701261150472_UserId_FK_Removed_from_Group.Designer.cs">
+      <DependentUpon>201701261150472_UserId_FK_Removed_from_Group.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701261159385_ForeignKeyChangedIn-BST_GROUPS.cs" />
+    <Compile Include="Migrations\201701261159385_ForeignKeyChangedIn-BST_GROUPS.Designer.cs">
+      <DependentUpon>201701261159385_ForeignKeyChangedIn-BST_GROUPS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701261307355_CheckDate_nullable_BST_NUMBERS.cs" />
+    <Compile Include="Migrations\201701261307355_CheckDate_nullable_BST_NUMBERS.Designer.cs">
+      <DependentUpon>201701261307355_CheckDate_nullable_BST_NUMBERS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701271341449_GroupNumberModel_added.cs" />
+    <Compile Include="Migrations\201701271341449_GroupNumberModel_added.Designer.cs">
+      <DependentUpon>201701271341449_GroupNumberModel_added.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201701311000012_Default_field_added_in_Group_model.cs" />
+    <Compile Include="Migrations\201701311000012_Default_field_added_in_Group_model.Designer.cs">
+      <DependentUpon>201701311000012_Default_field_added_in_Group_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702061313046_message_cost_FK_in_message_number.cs" />
+    <Compile Include="Migrations\201702061313046_message_cost_FK_in_message_number.Designer.cs">
+      <DependentUpon>201702061313046_message_cost_FK_in_message_number.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702061751331_client_id_added_to_numbers_model.cs" />
+    <Compile Include="Migrations\201702061751331_client_id_added_to_numbers_model.Designer.cs">
+      <DependentUpon>201702061751331_client_id_added_to_numbers_model.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702141204050_Added_SendSMSID_in_MessageNumberModel.cs" />
+    <Compile Include="Migrations\201702141204050_Added_SendSMSID_in_MessageNumberModel.Designer.cs">
+      <DependentUpon>201702141204050_Added_SendSMSID_in_MessageNumberModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702200718038_MessageCost_FK_removed_from_MessageNumber.cs" />
+    <Compile Include="Migrations\201702200718038_MessageCost_FK_removed_from_MessageNumber.Designer.cs">
+      <DependentUpon>201702200718038_MessageCost_FK_removed_from_MessageNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702231300217_Add_index_to_Number_column_in_Numbers_table.cs" />
+    <Compile Include="Migrations\201702231300217_Add_index_to_Number_column_in_Numbers_table.Designer.cs">
+      <DependentUpon>201702231300217_Add_index_to_Number_column_in_Numbers_table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201702281009305_Add_send_date_in_messages_table.cs" />
+    <Compile Include="Migrations\201702281009305_Add_send_date_in_messages_table.Designer.cs">
+      <DependentUpon>201702281009305_Add_send_date_in_messages_table.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201703011117357_User_linked_to_messages.cs" />
+    <Compile Include="Migrations\201703011117357_User_linked_to_messages.Designer.cs">
+      <DependentUpon>201703011117357_User_linked_to_messages.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705111942478_MessageCostId_FK_in_MessageNumber.cs" />
+    <Compile Include="Migrations\201705111942478_MessageCostId_FK_in_MessageNumber.Designer.cs">
+      <DependentUpon>201705111942478_MessageCostId_FK_in_MessageNumber.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705112022519_sent_field_to_MessageNumber_and_test_field_to_Message.cs" />
+    <Compile Include="Migrations\201705112022519_sent_field_to_MessageNumber_and_test_field_to_Message.Designer.cs">
+      <DependentUpon>201705112022519_sent_field_to_MessageNumber_and_test_field_to_Message.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705132137477_number_type_added_to_message_number.cs" />
+    <Compile Include="Migrations\201705132137477_number_type_added_to_message_number.Designer.cs">
+      <DependentUpon>201705132137477_number_type_added_to_message_number.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201705132210453_start_date_added_to_message_cost.cs" />
+    <Compile Include="Migrations\201705132210453_start_date_added_to_message_cost.Designer.cs">
+      <DependentUpon>201705132210453_start_date_added_to_message_cost.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\AdminManageViewModels.cs" />
+    <Compile Include="Models\BizSMSModels.cs" />
+    <Compile Include="Models\BizSMSViewModels.cs" />
+    <Compile Include="Models\ClientManageViewModels.cs" />
+    <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SendSMSViewModels.cs" />
+    <Compile Include="Models\GroupManageViewModels.cs" />
+    <Compile Include="Models\TempImportModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="SDPSendSms\CustomHeadersAssertion.cs" />
+    <Compile Include="SDPSendSms\SendSmsService.cs" />
+    <Compile Include="Service References\SelfCareLdapWS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="Startup.cs" />
+    <Compile Include="Web References\http2sms\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+    <Compile Include="Web References\ldapCheckWS\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.map</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrapBackup.css" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.minBackup.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\buttons.bootstrap.css" />
+    <Content Include="Content\dataTables.bootstrap.css" />
+    <Content Include="Content\flag-icon.min.css" />
+    <Content Include="Content\flags\1x1\gb.svg" />
+    <Content Include="Content\flags\1x1\rs.svg" />
+    <Content Include="Content\flags\4x3\gb.svg" />
+    <Content Include="Content\flags\4x3\rs.svg" />
+    <Content Include="Content\img\brojevi.png" />
+    <Content Include="Content\img\group.png" />
+    <Content Include="Content\img\kalendar.png" />
+    <Content Include="Content\img\mesecniIzvestaj.png" />
+    <Content Include="Content\img\sendSMS.png" />
+    <Content Include="Content\img\sms.png" />
+    <Content Include="Content\jquery.dataTables.css" />
+    <Content Include="Content\themes\base\accordion.css" />
+    <Content Include="Content\themes\base\all.css" />
+    <Content Include="Content\themes\base\autocomplete.css" />
+    <Content Include="Content\themes\base\base.css" />
+    <Content Include="Content\themes\base\button.css" />
+    <Content Include="Content\themes\base\core.css" />
+    <Content Include="Content\themes\base\datepicker.css" />
+    <Content Include="Content\themes\base\dialog.css" />
+    <Content Include="Content\themes\base\draggable.css" />
+    <Content Include="Content\themes\base\images\animated-overlay.gif" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="Content\themes\base\images\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="Content\themes\base\images\ui-icons_222222_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_2e83ff_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_454545_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_888888_256x240.png" />
+    <Content Include="Content\themes\base\images\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="Content\themes\base\menu.css" />
+    <Content Include="Content\themes\base\progressbar.css" />
+    <Content Include="Content\themes\base\resizable.css" />
+    <Content Include="Content\themes\base\selectable.css" />
+    <Content Include="Content\themes\base\selectmenu.css" />
+    <Content Include="Content\themes\base\slider.css" />
+    <Content Include="Content\themes\base\sortable.css" />
+    <Content Include="Content\themes\base\spinner.css" />
+    <Content Include="Content\themes\base\tabs.css" />
+    <Content Include="Content\themes\base\theme.css" />
+    <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="images\sort_asc.png" />
+    <Content Include="images\sort_both.png" />
+    <Content Include="images\sort_desc.png" />
+    <Content Include="Logs\BizSMSErrorLog.txt" />
+    <Content Include="Scripts\bootbox.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <Content Include="Content\localization\dt-sr.json" />
+    <Content Include="Content\localization\dt-en-US.json" />
+    <Content Include="appsettings.json" />
+    <None Include="Properties\PublishProfiles\BizSMSLocal.pubxml" />
+    <None Include="Properties\PublishProfiles\BizSMSWebExt.pubxml" />
+    <None Include="Properties\PublishProfiles\LocalFolder.pubxml" />
+    <None Include="Properties\PublishProfiles\PublishQA.pubxml" />
+    <None Include="Properties\PublishProfiles\PublishTest.pubxml" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="Scripts\jquery-1.11.0.intellisense.js" />
+    <Content Include="Scripts\buttons.bootstrap.js" />
+    <Content Include="Scripts\buttons.flash.js" />
+    <Content Include="Scripts\buttons.html5.min.js" />
+    <Content Include="Scripts\buttons.print.js" />
+    <Content Include="Scripts\dataTables.buttons.js" />
+    <Content Include="Scripts\dataTables.bootstrap.js" />
+    <Content Include="Scripts\jquery-1.11.0.js" />
+    <Content Include="Scripts\jquery-1.11.0.min.js" />
+    <Content Include="Scripts\jquery-1.11.0.min.map" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui-1.11.0.js" />
+    <Content Include="Scripts\jquery-ui-1.11.0.min.js" />
+    <Content Include="Scripts\jquery.dataTables.js" />
+    <Content Include="Content\jquery.datetimepicker.min.css" />
+    <Content Include="Scripts\jquery.datetimepicker.full.min.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\jszip.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\pdfmake.min.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\Custom\send.sms.js" />
+    <Content Include="Scripts\vfs_fonts.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Service References\SelfCareLdapWS\BizSMS.SelfCareLdapWS.vratiTipKorisnikaResponse.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Content>
+    <None Include="Service References\SelfCareLdapWS\configuration91.svcinfo" />
+    <None Include="Service References\SelfCareLdapWS\configuration.svcinfo" />
+    <None Include="Service References\SelfCareLdapWS\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <Content Include="Views\Home\SentSmsDetail.cshtml" />
+    <Content Include="Views\AdminManage\ConfirmUploadNumbers.cshtml" />
+    <Content Include="Views\AdminManage\UploadNumbers.cshtml" />
+    <Content Include="Views\AdminManage\CheckUploadedNumbers.cshtml" />
+    <Content Include="Views\Home\SentSMSJobReport.cshtml" />
+    <Content Include="Views\Home\SentSMSJobDetailReport.cshtml" />
+    <Content Include="UploadedFiles\UploadNumbersTemplate.xlsx" />
+    <Content Include="Views\Report\SentSmsReport.cshtml" />
+    <Content Include="Views\Report\SentSmsDetail.cshtml" />
+    <Content Include="Views\Report\SentSMSJobReport.cshtml" />
+    <Content Include="Views\Report\SentSMSJobDetailReport.cshtml" />
+    <Content Include="Views\Report\SentSmsClientList.cshtml" />
+    <Content Include="Views\AdminManage\ClientContracts.cshtml" />
+    <Content Include="Views\AdminManage\AddClientContract.cshtml" />
+    <Content Include="Views\AdminManage\EditClientContract.cshtml" />
+    <Content Include="Views\AdminManage\ClientUsers.cshtml" />
+    <Content Include="Views\AdminManage\CreateUser.cshtml" />
+    <Content Include="Views\AdminManage\EditUser.cshtml" />
+    <Content Include="Views\Group\UploadNumbers.cshtml" />
+    <Content Include="Views\Group\CheckUploadedNumbers.cshtml" />
+    <Content Include="Views\Group\AddOneNumber.cshtml" />
+    <Content Include="UploadedFiles\KorisnickoUputstvoBizSMS_administrator.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UploadedFiles\KorisnickoUputstvoBizSMS_klijent.pdf" />
+    <Content Include="Views\AdminManage\Groups.cshtml" />
+    <Content Include="Views\Account\ChooseProvider.cshtml" />
+    <Content Include="Views\Account\TwoFactor.cshtml" />
+    <Content Include="Views\Manage\VerifyCode.cshtml" />
+    <Content Include="Views\Account\AddPhoneNumber.cshtml" />
+    <Content Include="Views\Account\VerifyPhoneNumber_old.cshtml" />
+    <None Include="Service References\SelfCareLdapWS\LdapCheck.wsdl" />
+    <None Include="Service References\SelfCareLdapWS\LdapCheck.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\SelfCareLdapWS\LdapCheck1.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <Content Include="Views\Account\VerifyPhoneNumber.cshtml" />
+    <None Include="Web References\http2sms\http2sms.disco" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />
+    <Content Include="Views\Account\ConfirmEmail.cshtml" />
+    <Content Include="Views\Account\ExternalLoginConfirmation.cshtml" />
+    <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
+    <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
+    <Content Include="Views\Manage\ChangePassword.cshtml" />
+    <Content Include="Views\Manage\Index.cshtml" />
+    <Content Include="Views\Manage\ManageLogins.cshtml" />
+    <Content Include="Views\Manage\SetPassword.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\ClientManage\ClientManageUsers.cshtml" />
+    <Content Include="Views\ClientManage\ClientEditUser.cshtml" />
+    <Content Include="Views\ClientManage\ClientDeleteUser.cshtml" />
+    <Content Include="Views\ClientManage\ClientCreateUser.cshtml" />
+    <Content Include="Views\Shared\DeletedUser.cshtml" />
+    <Content Include="Views\AdminManage\CreateClient.cshtml" />
+    <Content Include="Views\AdminManage\EditClient.cshtml" />
+    <Content Include="Views\AdminManage\ManageClients.cshtml" />
+    <Content Include="Views\AdminManage\Alphanumerics.cshtml" />
+    <Content Include="Views\AdminManage\EditAlphanumeric.cshtml" />
+    <Content Include="Views\AdminManage\CreateAlphanumeric.cshtml" />
+    <Content Include="Views\AdminManage\MessageCost.cshtml" />
+    <Content Include="Views\AdminManage\EditMessageCost.cshtml" />
+    <Content Include="Views\AdminManage\CreateMessageCost.cshtml" />
+    <Content Include="Views\Error\Http404.cshtml" />
+    <Content Include="Views\Error\Http403.cshtml" />
+    <Content Include="Views\Error\Http400.cshtml" />
+    <Content Include="Views\Error\General.cshtml" />
+    <Content Include="Views\Error\Http401.cshtml" />
+    <Content Include="Views\AdminManage\Numbers.cshtml" />
+    <Content Include="Views\AdminManage\EditNumber.cshtml" />
+    <Content Include="Views\AdminManage\CreateNumber.cshtml" />
+    <Content Include="Views\Home\SendSMS.cshtml" />
+    <Content Include="Views\Home\SentSmsReport.cshtml" />
+    <Content Include="Views\Group\Index.cshtml" />
+    <Content Include="Views\Group\EditGroup.cshtml" />
+    <Content Include="Views\Group\CreateGroup.cshtml" />
+    <Content Include="Views\Group\Numbers.cshtml" />
+    <Content Include="Views\Group\EditNumber.cshtml" />
+    <Content Include="Views\Group\AddNumber.cshtml" />
+    <Content Include="Views\Group\ListNumbers.cshtml" />
+    <Content Include="Views\Group\EditListNumber.cshtml" />
+    <None Include="Web References\http2sms\http2sms.wsdl" />
+    <None Include="Web References\http2sms\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+    <None Include="Web References\ldapCheckWS\ldapcheck.wsdl" />
+    <None Include="Web References\ldapCheckWS\Reference.map">
+      <Generator>MSDiscoCodeGenerator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\Base\" />
+    <Folder Include="Views\Validation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="App_GlobalResources\Validation.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Validation.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_GlobalResources\Validation.sr.resx">
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Validation.sr.designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </Content>
+    <EmbeddedResource Include="Migrations\201612191148043_InitialCreate.resx">
+      <DependentUpon>201612191148043_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612191151261_Birthdate.resx">
+      <DependentUpon>201612191151261_Birthdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612271406542_GroupModel_Added.resx">
+      <DependentUpon>201612271406542_GroupModel_Added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201612271430430_GroupModel_UserID_ForeignKey.resx">
+      <DependentUpon>201612271430430_GroupModel_UserID_ForeignKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701110825031_GroupModel-test-EF.resx">
+      <DependentUpon>201701110825031_GroupModel-test-EF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701110856558_Table_name_BST_GROUPS.resx">
+      <DependentUpon>201701110856558_Table_name_BST_GROUPS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701110939369_ClientModel.resx">
+      <DependentUpon>201701110939369_ClientModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701110957314_MessageModel.resx">
+      <DependentUpon>201701110957314_MessageModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701111110572_WholeModel.resx">
+      <DependentUpon>201701111110572_WholeModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701160740418_add_IsCanceled_field_in_IdentityModels.resx">
+      <DependentUpon>201701160740418_add_IsCanceled_field_in_IdentityModels.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701171440180_IsCanceled_added_to_Client_model.resx">
+      <DependentUpon>201701171440180_IsCanceled_added_to_Client_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701231420184_EndDate_set_to_nullable.resx">
+      <DependentUpon>201701231420184_EndDate_set_to_nullable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701261150472_UserId_FK_Removed_from_Group.resx">
+      <DependentUpon>201701261150472_UserId_FK_Removed_from_Group.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701261159385_ForeignKeyChangedIn-BST_GROUPS.resx">
+      <DependentUpon>201701261159385_ForeignKeyChangedIn-BST_GROUPS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701261307355_CheckDate_nullable_BST_NUMBERS.resx">
+      <DependentUpon>201701261307355_CheckDate_nullable_BST_NUMBERS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701271341449_GroupNumberModel_added.resx">
+      <DependentUpon>201701271341449_GroupNumberModel_added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201701311000012_Default_field_added_in_Group_model.resx">
+      <DependentUpon>201701311000012_Default_field_added_in_Group_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702061313046_message_cost_FK_in_message_number.resx">
+      <DependentUpon>201702061313046_message_cost_FK_in_message_number.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702061751331_client_id_added_to_numbers_model.resx">
+      <DependentUpon>201702061751331_client_id_added_to_numbers_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702141204050_Added_SendSMSID_in_MessageNumberModel.resx">
+      <DependentUpon>201702141204050_Added_SendSMSID_in_MessageNumberModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702200718038_MessageCost_FK_removed_from_MessageNumber.resx">
+      <DependentUpon>201702200718038_MessageCost_FK_removed_from_MessageNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702231300217_Add_index_to_Number_column_in_Numbers_table.resx">
+      <DependentUpon>201702231300217_Add_index_to_Number_column_in_Numbers_table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201702281009305_Add_send_date_in_messages_table.resx">
+      <DependentUpon>201702281009305_Add_send_date_in_messages_table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703011117357_User_linked_to_messages.resx">
+      <DependentUpon>201703011117357_User_linked_to_messages.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705111942478_MessageCostId_FK_in_MessageNumber.resx">
+      <DependentUpon>201705111942478_MessageCostId_FK_in_MessageNumber.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705112022519_sent_field_to_MessageNumber_and_test_field_to_Message.resx">
+      <DependentUpon>201705112022519_sent_field_to_MessageNumber_and_test_field_to_Message.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705132137477_number_type_added_to_message_number.resx">
+      <DependentUpon>201705132137477_number_type_added_to_message_number.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201705132210453_start_date_added_to_message_cost.resx">
+      <DependentUpon>201705132210453_start_date_added_to_message_cost.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706151110565_ErrorLog_Added.resx">
+      <DependentUpon>201706151110565_ErrorLog_Added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706200959544_messageCost-seed.resx">
+      <DependentUpon>201706200959544_messageCost-seed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706210717479_Delivered_data_type_int.resx">
+      <DependentUpon>201706210717479_Delivered_data_type_int.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201706270637453_status_added_in_messageModel.resx">
+      <DependentUpon>201706270637453_status_added_in_messageModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711071206152_TempImportTableAdded.resx">
+      <DependentUpon>201711071206152_TempImportTableAdded.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711071233355_TempImportTableAdded1.resx">
+      <DependentUpon>201711071233355_TempImportTableAdded1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711111739123_ActiveFieldAddedToNumbersModel.resx">
+      <DependentUpon>201711111739123_ActiveFieldAddedToNumbersModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201711141338043_IsDeletedFieldAddedToApplicationUser.resx">
+      <DependentUpon>201711141338043_IsDeletedFieldAddedToApplicationUser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712191231268_name_field_added_to_temp_model.resx">
+      <DependentUpon>201712191231268_name_field_added_to_temp_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712250935092_log_table_renamed.resx">
+      <DependentUpon>201712250935092_log_table_renamed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712250938137_log_table_removed.resx">
+      <DependentUpon>201712250938137_log_table_removed.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201712250940549_log_table_added.resx">
+      <DependentUpon>201712250940549_log_table_added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810281911512_ContractIDAddet.resx">
+      <DependentUpon>201810281911512_ContractIDAddet.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810282137195_ClientNameLengthIncreased.resx">
+      <DependentUpon>201810282137195_ClientNameLengthIncreased.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811021047430_ClientContractModel_Added.resx">
+      <DependentUpon>201811021047430_ClientContractModel_Added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811021231424_TableName_for_client_contracts_modified.resx">
+      <DependentUpon>201811021231424_TableName_for_client_contracts_modified.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811101813025_Charged_property_added_to_message_and_messageNumber_model.resx">
+      <DependentUpon>201811101813025_Charged_property_added_to_message_and_messageNumber_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811211457583_SynchronizationDate_added_to_ClientContracts.resx">
+      <DependentUpon>201811211457583_SynchronizationDate_added_to_ClientContracts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811222040078_ContractId_added_to_NumberModel.resx">
+      <DependentUpon>201811222040078_ContractId_added_to_NumberModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202001211253493_fix_GropupId_column_name_in_tempImport_model.resx">
+      <DependentUpon>202001211253493_fix_GropupId_column_name_in_tempImport_model.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002051129167_deny_sending_reason_model_added.resx">
+      <DependentUpon>202002051129167_deny_sending_reason_model_added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202002121451272_SendAllowed_added_to_DenySendingReason.resx">
+      <DependentUpon>202002121451272_SendAllowed_added_to_DenySendingReason.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004191822022_scheduled_sms_model_added.resx">
+      <DependentUpon>202004191822022_scheduled_sms_model_added.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202004281204520_change_User_Cancel_to_foreign_key_in_ScheduledSms.resx">
+      <DependentUpon>202004281204520_change_User_Cancel_to_foreign_key_in_ScheduledSms.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202006050910513_Add_MessageNumberTypeLength_column_to_MessageNumbers_table.resx">
+      <DependentUpon>202006050910513_Add_MessageNumberTypeLength_column_to_MessageNumbers_table.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202008201546092_Changed_column_name_MessageNumberTypeLength_to_MessageLengthNT_in_MessageNumber_table.resx">
+      <DependentUpon>202008201546092_Changed_column_name_MessageNumberTypeLength_to_MessageLengthNT_in_MessageNumber_table.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{786e4c23-c1e0-402e-99f2-6b97a7618bd3}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferences Include="Web References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <WebReferenceUrl Include="http://http2sms.telekom.rs/http2sms.asmx">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\http2sms\</RelPath>
+      <UpdateFromURL>http://http2sms.telekom.rs/http2sms.asmx</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>BizSMS_http2sms_http2sms</CachedSettingsPropName>
+    </WebReferenceUrl>
+    <WebReferenceUrl Include="http://wsselfcare.telekom.rs/ldapcheck.asmx%3fwsdl">
+      <UrlBehavior>Dynamic</UrlBehavior>
+      <RelPath>Web References\ldapCheckWS\</RelPath>
+      <UpdateFromURL>http://wsselfcare.telekom.rs/ldapcheck.asmx%3fwsdl</UpdateFromURL>
+      <ServiceLocationURL>
+      </ServiceLocationURL>
+      <CachedDynamicPropName>
+      </CachedDynamicPropName>
+      <CachedAppSettingsObjectName>Settings</CachedAppSettingsObjectName>
+      <CachedSettingsPropName>BizSMS_ldapCheckWS_LDAPCheck</CachedSettingsPropName>
+    </WebReferenceUrl>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\SelfCareLdapWS\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>52168</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>https://localhost:44338/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

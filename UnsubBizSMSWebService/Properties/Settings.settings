@@ -1,0 +1,18 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="UnsubBizSMSWebService.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="UnsubBizSMSWebService_yu_telekom_it_kasdpca2test_SdpService" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">http://vassdpqa.telekom.rs:8780/SubscriptionManagerService/services/Sdp</Value>
+    </Setting>
+    <Setting Name="UnsubBizSMSWebService_SendSMSReference_SendSmsService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://vassdpqa.telekom.rs:27010/ParlayXSmsAccess/services/SendSms</Value>
+    </Setting>
+    <Setting Name="UnsubBizSMSWebService_SendEmailReference_MailService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://wsselfcaretest.telekom.rs/mailservice.asmx</Value>
+    </Setting>
+    <Setting Name="UnsubBizSMSWebService_SendSMShttp2sms_http2sms" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://kavasraz/http2sms/http2sms.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

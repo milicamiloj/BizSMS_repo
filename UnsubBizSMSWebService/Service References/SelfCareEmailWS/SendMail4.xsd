@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s1="http://www.telekomsrbija.com/ws/AdditionalServices/types" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" elementFormDefault="qualified" targetNamespace="http://www.telekomsrbija.com/ws/AdditionalServices/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:simpleType name="ServiceType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="WEB_TV" />
+      <xsd:enumeration value="MOBILE_TV" />
+      <xsd:enumeration value="SPORTLIVE" />
+      <xsd:enumeration value="WEBHOSTING" />
+      <xsd:enumeration value="AV_LICENCE" />
+      <xsd:enumeration value="MYACCOUNT" />
+      <xsd:enumeration value="PSTN" />
+      <xsd:enumeration value="ISDN" />
+      <xsd:enumeration value="POSTPAID" />
+      <xsd:enumeration value="PREPAID" />
+      <xsd:enumeration value="ADSL" />
+      <xsd:enumeration value="IPTV" />
+      <xsd:enumeration value="MAIL" />
+      <xsd:enumeration value="DOMEN" />
+      <xsd:enumeration value="MOBILE_NET" />
+      <xsd:enumeration value="mMARKET" />
+      <xsd:enumeration value="OTHERS" />
+    </xsd:restriction>
+  </xsd:simpleType>
+</xsd:schema>

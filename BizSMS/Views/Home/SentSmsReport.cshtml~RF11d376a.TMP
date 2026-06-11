@@ -1,0 +1,98 @@
+﻿@model IEnumerable<BizSMS.Models.SentMessageReportViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.SMSReport;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.SMSReport</h2>
+
+<table class="table" id="reportTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SendDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfMessages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SendDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfMessages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cost)
+                </td>
+                <td>
+                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) 
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+    @Scripts.Render("~/bundles/jquery-datatables-buttons")
+
+    <script>
+        $(document).ready(function () {
+            var table_link = $("#reportTable");
+            var table = table_link.DataTable({
+                dom: '<"pull-left"f>r<"pull-right"B>tip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        download: 'open',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        }
+                    }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                "aoColumns": [
+                 null,
+                 null,
+                 null,
+                 null,
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+        });
+    </script>    
+}

@@ -1,0 +1,105 @@
+﻿@model IEnumerable<BizSMS.Models.SentMessageDetailReportViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.MonthReportDetail;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@ViewBag.Title @Resources.Resources.For.ToLower() @ViewBag.ClientName</h2>
+<h2>@Resources.Resources.ForMonth - @System.Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.GetMonthName(Convert.ToInt32(HttpContext.Current.Request.QueryString["month"]))</h2>
+
+<table class="table" id="detailReportTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Number)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberTypeName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfMessages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfDelivered)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PriceOfDeliveredMessagesLength)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberTypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfMessages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDelivered) (@Html.DisplayFor(modelItem => item.NumberOfDeliveredMessagesLength))
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PriceOfDeliveredMessagesLength)
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToList, "SentSmsReport", new { id = Convert.ToInt32(HttpContext.Current.Request.QueryString["clientId"]) })
+</div>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+    @Scripts.Render("~/bundles/jquery-datatables-buttons")
+    
+    <script>
+        $(document).ready(function () {
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 0 ?
+                                '\u200C' + data :
+                                data;
+                        }
+                    }
+                }
+            };
+            var table_link = $("#detailReportTable");
+            var table = table_link.DataTable({
+                dom: '<"pull-left"f>r<"pull-right"B>tip',
+                buttons: [
+                    $.extend(true, {}, buttonCommon, {
+                        extend: 'excel'
+                    }),
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        }
+                    }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+        });
+    </script>
+}

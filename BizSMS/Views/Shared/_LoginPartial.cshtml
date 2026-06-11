@@ -1,0 +1,86 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+@*@if (User != null && User.Identity != null && User.Identity.IsAuthenticated)*@
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+    {
+        @Html.AntiForgeryToken()
+
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> @Resources.Resources.Welcome @User.Identity.GetUserName() <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li>@Html.ActionLink(Resources.Resources.ChangePassword, "ChangePassword", "Manage", routeValues: null, htmlAttributes: new { title = Resources.Resources.ChangePassword })</li>
+
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <li role="separator" class="divider"></li>
+                        <li>@Html.ActionLink(Resources.Resources.ClientNumbers, "Groups", "AdminManage", routeValues: null, htmlAttributes: new { title = Resources.Resources.ClientNumbers })</li>
+                        <li>@Html.ActionLink(Resources.Resources.MessageCost, "MessageCost", "AdminManage", routeValues: null, htmlAttributes: new { title = Resources.Resources.MessageCost })</li>
+                        <li>@Html.ActionLink(Resources.Resources.ManageClients, "ManageClients", "AdminManage", routeValues: null, htmlAttributes: new { title = Resources.Resources.ManageClients })</li>
+                        <li>@Html.ActionLink(Resources.Resources.Manual, "DownloadManual", "AdminManage", routeValues: null, htmlAttributes: new { title = Resources.Resources.Manual, target = "_blank" })</li>
+                    }
+
+                    @if (User.IsInRole("Client") || User.IsInRole("User"))
+                    {
+                        @*<li>@Html.ActionLink(Resources.Resources.ManageUsers, "ClientManageUsers", "ClientManage", routeValues: null, htmlAttributes: new { title = Resources.Resources.ManageUsers })</li>*@
+                        <li>@Html.ActionLink(Resources.Resources.Manual, "DownloadManual", "Home", routeValues: null, htmlAttributes: new { title = Resources.Resources.Manual, target = "_blank" })</li>
+                    }
+
+                    @if (User.IsInRole("SuperAdmin"))
+                    {
+                        <li>@Html.ActionLink("Administration", "Administration", "Manage", routeValues: null, htmlAttributes: new { title = "Administration" })</li>
+                    }
+
+                    <li role="separator" class="divider"></li>
+                    <li><a href="javascript:document.getElementById('logoutForm').submit()">@Resources.Resources.LogOut</a></li>
+                </ul>
+            </li>
+
+            @*@if (culture == "sr")
+                {
+                    <li>
+                        <a href="@Url.Action("SetCulture", "Home", new { culture = "en-us" })">
+                            <span class="flag-icon flag-icon-gb"></span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li>
+                        <a href="@Url.Action("SetCulture", "Home", new { culture = "sr" })">
+                            <span class="flag-icon flag-icon-rs"></span>
+                        </a>
+                    </li>
+                }*@
+            @*<li class="@(culture == "sr"? "active":"")">@Html.ActionLink("SR", "SetCulture", "Home", new { culture = "sr" }, "")</li>*@
+        </ul>
+    }
+}
+else
+{
+    <ul class="nav navbar-nav navbar-right">
+        @*<li>@Html.ActionLink(Resources.Resources.Register, "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })</li>*@
+        <li>@Html.ActionLink(Resources.Resources.LogIn, "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+        <li style="padding-bottom:11px; padding-top:11px;">|</li>
+        @if (culture == "sr")
+        {
+            <li>
+                <a href="@Url.Action("SetCulture", "Home", new { culture = "en-us" })">
+                    <span class="flag-icon flag-icon-gb"></span>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="@Url.Action("SetCulture", "Home", new { culture = "sr" })">
+                    <span class="flag-icon flag-icon-rs"></span>
+                </a>
+            </li>
+        }
+    </ul>
+}

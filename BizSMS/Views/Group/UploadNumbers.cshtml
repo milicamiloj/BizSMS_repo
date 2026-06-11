@@ -1,0 +1,51 @@
+﻿@model IEnumerable<BizSMS.Models.ClientUploadFileViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.UploadNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+<h1>@ViewBag.Title</h1>
+<h2>@Resources.Resources.Group: @ViewBag.GroupName</h2>
+
+@using (Html.BeginForm("CheckUploadedNumbers", "Group", routeValues: new { id = ViewContext.RouteData.Values["id"] },
+    method: FormMethod.Post, htmlAttributes: new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <div class="col-md-offset-10">
+            @Html.ActionLink(Resources.Resources.DownloadTemplate, "DownloadTemplate", "Group")
+        </div>
+    </div>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <div class="col-md-2">
+                @Resources.Resources.SelectFile
+            </div>
+            <div class="col-md-10">
+                <input type="file" name="file" id="fileSelected" value="@Resources.Resources.UploadData" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit"  id="importFileButton" disabled="disabled" value="@Resources.Resources.Import" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToList, "Numbers", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: null)
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#fileSelected").on("change", function () {
+                 $("#importFileButton")
+                    .removeAttr("disabled");
+            });
+        })
+    </script>
+}

@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="vratiTipKorisnika">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="msisdn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="vratiTipKorisnikaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="vratiTipKorisnikaResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="vratiTipBroja">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="msisdn" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="token" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="vratiTipBrojaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="vratiTipBrojaResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="vratiTipKorisnikaTemp">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="msisdn" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="vratiTipKorisnikaTempResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="vratiTipKorisnikaTempResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="proveriKorisnikaPoAtributu">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="msisdn" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="atribut" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="proveriKorisnikaPoAtributuResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="proveriKorisnikaPoAtributuResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="vratiTipKorisnikaSoapIn">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnika" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaSoapOut">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnikaResponse" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaSoapIn">
+    <wsdl:part name="parameters" element="tns:vratiTipBroja" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaSoapOut">
+    <wsdl:part name="parameters" element="tns:vratiTipBrojaResponse" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempSoapIn">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnikaTemp" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempSoapOut">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnikaTempResponse" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuSoapIn">
+    <wsdl:part name="parameters" element="tns:proveriKorisnikaPoAtributu" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuSoapOut">
+    <wsdl:part name="parameters" element="tns:proveriKorisnikaPoAtributuResponse" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaHttpGetIn">
+    <wsdl:part name="msisdn" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaHttpGetIn">
+    <wsdl:part name="msisdn" type="s:string" />
+    <wsdl:part name="token" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempHttpGetIn">
+    <wsdl:part name="msisdn" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuHttpGetIn">
+    <wsdl:part name="msisdn" type="s:string" />
+    <wsdl:part name="atribut" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaHttpPostIn">
+    <wsdl:part name="msisdn" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaHttpPostIn">
+    <wsdl:part name="msisdn" type="s:string" />
+    <wsdl:part name="token" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipBrojaHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempHttpPostIn">
+    <wsdl:part name="msisdn" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaTempHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuHttpPostIn">
+    <wsdl:part name="msisdn" type="s:string" />
+    <wsdl:part name="atribut" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="proveriKorisnikaPoAtributuHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:portType name="LDAPCheckSoap">
+    <wsdl:operation name="vratiTipKorisnika">
+      <wsdl:input message="tns:vratiTipKorisnikaSoapIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <wsdl:input message="tns:vratiTipBrojaSoapIn" />
+      <wsdl:output message="tns:vratiTipBrojaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <wsdl:input message="tns:vratiTipKorisnikaTempSoapIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaTempSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <wsdl:input message="tns:proveriKorisnikaPoAtributuSoapIn" />
+      <wsdl:output message="tns:proveriKorisnikaPoAtributuSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="LDAPCheckHttpGet">
+    <wsdl:operation name="vratiTipKorisnika">
+      <wsdl:input message="tns:vratiTipKorisnikaHttpGetIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <wsdl:input message="tns:vratiTipBrojaHttpGetIn" />
+      <wsdl:output message="tns:vratiTipBrojaHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <wsdl:input message="tns:vratiTipKorisnikaTempHttpGetIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaTempHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <wsdl:input message="tns:proveriKorisnikaPoAtributuHttpGetIn" />
+      <wsdl:output message="tns:proveriKorisnikaPoAtributuHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="LDAPCheckHttpPost">
+    <wsdl:operation name="vratiTipKorisnika">
+      <wsdl:input message="tns:vratiTipKorisnikaHttpPostIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <wsdl:input message="tns:vratiTipBrojaHttpPostIn" />
+      <wsdl:output message="tns:vratiTipBrojaHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <wsdl:input message="tns:vratiTipKorisnikaTempHttpPostIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaTempHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <wsdl:input message="tns:proveriKorisnikaPoAtributuHttpPostIn" />
+      <wsdl:output message="tns:proveriKorisnikaPoAtributuHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LDAPCheckSoap" type="tns:LDAPCheckSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="vratiTipKorisnika">
+      <soap:operation soapAction="http://tempuri.org/vratiTipKorisnika" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <soap:operation soapAction="http://tempuri.org/vratiTipBroja" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <soap:operation soapAction="http://tempuri.org/vratiTipKorisnikaTemp" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <soap:operation soapAction="http://tempuri.org/proveriKorisnikaPoAtributu" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="LDAPCheckSoap12" type="tns:LDAPCheckSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="vratiTipKorisnika">
+      <soap12:operation soapAction="http://tempuri.org/vratiTipKorisnika" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <soap12:operation soapAction="http://tempuri.org/vratiTipBroja" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <soap12:operation soapAction="http://tempuri.org/vratiTipKorisnikaTemp" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <soap12:operation soapAction="http://tempuri.org/proveriKorisnikaPoAtributu" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="LDAPCheckHttpGet" type="tns:LDAPCheckHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="vratiTipKorisnika">
+      <http:operation location="/vratiTipKorisnika" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <http:operation location="/vratiTipBroja" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <http:operation location="/vratiTipKorisnikaTemp" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <http:operation location="/proveriKorisnikaPoAtributu" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="LDAPCheckHttpPost" type="tns:LDAPCheckHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="vratiTipKorisnika">
+      <http:operation location="/vratiTipKorisnika" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipBroja">
+      <http:operation location="/vratiTipBroja" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="vratiTipKorisnikaTemp">
+      <http:operation location="/vratiTipKorisnikaTemp" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="proveriKorisnikaPoAtributu">
+      <http:operation location="/proveriKorisnikaPoAtributu" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LDAPCheck">
+    <wsdl:port name="LDAPCheckSoap" binding="tns:LDAPCheckSoap">
+      <soap:address location="http://wsselfcare.telekom.rs/ldapcheck.asmx" />
+    </wsdl:port>
+    <wsdl:port name="LDAPCheckSoap12" binding="tns:LDAPCheckSoap12">
+      <soap12:address location="http://wsselfcare.telekom.rs/ldapcheck.asmx" />
+    </wsdl:port>
+    <wsdl:port name="LDAPCheckHttpGet" binding="tns:LDAPCheckHttpGet">
+      <http:address location="http://wsselfcare.telekom.rs/ldapcheck.asmx" />
+    </wsdl:port>
+    <wsdl:port name="LDAPCheckHttpPost" binding="tns:LDAPCheckHttpPost">
+      <http:address location="http://wsselfcare.telekom.rs/ldapcheck.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

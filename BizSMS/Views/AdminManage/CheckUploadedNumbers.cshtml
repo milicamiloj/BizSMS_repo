@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = Resources.Resources.CheckNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+<h1>@ViewBag.Title</h1>
+<h2>@Resources.Resources.ClientName: @ViewBag.ClientName, @Resources.Resources.Group: @ViewBag.GroupName</h2>
+
+@if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers) || !String.IsNullOrEmpty(ViewBag.BadNumbers) || !String.IsNullOrEmpty(ViewBag.BadGroup))
+{
+    <div class="alert alert-danger fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+        @if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers))
+        {
+            <p>
+                @Resources.Resources.ExistingNumbers @ViewBag.ExistingNumbers
+            </p>
+        }
+
+        @if (!String.IsNullOrEmpty(ViewBag.BadNumbers))
+        {
+            <p>
+                @Resources.Resources.BadFormatNumbers @ViewBag.BadNumbers
+            </p>
+        }
+
+        @if (!String.IsNullOrEmpty(ViewBag.BadGroup))
+        {
+            <p>
+                @Resources.Resources.BadGroupNumbers @ViewBag.BadGroup
+            </p>
+        }
+    </div>
+    <hr />
+}
+
+@using (Html.BeginForm("ConfirmUploadNumbers", "AdminManage",
+                    routeValues: new { id = ViewContext.RouteData.Values["id"] },
+                    method: FormMethod.Post, htmlAttributes: null))
+{
+    @Html.AntiForgeryToken()
+    <h3>Dozvoljeno je učitati sledeće brojeve: </h3>
+    
+    <table class="table" id="numbersTable" data-language="@culture">
+        <thead>
+            <tr>
+                <th>
+                   @Resources.Resources.Number
+                </th>
+                <th>
+                    @Resources.Resources.Name
+                </th>
+                <th>
+                    @Resources.Resources.NumberType
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table>
+}
+
+<div class="form-group @*pull-right*@" align="center">
+    <div class="col-md-12">
+        <input type="submit" value="@Resources.Resources.ConfirmUploadNumbers" id="submitNumbers" class="btn btn-default" />
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink(Resources.Resources.Back, "UploadNumbers", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: null)
+</div>
+
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+
+            var link = $("#numbersTable");
+
+            link.DataTable({
+                dom: 'rtip',
+                "ajax": "/api/adminmanage/ConfirmUploadNumbers",
+                columns: [
+                    { "data": "Number" },
+                    { "data": "Name" },
+                    { "data": "NumberType" }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + link.attr("data-language") + ".json"
+                },
+                "bSort": false
+            });
+        });
+    </script>
+}

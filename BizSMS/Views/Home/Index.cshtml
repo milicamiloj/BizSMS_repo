@@ -1,0 +1,68 @@
+﻿@{
+    ViewBag.Title = Resources.Resources.HomePage;
+}
+@if (@ViewBag.StatusMessage != "")
+{
+    <p class="alert alert-success fade in">
+        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+        @ViewBag.StatusMessage
+    </p>
+}
+
+<div class="jumbotron">
+    <h1>BizSMS</h1>
+    <p class="lead">@Resources.Resources.IndexText</p>
+</div>
+@if(!User.IsInRole("Administrator")){
+    <div class="form-horizontal">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-1"></div>
+                <div class="col-md-2 img-transform">
+                    <div class="img-transform" style="text-align:center;">
+                        <a href="/Home/SendSMS">
+                            <img src="~/Content/img/sendSMS.png" />
+                            <span style="margin:0 auto;">@Resources.Resources.SMS</span>
+                        </a>
+                    
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="img-transform" style="text-align:center;">
+                        <a href="/Group/Index">
+                        <img src="~/Content/img/group.png" />
+                            <span style="margin:0 auto;">@Resources.Resources.Groups</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="img-transform" style="text-align:center;">
+                        <a href="/Group/ListNumbers">
+                        <img src="~/Content/img/brojevi.png" />
+                            <span style="margin:0 auto;">@Resources.Resources.Numbers</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="img-transform" style="text-align:center;">
+                        <a href="/Home/SentSMSReport">
+                            <img src="~/Content/img/kalendar.png" />
+                            <span style="margin:0 auto;">@Resources.Resources.MonthReport</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="img-transform" style="text-align:center;">
+                        <a href="/Home/SentSMSJobReport">
+                            <img src="~/Content/img/mesecniIzvestaj.png" />
+                            <span style="margin:0 auto;">@Resources.Resources.SMSReport</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://tempuri.org/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="ldapCheck_1_InlineSchema1.xsd" />
+        <binding hasEncoding="false" imported="true" name="LDAPCheckSoap" originalBindingStyle="document" />
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:include schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?xsd=xsd0" />
+      <xsd:include schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck?xsd=xsd1" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="vratiTipKorisnikaSoapIn">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnika" />
+  </wsdl:message>
+  <wsdl:message name="vratiTipKorisnikaSoapOut">
+    <wsdl:part name="parameters" element="tns:vratiTipKorisnikaResponse" />
+  </wsdl:message>
+  <wsdl:portType name="LDAPCheckSoap">
+    <wsdl:operation name="vratiTipKorisnika">
+      <wsdl:input message="tns:vratiTipKorisnikaSoapIn" />
+      <wsdl:output message="tns:vratiTipKorisnikaSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="LDAPCheckSoap" type="tns:LDAPCheckSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="vratiTipKorisnika">
+      <soap:operation soapAction="http://tempuri.org/vratiTipKorisnika" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="LDAPCheck">
+    <wsdl:port name="LDAPCheckSoap" binding="tns:LDAPCheckSoap">
+      <soap:address location="http://iibqa.telekom.rs:7950/SelfCareWS/LdapCheck" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

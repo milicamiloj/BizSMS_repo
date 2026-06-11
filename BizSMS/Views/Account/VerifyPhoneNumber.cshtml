@@ -1,0 +1,146 @@
+﻿@model BizSMS.Models.VerifyPhoneNumberViewModel
+
+@{
+    ViewBag.Title = Resources.Resources.VerifyOTP;
+}
+
+<h2>@ViewBag.Title</h2>
+
+<!-- PORUKE -->
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["Error"]
+    </div>
+}
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Message"]
+    </div>
+}
+
+@if (TempData["MessageResend"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["MessageResend"]
+    </div>
+}
+
+<!-- ===================== -->
+<!-- VERIFY OTP FORMA -->
+<!-- ===================== -->
+@using (Html.BeginForm("VerifyPhoneNumber", "Account", FormMethod.Post, new { id = "verifyForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @*@Html.HiddenFor(model => model.PhoneNumber)*@
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Provider)
+    <h4></h4>
+    <h5>@ViewBag.Status</h5>
+    <hr />
+    <div class="form-group">
+        <label>Kod:</label>
+        @Html.TextBoxFor(m => m.Code, new { @class = "form-control", autocomplete = "off" })
+        @Html.ValidationMessageFor(m => m.Code)
+    </div>
+
+    <button type="submit" id="verifyBtn" class="btn btn-primary">
+        @Resources.Resources.Confirm
+    </button>
+}
+
+<hr />
+
+<!-- ===================== -->
+<!-- RESEND FORMA -->
+<!-- ===================== -->
+@using (Html.BeginForm("ResendCode", "Account", FormMethod.Post, new { id = "resendForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @*@Html.HiddenFor(model => model.PhoneNumber)*@
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Provider)
+    <h4></h4>
+    <hr />
+    @*<div class="form-group">
+            <label>Kod:</label>
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control", autocomplete = "off" })
+            @Html.ValidationMessageFor(m => m.Code)
+        </div>*@
+
+    <button type="submit" id="resendBtn" class="btn btn-default" formnovalidate>@Resources.Resources.PonoviKod</button>
+    <span id="resendTimer" style="margin-left:10px;"></span>
+}
+
+<!-- ===================== -->
+<!-- JAVASCRIPT LOGIKA -->
+<!-- ===================== -->
+@*@Scripts.Render("~/bundles/jqueryval")*@
+@*@RenderSection("Scripts", required: false)*@
+@section Scripts {
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+    <script>
+        $(document).ready(function () {
+            @*var sentAt = '@ViewBag.PhoneCodeSentAt';*@
+            var sentAt = '@(Model.PhoneCodeSentAt.HasValue ? Model.PhoneCodeSentAt.Value.ToString("o") : "")';
+            console.log("sentAt:", sentAt);
+            console.log("parsed date:", new Date(sentAt));
+            console.log("now:", new Date());
+            console.log("sentTime:", new Date(sentAt));
+
+            if (!sentAt) {
+                console.log("Nema sentAt");
+                disableResend(30); // fallback
+                return;
+            }
+
+            var sentTime = new Date(sentAt);
+
+            if (isNaN(sentTime.getTime())) {
+                console.log("Invalid date format:", sentAt);
+                disableResend(30); // fallback
+                return;
+            }
+
+            var now = new Date();
+
+            var diffSeconds = Math.floor((now - sentTime) / 1000);
+            var remaining = 30 - diffSeconds;
+
+            console.log("diffSeconds:", diffSeconds);
+            console.log("remaining:", remaining);
+
+            if (remaining > 0) {
+                disableResend(remaining);
+            }
+
+            function disableResend(seconds) {
+                var btn = $("#resendBtn");
+                var timer = $("#resendTimer");
+
+                btn.prop("disabled", true);
+
+                var interval = setInterval(function () {
+                    timer.text(" (" + seconds + "s)");
+
+                    seconds--;
+
+                    if (seconds < 0) {
+                        clearInterval(interval);
+                        btn.prop("disabled", false);
+                        timer.text("");
+                    }
+                }, 1000);
+            }
+        });
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ID="0b5fd819-8670-4942-8203-a4acebdb9dba" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>true</GenerateAsynchronousMethods>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?wsdl" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SendMail.xsd" MetadataType="Schema" ID="60e7c353-c4f3-448a-91f1-d7af63dae24e" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd1" />
+    <MetadataFile FileName="SendMail1.xsd" MetadataType="Schema" ID="331184d0-f2a4-4fff-b497-a88b4afce635" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd0" />
+    <MetadataFile FileName="SendMail.wsdl" MetadataType="Wsdl" ID="370c9d34-065a-4a78-8d67-921c2b59f754" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?wsdl" />
+    <MetadataFile FileName="SendMail2.xsd" MetadataType="Schema" ID="df3b0348-056e-4887-abfa-3e26798af85f" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd2" />
+    <MetadataFile FileName="SendMail3.xsd" MetadataType="Schema" ID="53d326c7-33ac-4779-bb33-f7d4227bf1df" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd3" />
+    <MetadataFile FileName="SendMail4.xsd" MetadataType="Schema" ID="4ccc8707-b4f3-4413-8ae9-f0ea1804a12c" SourceId="1" SourceUrl="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd4" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

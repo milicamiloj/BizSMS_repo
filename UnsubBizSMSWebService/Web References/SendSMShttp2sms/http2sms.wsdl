@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s1="http://tempuri.org/AbstractTypes" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="Send">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="source" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dstList" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="message" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="callbackurl" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="SendResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SendResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Delivery">
+        <s:complexType />
+      </s:element>
+      <s:element name="DeliveryResponse">
+        <s:complexType />
+      </s:element>
+      <s:element name="isDelivered">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="messageId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="isDeliveredResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="isDeliveredResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="string" nillable="true" type="s:string" />
+      <s:element name="boolean" type="s:boolean" />
+    </s:schema>
+    <s:schema targetNamespace="http://tempuri.org/AbstractTypes">
+      <s:import namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <s:complexType name="StringArray">
+        <s:complexContent mixed="false">
+          <s:restriction base="soapenc:Array">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="unbounded" name="String" type="s:string" />
+            </s:sequence>
+          </s:restriction>
+        </s:complexContent>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="SendSoapIn">
+    <wsdl:part name="parameters" element="tns:Send" />
+  </wsdl:message>
+  <wsdl:message name="SendSoapOut">
+    <wsdl:part name="parameters" element="tns:SendResponse" />
+  </wsdl:message>
+  <wsdl:message name="DeliverySoapIn">
+    <wsdl:part name="parameters" element="tns:Delivery" />
+  </wsdl:message>
+  <wsdl:message name="DeliverySoapOut">
+    <wsdl:part name="parameters" element="tns:DeliveryResponse" />
+  </wsdl:message>
+  <wsdl:message name="isDeliveredSoapIn">
+    <wsdl:part name="parameters" element="tns:isDelivered" />
+  </wsdl:message>
+  <wsdl:message name="isDeliveredSoapOut">
+    <wsdl:part name="parameters" element="tns:isDeliveredResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendHttpGetIn">
+    <wsdl:part name="source" type="s:string" />
+    <wsdl:part name="dstList" type="s1:StringArray" />
+    <wsdl:part name="message" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="callbackurl" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendHttpGetOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="DeliveryHttpGetIn" />
+  <wsdl:message name="DeliveryHttpGetOut" />
+  <wsdl:message name="isDeliveredHttpGetIn">
+    <wsdl:part name="messageId" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="isDeliveredHttpGetOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendHttpPostIn">
+    <wsdl:part name="source" type="s:string" />
+    <wsdl:part name="dstList" type="s1:StringArray" />
+    <wsdl:part name="message" type="s:string" />
+    <wsdl:part name="user" type="s:string" />
+    <wsdl:part name="callbackurl" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendHttpPostOut">
+    <wsdl:part name="Body" element="tns:string" />
+  </wsdl:message>
+  <wsdl:message name="DeliveryHttpPostIn" />
+  <wsdl:message name="DeliveryHttpPostOut" />
+  <wsdl:message name="isDeliveredHttpPostIn">
+    <wsdl:part name="messageId" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="isDeliveredHttpPostOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:portType name="http2smsSoap">
+    <wsdl:operation name="Send">
+      <wsdl:input message="tns:SendSoapIn" />
+      <wsdl:output message="tns:SendSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <wsdl:input message="tns:DeliverySoapIn" />
+      <wsdl:output message="tns:DeliverySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <wsdl:input message="tns:isDeliveredSoapIn" />
+      <wsdl:output message="tns:isDeliveredSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="http2smsHttpGet">
+    <wsdl:operation name="Send">
+      <wsdl:input message="tns:SendHttpGetIn" />
+      <wsdl:output message="tns:SendHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <wsdl:input message="tns:DeliveryHttpGetIn" />
+      <wsdl:output message="tns:DeliveryHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <wsdl:input message="tns:isDeliveredHttpGetIn" />
+      <wsdl:output message="tns:isDeliveredHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="http2smsHttpPost">
+    <wsdl:operation name="Send">
+      <wsdl:input message="tns:SendHttpPostIn" />
+      <wsdl:output message="tns:SendHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <wsdl:input message="tns:DeliveryHttpPostIn" />
+      <wsdl:output message="tns:DeliveryHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <wsdl:input message="tns:isDeliveredHttpPostIn" />
+      <wsdl:output message="tns:isDeliveredHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="http2smsSoap" type="tns:http2smsSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Send">
+      <soap:operation soapAction="http://tempuri.org/Send" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <soap:operation soapAction="http://tempuri.org/Delivery" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <soap:operation soapAction="http://tempuri.org/isDelivered" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="http2smsSoap12" type="tns:http2smsSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="Send">
+      <soap12:operation soapAction="http://tempuri.org/Send" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <soap12:operation soapAction="http://tempuri.org/Delivery" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <soap12:operation soapAction="http://tempuri.org/isDelivered" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="http2smsHttpGet" type="tns:http2smsHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="Send">
+      <http:operation location="/Send" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <http:operation location="/Delivery" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <http:operation location="/isDelivered" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="http2smsHttpPost" type="tns:http2smsHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="Send">
+      <http:operation location="/Send" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Delivery">
+      <http:operation location="/Delivery" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output />
+    </wsdl:operation>
+    <wsdl:operation name="isDelivered">
+      <http:operation location="/isDelivered" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="http2sms">
+    <wsdl:port name="http2smsSoap" binding="tns:http2smsSoap">
+      <soap:address location="http://kavasraz/http2sms/http2sms.asmx" />
+    </wsdl:port>
+    <wsdl:port name="http2smsSoap12" binding="tns:http2smsSoap12">
+      <soap12:address location="http://kavasraz/http2sms/http2sms.asmx" />
+    </wsdl:port>
+    <wsdl:port name="http2smsHttpGet" binding="tns:http2smsHttpGet">
+      <http:address location="http://kavasraz/http2sms/http2sms.asmx" />
+    </wsdl:port>
+    <wsdl:port name="http2smsHttpPost" binding="tns:http2smsHttpPost">
+      <http:address location="http://kavasraz/http2sms/http2sms.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

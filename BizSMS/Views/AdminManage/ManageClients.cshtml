@@ -1,0 +1,112 @@
+﻿@model IEnumerable<BizSMS.Models.AdminManageClientsViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.ManageClients;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.ManageClients</h2>
+
+<p>
+    @Html.ActionLink(Resources.Resources.CreateClient, "CreateClient", "AdminManage", null, htmlAttributes: new { @class = "pull-right" })
+</p>
+
+<table class="table" id="clientsTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MtsID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneNumber)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsCanceled)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Username)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MtsID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                </td>
+                <td>
+                    @if (item.IsCanceled)
+                    {
+                        <strong>
+                            @Resources.Resources.Yes
+                        </strong>
+                    }
+                    else
+                    {
+                        @Resources.Resources.No
+                    }
+                </td>
+                <td>
+                    @Html.ActionLink(Resources.Resources.ClientContracts, "ClientContracts", new { id = item.ClientID }) |
+                    @Html.ActionLink(Resources.Resources.ManageUsers, "ClientUsers", new { id = item.ClientID }) | 
+                    @Html.ActionLink(Resources.Resources.Edit, "EditClient", new { id = item.ClientID }) | 
+                    @Html.ActionLink(Resources.Resources.Alphanumerics, "Alphanumerics", new { id = item.ClientID }) | 
+                    @*@Html.ActionLink(Resources.Resources.ResetPassword, "ResetClientPassword", "Account", new { id = item.ClientID }, htmlAttributes: null) |*@ 
+                    @Html.ActionLink(item.IsCanceled ? Resources.Resources.Unlock : Resources.Resources.Lock, "ManageClients", new { id = item.ClientID }) 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+    <style>
+        tr td:last-child {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+    </style>
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            var link = $("#clientsTable");
+            link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + link.attr("data-language") + ".json"
+                },
+                stateSave: true,
+                "aoColumns": [
+                     null,
+                     null,
+                     null,
+                     null,
+                     null,
+                     {
+                         "bSearchable": false,
+                         "bSortable": false
+                     }
+                ]
+            });
+        });
+    </script>
+}

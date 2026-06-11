@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace BizSMS.Attributes
+{
+    public class AuthorizeUserAttribute : AuthorizeAttribute
+    {
+        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
+        protected override void HandleUnauthorizedRequest(AuthorizationContext filterContext)
+        {
+            bool isAuthenicated = (System.Web.HttpContext.Current.User != null) && System.Web.HttpContext.Current.User.Identity.IsAuthenticated;
+            if (!isAuthenicated)
+            {
+                log.Error("Not Found");
+                throw new HttpException(404, "Not Found");
+            }
+            else
+            {
+                log.Error("Message: Unauthorized, " + "Controller: " + filterContext.Controller.ToString() + ", Action: " + filterContext.ActionDescriptor.ActionName);
+                
+                throw new HttpException(403, "Unauthorized");
+            }
+        }
+    }
+}

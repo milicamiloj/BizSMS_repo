@@ -1,0 +1,873 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Add" xml:space="preserve">
+    <value>Dodaj</value>
+  </data>
+  <data name="AddNumber" xml:space="preserve">
+    <value>Dodaj broj u grupu:</value>
+  </data>
+  <data name="Alphanumeric" xml:space="preserve">
+    <value>Alfanumerik</value>
+  </data>
+  <data name="Alphanumerics" xml:space="preserve">
+    <value>Alfanumerici</value>
+  </data>
+  <data name="BackToHomePage" xml:space="preserve">
+    <value>Nazad na početnu stranu</value>
+  </data>
+  <data name="BackToList" xml:space="preserve">
+    <value>Nazad na listu</value>
+  </data>
+  <data name="BadRequest" xml:space="preserve">
+    <value>Loš zahtev</value>
+  </data>
+  <data name="BadRequestMessage" xml:space="preserve">
+    <value>Zahtev ne može biti ispunjen zbog loše sintakse</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Otkaži</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Otkazan</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Izmeni lozinku</value>
+  </data>
+  <data name="ClientName" xml:space="preserve">
+    <value>Ime klijenta</value>
+  </data>
+  <data name="ClientNameIsRequired" xml:space="preserve">
+    <value>Ime klijenta je obavezno polje</value>
+  </data>
+  <data name="ClientRegister" xml:space="preserve">
+    <value>Registracija klijenta</value>
+  </data>
+  <data name="ClientSelectList" xml:space="preserve">
+    <value>Izaberi klijenta</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Potvrdi Lozinku</value>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Kreiraj</value>
+  </data>
+  <data name="CreateClient" xml:space="preserve">
+    <value>Kreiraj novog klijenta</value>
+  </data>
+  <data name="CreateGroup" xml:space="preserve">
+    <value>Kreiraj novu grupu</value>
+  </data>
+  <data name="CreateUser" xml:space="preserve">
+    <value>Kreiraj novog korisnika</value>
+  </data>
+  <data name="CurrentPassword" xml:space="preserve">
+    <value>Trenutna lozinka</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Obriši</value>
+  </data>
+  <data name="DeleteUser" xml:space="preserve">
+    <value>Brisanje korisnika</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Izmeni</value>
+  </data>
+  <data name="EditGroup" xml:space="preserve">
+    <value>Izmeni grupu</value>
+  </data>
+  <data name="EditUser" xml:space="preserve">
+    <value>Izmena korisnika</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailIsRequired" xml:space="preserve">
+    <value>Email je obavezno polje</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Datum prestanka</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Greška</value>
+  </data>
+  <data name="ErrorMessage" xml:space="preserve">
+    <value>Dogodila se greška. Pokušajte ponovo malo kasnije.</value>
+  </data>
+  <data name="FieldMustBeNumeric" xml:space="preserve">
+    <value>Numerik srpski</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Grupa</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Ime grupe</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Grupe</value>
+  </data>
+  <data name="Hello" xml:space="preserve">
+    <value>Zdravo</value>
+  </data>
+  <data name="InvalidEmail" xml:space="preserve">
+    <value>Polje {0} nije validna e-mail adresa</value>
+  </data>
+  <data name="InvalidLogin" xml:space="preserve">
+    <value>Pogrešno korisničko ime ili lozinka</value>
+  </data>
+  <data name="InvalidPhone" xml:space="preserve">
+    <value>Polje {0} nije validan broj telefona</value>
+  </data>
+  <data name="IsNotGreaterThan" xml:space="preserve">
+    <value>Polje {0} mora biti veće od polja {1}</value>
+  </data>
+  <data name="IsRequired" xml:space="preserve">
+    <value>{0} je obavezno polje</value>
+  </data>
+  <data name="LengthValidation" xml:space="preserve">
+    <value>{0} mora da sadrži najmanje {2} karaktera.</value>
+  </data>
+  <data name="LengthValidationOtp" xml:space="preserve">
+    <value>Kod mora da sadrži {2} karaktera.</value>
+  </data>
+  <data name="ListNumbers" xml:space="preserve">
+    <value>Lista brojeva</value>
+  </data>
+  <data name="Lock" xml:space="preserve">
+    <value>Zaključaj</value>
+  </data>
+  <data name="Locked" xml:space="preserve">
+    <value>Zaključan</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>Prijava</value>
+  </data>
+  <data name="LogOut" xml:space="preserve">
+    <value>Odjava</value>
+  </data>
+  <data name="ManageClients" xml:space="preserve">
+    <value>Upravljaj klijentima</value>
+  </data>
+  <data name="ManageUsers" xml:space="preserve">
+    <value>Upravljaj korisnicima</value>
+  </data>
+  <data name="MessageCost" xml:space="preserve">
+    <value>Cene poruka</value>
+  </data>
+  <data name="MtsID" xml:space="preserve">
+    <value>MTS ID</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Naziv</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Nova lozinka</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ne</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>Stranica nije pronadjena</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Broj</value>
+  </data>
+  <data name="NumberOfMessagesFrom" xml:space="preserve">
+    <value>Broj poruka od</value>
+  </data>
+  <data name="NumberOfMessagesTo" xml:space="preserve">
+    <value>Broj poruka do</value>
+  </data>
+  <data name="Numbers" xml:space="preserve">
+    <value>Brojevi</value>
+  </data>
+  <data name="NumberType" xml:space="preserve">
+    <value>Tip broja</value>
+  </data>
+  <data name="PageNotExist" xml:space="preserve">
+    <value>Stranica koju tražite ne postoji</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Lozinka</value>
+  </data>
+  <data name="PasswordsDontMatch" xml:space="preserve">
+    <value>Lozinke se ne podudaraju</value>
+  </data>
+  <data name="PhoneNotValid" xml:space="preserve">
+    <value>{0} polje ne predstavlja validan broj telefona</value>
+  </data>
+  <data name="PhoneNumber" xml:space="preserve">
+    <value>Broj telefona</value>
+  </data>
+  <data name="PhoneNumberIsRequired" xml:space="preserve">
+    <value>Broj telefona je obavezno polje</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Cena (RSD)</value>
+  </data>
+  <data name="PropertyValueInvalid" xml:space="preserve">
+    <value>Srpski test</value>
+  </data>
+  <data name="QuestionDeleteAlphanumeric" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabrani alfanumerik?</value>
+  </data>
+  <data name="QuestionDeleteClient" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabranog klijenta?</value>
+  </data>
+  <data name="QuestionDeleteUser" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabranog korisnika?</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Registruj se</value>
+  </data>
+  <data name="RememberMe" xml:space="preserve">
+    <value>Zapamti me?</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Snimi</value>
+  </data>
+  <data name="Select" xml:space="preserve">
+    <value>Izaberi</value>
+  </data>
+  <data name="SelectClient" xml:space="preserve">
+    <value>Izaberi klijenta</value>
+  </data>
+  <data name="SelectNumberType" xml:space="preserve">
+    <value>Izaberi tip broja</value>
+  </data>
+  <data name="SendAllowed" xml:space="preserve">
+    <value>Dozvoljeno slanje</value>
+  </data>
+  <data name="TotalOfNumbers" xml:space="preserve">
+    <value>Ukupno brojeva</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Neovlašćen pristup</value>
+  </data>
+  <data name="UnauthorizedMessage" xml:space="preserve">
+    <value>Nemate ovlašćenja da bi pristupili ovoj stranici</value>
+  </data>
+  <data name="Unlock" xml:space="preserve">
+    <value>Otključaj</value>
+  </data>
+  <data name="UserDeleted" xml:space="preserve">
+    <value>Obrisan korisnik</value>
+  </data>
+  <data name="UserDeletedMessage" xml:space="preserve">
+    <value>Korisnik sa tim korisničkim imenom je obrisan. Molimo prijavite se validnim korisničkim imenom.</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Korisničko ime</value>
+  </data>
+  <data name="UsernameIsRequired" xml:space="preserve">
+    <value>Korisničko ime je obavezno polje</value>
+  </data>
+  <data name="Welcome" xml:space="preserve">
+    <value>Dobrodošli</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Da</value>
+  </data>
+  <data name="Administration" xml:space="preserve">
+    <value>Administracija</value>
+  </data>
+  <data name="SendSMS" xml:space="preserve">
+    <value>Pošalji SMS</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Sledeći</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Prethodni</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Traži</value>
+  </data>
+  <data name="AddSelected" xml:space="preserve">
+    <value>Dodaj izabrane</value>
+  </data>
+  <data name="RemoveSelected" xml:space="preserve">
+    <value>Izbaci izabrane</value>
+  </data>
+  <data name="SelectAll" xml:space="preserve">
+    <value>Izaberi sve</value>
+  </data>
+  <data name="QuestionDeleteGroup" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabranu grupu?</value>
+  </data>
+  <data name="EditNumberInfo" xml:space="preserve">
+    <value>Izmena informacija o broju</value>
+  </data>
+  <data name="QuestionDeleteNumber" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabrani broj?</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ukloni</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>Za</value>
+  </data>
+  <data name="ChooseNumberFromList" xml:space="preserve">
+    <value>Izaberi broj iz liste</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>Cena</value>
+  </data>
+  <data name="NumberOfSentMessages" xml:space="preserve">
+    <value>Broj poslatih poruka</value>
+  </data>
+  <data name="Report" xml:space="preserve">
+    <value>Izveštaji o slanju poruka</value>
+  </data>
+  <data name="CustomGroups" xml:space="preserve">
+    <value>Kreirane grupe</value>
+  </data>
+  <data name="DefaultGroups" xml:space="preserve">
+    <value>Osnovne grupe</value>
+  </data>
+  <data name="EnterMessage" xml:space="preserve">
+    <value>Unesite poruku</value>
+  </data>
+  <data name="Message" xml:space="preserve">
+    <value>Poruka</value>
+  </data>
+  <data name="MessageSentToNumbers" xml:space="preserve">
+    <value>Brojevi na koje se šalje poruka:</value>
+  </data>
+  <data name="MessageText" xml:space="preserve">
+    <value>Tekst poruke</value>
+  </data>
+  <data name="NumbersInGroup" xml:space="preserve">
+    <value>Brojevi u grupi</value>
+  </data>
+  <data name="ScheduleSending" xml:space="preserve">
+    <value>Zakaži slanje</value>
+  </data>
+  <data name="SelectedNumbers" xml:space="preserve">
+    <value>Odabrani brojevi</value>
+  </data>
+  <data name="Sending" xml:space="preserve">
+    <value>Slanje</value>
+  </data>
+  <data name="SendTestSMS" xml:space="preserve">
+    <value>Pošalji testni SMS</value>
+  </data>
+  <data name="StartSending" xml:space="preserve">
+    <value>Pokreni slanje</value>
+  </data>
+  <data name="Test" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="ToNumber" xml:space="preserve">
+    <value>Na broj</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detaljno</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detalji</value>
+  </data>
+  <data name="SMSReport" xml:space="preserve">
+    <value>Izveštaj o poslatim SMS porukama</value>
+  </data>
+  <data name="ErrorContactAdmin" xml:space="preserve">
+    <value>Dogodila se greška. Kontaktirajte administratora.</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>{0} već postoji</value>
+  </data>
+  <data name="AllowSending" xml:space="preserve">
+    <value>Dozvoli slanje</value>
+  </data>
+  <data name="DenySending" xml:space="preserve">
+    <value>Zabrani slanje</value>
+  </data>
+  <data name="LockedMessage" xml:space="preserve">
+    <value>Ovaj nalog je zaključan, molimo kontaktirajte administratora.</value>
+  </data>
+  <data name="PasswordChangedMessage" xml:space="preserve">
+    <value>Lozinka je uspešno promenjena.</value>
+  </data>
+  <data name="IncorrectPassword" xml:space="preserve">
+    <value>Netačni podaci.</value>
+  </data>
+  <data name="HomePage" xml:space="preserve">
+    <value>Početna strana</value>
+  </data>
+  <data name="SendMonth" xml:space="preserve">
+    <value>Mesec</value>
+  </data>
+  <data name="UploadData" xml:space="preserve">
+    <value>Učitaj podatke</value>
+  </data>
+  <data name="UploadNumbers" xml:space="preserve">
+    <value>Učitaj listu brojeva</value>
+  </data>
+  <data name="ConfirmUploadNumbers" xml:space="preserve">
+    <value>Potvrdi upis brojeva</value>
+  </data>
+  <data name="SelectFile" xml:space="preserve">
+    <value>Izaberi fajl</value>
+  </data>
+  <data name="CheckNumbers" xml:space="preserve">
+    <value>Provera brojeva</value>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Nazad</value>
+  </data>
+  <data name="SMSReportDetail" xml:space="preserve">
+    <value>SMS izveštaj - detaljno</value>
+  </data>
+  <data name="InMTS" xml:space="preserve">
+    <value>U MTS</value>
+  </data>
+  <data name="OutMTS" xml:space="preserve">
+    <value>Van MTS</value>
+  </data>
+  <data name="SendDate" xml:space="preserve">
+    <value>Datum slanja</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Korisnik</value>
+  </data>
+  <data name="VPN" xml:space="preserve">
+    <value>VPN</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Nije poslata</value>
+  </data>
+  <data name="Sent" xml:space="preserve">
+    <value>Poslata</value>
+  </data>
+  <data name="QuestionSendTestMessage" xml:space="preserve">
+    <value>Da li ste primili poruku i da li je poruka u korektnom formatu?</value>
+  </data>
+  <data name="MonthReport" xml:space="preserve">
+    <value>Mesečni izveštaj</value>
+  </data>
+  <data name="ForMonth" xml:space="preserve">
+    <value>Za mesec</value>
+  </data>
+  <data name="MonthReportDetail" xml:space="preserve">
+    <value>Mesečni izveštaj - detaljno</value>
+  </data>
+  <data name="Delivered" xml:space="preserve">
+    <value>Dostavljena</value>
+  </data>
+  <data name="NumberOfDeliveredMessages" xml:space="preserve">
+    <value>Broj dostavljenih SMS poruka</value>
+  </data>
+  <data name="SendTestSMSFail" xml:space="preserve">
+    <value>Slanje testnog SMS-a nije uspelo. Molimo pokušajte kasnije. Ukoliko se problem nastavi, kontaktirajte administratora.</value>
+  </data>
+  <data name="SendSMSDone" xml:space="preserve">
+    <value>Sve poruke su uspešno pripremljene za slanje. Status možete proveriti na strani Izveštaj o poslatim SMS porukama.</value>
+  </data>
+  <data name="SendSMSFail" xml:space="preserve">
+    <value>Slanje SMS-a nije uspelo. Molimo pokušajte kasnije. Ukoliko se problem nastavi, kontaktirajte administratora.</value>
+  </data>
+  <data name="NumberOfSentSMSes" xml:space="preserve">
+    <value>Broj poslatih SMS poruka</value>
+  </data>
+  <data name="SendingTestSMS" xml:space="preserve">
+    <value>Slanje testnog SMS-a</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Potvrdi</value>
+  </data>
+  <data name="Finished" xml:space="preserve">
+    <value>Završeno</value>
+  </data>
+  <data name="Processing" xml:space="preserve">
+    <value>U obradi</value>
+  </data>
+  <data name="Qued" xml:space="preserve">
+    <value>U pripremi</value>
+  </data>
+  <data name="Scheduled" xml:space="preserve">
+    <value>Zakazan</value>
+  </data>
+  <data name="GetDataFail" xml:space="preserve">
+    <value>Dogodila se greška. Pokušajte ponovo. Ukoliko se problem nastavi, molimo kontaktirajte administratora.</value>
+  </data>
+  <data name="NumberTypeIsNotBelong" xml:space="preserve">
+    <value>Izabrani tip broja se ne može dodeliti odabranoj grupi.</value>
+  </data>
+  <data name="AlphanumericRegExValidation" xml:space="preserve">
+    <value>Alfanumerik može sadržati najmanje 3, a najviše 11 slova engleskog alfabeta, brojeva, razmak i specijalne znakove (- i _)</value>
+  </data>
+  <data name="DownloadTemplate" xml:space="preserve">
+    <value>Skini šablon</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Učitaj fajl</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Obavezno polje</value>
+  </data>
+  <data name="OverlapingRange" xml:space="preserve">
+    <value>Opsezi se ne smeju preklapati sa postojećim</value>
+  </data>
+  <data name="QuestionDeleteMessageCost" xml:space="preserve">
+    <value>Da li ste sigurni da želite da obrišete izabranu cenu?</value>
+  </data>
+  <data name="ResetClientPassword" xml:space="preserve">
+    <value>Resetuj lozinku klijenta</value>
+  </data>
+  <data name="ResetPassword" xml:space="preserve">
+    <value>Reset lozinke</value>
+  </data>
+  <data name="ResetPasswordSuccess" xml:space="preserve">
+    <value>Lozinka je uspešno resetovana</value>
+  </data>
+  <data name="AllowedNumbersForUpload" xml:space="preserve">
+    <value>Dozvoljeno je učitati sledeće brojeve:</value>
+  </data>
+  <data name="BadFormatNumbers" xml:space="preserve">
+    <value>Brojevi lošeg fomata:</value>
+  </data>
+  <data name="BadGroupNumbers" xml:space="preserve">
+    <value>Brojevi koji ne mogu pripadati odabranoj grupi:</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Izveštaji</value>
+  </data>
+  <data name="AddMessageCost" xml:space="preserve">
+    <value>Dodaj novi opseg cene poruka</value>
+  </data>
+  <data name="PriceError" xml:space="preserve">
+    <value>Cena poruke ne može biti veća od cene sa manjim opsegom</value>
+  </data>
+  <data name="WrongDate" xml:space="preserve">
+    <value>Pogrešan datum</value>
+  </data>
+  <data name="IndexText" xml:space="preserve">
+    <value>Šaljite SMS poruke na brojeve telefona unutar i izvan svoje Biznet grupe</value>
+  </data>
+  <data name="ContractID" xml:space="preserve">
+    <value>Broj prodajnog ugovora</value>
+  </data>
+  <data name="Manual" xml:space="preserve">
+    <value>Uputstvo</value>
+  </data>
+  <data name="ImportCount" xml:space="preserve">
+    <value>Ukupano učitanih brojeva:</value>
+  </data>
+  <data name="ImportNumbers" xml:space="preserve">
+    <value>Učitaj brojeve</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Učtavanje...</value>
+  </data>
+  <data name="ClientContracts" xml:space="preserve">
+    <value>Ugovori</value>
+  </data>
+  <data name="AddContract" xml:space="preserve">
+    <value>Dodaj ugovor</value>
+  </data>
+  <data name="DeleteContract" xml:space="preserve">
+    <value>Obriši ugovor</value>
+  </data>
+  <data name="EditContract" xml:space="preserve">
+    <value>Izmeni ugovor</value>
+  </data>
+  <data name="UserCreatedSuccessfully" xml:space="preserve">
+    <value>Korisnik je uspešno kreiran</value>
+  </data>
+  <data name="FreeOfCharge" xml:space="preserve">
+    <value>Besplatne</value>
+  </data>
+  <data name="MessageLength" xml:space="preserve">
+    <value>Dužina poruke</value>
+  </data>
+  <data name="UserUpdatedSuccessfully" xml:space="preserve">
+    <value>Podaci o korisniku su uspešno izmenjeni</value>
+  </data>
+  <data name="RefreshNumbers" xml:space="preserve">
+    <value>Osveži listu brojeva</value>
+  </data>
+  <data name="SendSMSToGroup" xml:space="preserve">
+    <value>Pošalji poruku na celu grupu</value>
+  </data>
+  <data name="MessageSentToGroup" xml:space="preserve">
+    <value>Poruka će biti poslata na sledeću grupu:</value>
+  </data>
+  <data name="SkipTestSMS" xml:space="preserve">
+    <value>Preskoči ovaj korak</value>
+  </data>
+  <data name="ExistingNumbers" xml:space="preserve">
+    <value>Sledeći broj/brojevi već postoje u ovoj grupi:</value>
+  </data>
+  <data name="NumbersToBeUploaded" xml:space="preserve">
+    <value>Broj (brojevi) koji će biti učitani</value>
+  </data>
+  <data name="UploadTableNumbersFail" xml:space="preserve">
+    <value>Brojevi za učitavanje nisu stigli! Pokušajte malo kasnije ili kontaktirajte administratora.</value>
+  </data>
+  <data name="AddOneNumber" xml:space="preserve">
+    <value>Dodaj jedan broj</value>
+  </data>
+  <data name="EnterNameForNumber" xml:space="preserve">
+    <value>Naziv za ovaj broj</value>
+  </data>
+  <data name="RequiredNumberFormat" xml:space="preserve">
+    <value>Obavezno polje! Molimo Vas unesite broj u formatu 06XXXXXXX</value>
+  </data>
+  <data name="AddVpnNumber" xml:space="preserve">
+    <value>Dodaj broj/brojeve iz VPN grupe</value>
+  </data>
+  <data name="ErrorTryLaterContactAdmin" xml:space="preserve">
+    <value>Došlo je do greške, probajte ponovo kasnije. Ako se problem ponovi kontaktirajte Vašeg administratora.</value>
+  </data>
+  <data name="ReasonForDenySending" xml:space="preserve">
+    <value>Obavezno uneti razlog zabrane!</value>
+  </data>
+  <data name="AlreadyExistsInGroup" xml:space="preserve">
+    <value>Ovaj broj već postoji u grupi, ili je na njega zabranjeno slanje jer je odjavljen sa liste primaoca.</value>
+  </data>
+  <data name="ClientNumbers" xml:space="preserve">
+    <value>Brojevi klijenata</value>
+  </data>
+  <data name="DeniedReason" xml:space="preserve">
+    <value>Opis izmene | Datum | Izmenio administrator</value>
+  </data>
+  <data name="ReasonByUser" xml:space="preserve">
+    <value>Od strane korisnika:</value>
+  </data>
+  <data name="NumberOfDeliveredMessagesLength" xml:space="preserve">
+    <value>Suma dostavljenih SMS-ova (uključujući i višedelne poruke)</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Unesi</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Štampa</value>
+  </data>
+  <data name="BackToGroup" xml:space="preserve">
+    <value>Nazad na grupu</value>
+  </data>
+  <data name="CreateNew" xml:space="preserve">
+    <value>Kreiraj novi Alfanumerik</value>
+  </data>
+  <data name="ForGroup" xml:space="preserve">
+    <value>Za grupu</value>
+  </data>
+  <data name="NoEmptySpaceOrSpecChars" xml:space="preserve">
+    <value>Korisničko ime ne može imati razmak ili specijalne karaktere</value>
+  </data>
+  <data name="PriceOfDeliveredMessagesLength" xml:space="preserve">
+    <value>Ukupna cena (uključujući i višedelne poruke)</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ScheduledSMS" xml:space="preserve">
+    <value>Zakazani SMS</value>
+  </data>
+  <data name="CancelSending" xml:space="preserve">
+    <value>Otkaži</value>
+  </data>
+  <data name="QuestionCancelScheduledSMS" xml:space="preserve">
+    <value>Da li ste sigurni da želite da otkažete zakazani SMS?</value>
+  </data>
+  <data name="ScheduledSendingCanceled" xml:space="preserve">
+    <value>Otkazan</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Napomena</value>
+  </data>
+  <data name="CanceledBy" xml:space="preserve">
+    <value>Otkazao</value>
+  </data>
+  <data name="NotInMTS" xml:space="preserve">
+    <value>VAN MTS</value>
+  </data>
+  <data name="UnsubTextMts" xml:space="preserve">
+    <value>* Svim porukama koje se šalju ka brojevima tipa "U MTS" biće dodat tekst o odjavi:</value>
+  </data>
+  <data name="UnsubTextNotInMts" xml:space="preserve">
+    <value>** Svim porukama koje se šalju ka brojevima tipa "VAN MTS" biće dodat tekst o odjavi:</value>
+  </data>
+  <data name="MessageAlreadySent" xml:space="preserve">
+    <value>Poruka je već poslata!</value>
+  </data>
+  <data name="UserAlreadyUnsubscribed" xml:space="preserve">
+    <value>Korisnik je već odjavljen!</value>
+  </data>
+  <data name="NoNumericSender" xml:space="preserve">
+    <value>Nemate u bazi definisan sender/alfanumerik u formatu broja telefona koji je preduslov za slanje SMS-a na brojeve van MTS mreže. Kontaktirajte administratora da biste ga formirali.</value>
+  </data>
+  <data name="DuplicateNumbers" xml:space="preserve">
+    <value>Dupli brojevi pronađeni u učitanoj listi:</value>
+  </data>
+  <data name="BackToGroups" xml:space="preserve">
+    <value>Nazad na grupe</value>
+  </data>
+  <data name="AddNumbersToVPN" xml:space="preserve">
+    <value>Dodaj brojeve u VPN grupu</value>
+  </data>
+  <data name="ImportNumbersToVPN" xml:space="preserve">
+    <value>Učitaj brojeve u VPN grupu</value>
+  </data>
+  <data name="RefreshVPNnumbers" xml:space="preserve">
+    <value>Osveži brojeve iz VPN grupe</value>
+  </data>
+  <data name="SuccessNewNumbersUpdate" xml:space="preserve">
+    <value>broj/brojeva uspešno update-ovano!</value>
+  </data>
+  <data name="NoNewNumbersToUpdate" xml:space="preserve">
+    <value>Nema novih brojeva za update.</value>
+  </data>
+  <data name="DeactivatedNumbers" xml:space="preserve">
+    <value>Deaktivirani broj/brojevi</value>
+  </data>
+  <data name="SendDeniedNumbers" xml:space="preserve">
+    <value>Broj/brojevi koje nije moguće dodati jer su se odjavili sa liste primaoca SMS poruka: </value>
+  </data>
+  <data name="NumberDeleted" xml:space="preserve">
+    <value>Broj je izbrisan iz grupe!</value>
+  </data>
+  <data name="MaxNumberOfCharacters" xml:space="preserve">
+    <value>Dozvoljeni broj karaktera je 30 (uključujući i razmake)</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Verifikacioni kod</value>
+  </data>
+  <data name="EnterVerificationCode" xml:space="preserve">
+    <value>Unesite verifikacioni kod</value>
+  </data>
+  <data name="InvalidCode" xml:space="preserve">
+    <value>Neispravan kod</value>
+  </data>
+  <data name="RememberBrowser" xml:space="preserve">
+    <value>Zapamti ovaj pretrazivac?</value>
+  </data>
+  <data name="Verify" xml:space="preserve">
+    <value>Potvrdi</value>
+  </data>
+  <data name="VerifyOTP" xml:space="preserve">
+    <value>SMS verifikacija</value>
+  </data>
+  <data name="PonoviKod" xml:space="preserve">
+    <value>Posalji ponovo</value>
+  </data>
+</root>

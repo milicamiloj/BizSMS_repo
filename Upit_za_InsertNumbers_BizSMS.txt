@@ -1,0 +1,79 @@
+USE [BizSMS]
+GO
+/****** Object:  StoredProcedure [dbo].[sp_InsertNumbers]    Script Date: 18-Feb-21 15:27:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Milan Milosavljevic, Ivan Trickovic
+-- Create date: 18.11.2018/18.02.2021
+-- Description:	Procedure for inserting new
+-- numbers from TIS
+-- =============================================
+ALTER PROCEDURE [dbo].[sp_InsertNumbers] 
+	@nContractId NVARCHAR(50),
+	@iInsertedNumbersCount INT = 0 OUTPUT
+AS
+DECLARE 
+	@iClientId INT,
+	@sQuery NVARCHAR(1000),
+	@iBizSMSNumbersCount INT;
+
+DECLARE
+	@tempTable TABLE ( 
+		Number NVARCHAR(20) 
+	);
+
+BEGIN
+	
+	INSERT INTO BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_InsertNumbers', 'EnterToProcedure', 'Insert', @nContractId);
+
+	-- get clientId by contractId
+	SELECT @iClientId = Client_ID FROM BST_CLIENT_CONTRACTS
+	WHERE Contract_ID = @nContractId;
+
+	-- check if there are numbers for contractId
+	SELECT @iBizSMSNumbersCount = COUNT(*) FROM BST_NUMBERS n
+	INNER JOIN BST_CLIENT_CONTRACTS cc ON n.Client_ID = cc.Client_ID AND n.Contract_ID = @nContractId
+	WHERE n.[Number_Type_ID] = 1;
+
+	-- break if numbers exist for passed contractId
+	IF @iBizSMSNumbersCount > 0 
+		RETURN 0;
+	
+	-- prepare query for select numbers from bizsms_sync view
+	SET @sQuery = N'SELECT * FROM OPENQUERY(EBILTISRAZ, ''SELECT BROJ_TELEFONA FROM ftpro.bizsms_sync bizM WHERE Akcija = ''''+'''' AND prodajni_ugovor_id = ''''' + @nContractId + ''''' AND BROJ_TELEFONA NOT IN ( SELECT BROJ_TELEFONA FROM ftpro.bizsms_sync bizC WHERE bizC.BROJ_TELEFONA = bizM.BROJ_TELEFONA AND prodajni_ugovor_id = ''''' + @nContractId + '''''  AND Akcija = ''''-'''' AND bizM.Datum < bizC.Datum)'')';
+
+	-- execute query
+	INSERT INTO @tempTable
+	EXEC(@sQuery)
+
+	-- count numbers for import
+	SELECT @iInsertedNumbersCount = COUNT(*) FROM @tempTable;
+
+	-- insert summary into log
+	INSERT INTO BST_LOG ([Log_Date], [Log_Level], [Log_Source], [User], [Controller], [Action], [Log_Message])
+	VALUES (GETDATE(), 'INFO', 'StoredProcedure', 'sp_InsertNumbers', @nContractID, 'Insert', @iInsertedNumbersCount);
+
+	-- insert numbers
+	INSERT INTO BST_NUMBERS([Number], [Send_allowed], [Check_Date], [Number_Type_ID], [Client_ID], [Active], [Insert_Date], [Contract_ID])
+	SELECT nums.Number, 1, GETDATE(), 1, @iClientID, 1, GETDATE(), @nContractId FROM @tempTable nums
+	WHERE nums.Number NOT IN (SELECT [Number] FROM BST_NUMBERS WHERE [Client_ID] = @iClientID);
+
+	-- connect numbers with default (VPN) group
+	INSERT INTO BST_GROUP_NUMBER (Group_ID, Number_ID, Insert_Date)
+	SELECT g.Group_ID, n.Number_ID, GETDATE() FROM BST_NUMBERS n
+	INNER JOIN @tempTable tt ON tt.Number = n.Number
+	INNER JOIN BST_CLIENT_CONTRACTS cc ON cc.Client_ID = n.Client_ID AND cc.Contract_ID = @nContractId
+	INNER JOIN BST_GROUPS g ON n.Client_ID = g.Client_ID AND g.[Default] = 1
+	WHERE n.Number_Type_ID = 1
+
+	-- update synchronization date
+	UPDATE BST_CLIENT_CONTRACTS  
+	SET Synchronization_Date = GETDATE()
+	WHERE Contract_ID = @nContractId;
+
+	RETURN @iInsertedNumbersCount;
+END

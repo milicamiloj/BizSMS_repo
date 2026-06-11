@@ -1,0 +1,9 @@
+bin/
+obj/
+.vs/
+packages/
+*.user
+*.suo
+TestResults/
+*.zip
+*.docx

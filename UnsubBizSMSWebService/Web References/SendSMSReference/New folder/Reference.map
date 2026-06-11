@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://vassdp.telekom.rs:27010/ParlayXSmsAccess/services/SendSms?wsdl" filename="parlayx_sms_send_service.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://212.200.252.225:27010/ParlayXSmsAccess/services/SendSms?wsdl=parlayx_common_faults_2_0.wsdl" filename="common_faults.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://212.200.252.225:27010/ParlayXSmsAccess/services/SendSms?xsd=parlayx_common_types_2_1.xsd" filename="SendSms.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://212.200.252.225:27010/ParlayXSmsAccess/services/SendSms?xsd=parlayx_sms_types_2_1.xsd" filename="SendSms0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://212.200.252.225:27010/ParlayXSmsAccess/services/SendSms?wsdl=parlayx_sms_send_interface_2_1.wsdl" filename="parlayx_sms_send_interface.wsdl" />
+  </Results>
+</DiscoveryClientResultsFile>

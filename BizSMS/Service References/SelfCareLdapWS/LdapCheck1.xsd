@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element ibmSchExtn:docRoot="true" name="setUserMail">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="1" maxOccurs="1" name="user_id" type="xsd:string" />
+        <xsd:element minOccurs="1" maxOccurs="1" name="user_mail" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="setUserMailResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="setUserMailResult" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="string" nillable="true" type="xsd:string" />
+  <xsd:complexType name="HybrisUser">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="1" name="username" type="xsd:string" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="password" type="xsd:string" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="sn" type="xsd:string" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="cn" type="xsd:string" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="user_id" type="tns:ArrayOfString" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="telekom_status" type="xsd:string" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="telekom_services" type="tns:ArrayOfString" />
+      <xsd:element minOccurs="0" maxOccurs="1" name="user_mail" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="ArrayOfString">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xsd:string" />
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:element ibmSchExtn:docRoot="true" name="getHybrisUser">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="username" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="user_id" type="xsd:string" />
+        <xsd:element minOccurs="0" maxOccurs="1" name="sn" type="xsd:string" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element ibmSchExtn:docRoot="true" name="getHybrisUserResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element minOccurs="0" maxOccurs="1" name="getHybrisUserResult" type="tns:HybrisUser" />
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

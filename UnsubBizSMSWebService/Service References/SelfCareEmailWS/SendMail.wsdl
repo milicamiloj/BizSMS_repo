@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:s1="http://tempuri.org/AbstractTypes" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:documentation>
+    <wsdl:appinfo source="WMQI_APPINFO">
+      <MRWSDLAppInfo imported="true">
+        <generatedXSD location="mailservice_InlineSchema1.xsd" />
+        <generatedXSD location="mailservice_InlineSchema2.xsd" />
+        <binding hasEncoding="false" imported="true" name="MailServiceSoap" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="true" name="MailServiceSoap12" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="false" name="MailServiceHttpPost" originalBindingStyle="document" />
+        <binding hasEncoding="false" imported="false" name="MailServiceHttpGet" originalBindingStyle="document" />
+      </MRWSDLAppInfo>
+    </wsdl:appinfo>
+  </wsdl:documentation>
+  <wsdl:types>
+    <xsd:schema xmlns:ibmSchExtn="http://www.ibm.com/schema/extensions" elementFormDefault="qualified" targetNamespace="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:include schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd0" />
+      <xsd:include schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd1" />
+    </xsd:schema>
+    <xsd:schema targetNamespace="http://tempuri.org/AbstractTypes" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <xsd:import schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd2" namespace="http://schemas.xmlsoap.org/soap/encoding/" />
+      <xsd:include schemaLocation="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail?xsd=xsd3" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="SendEmailSoapIn">
+    <wsdl:part name="parameters" element="tns:SendEmail" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailSoapOut">
+    <wsdl:part name="parameters" element="tns:SendEmailResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccSoapIn">
+    <wsdl:part name="parameters" element="tns:SendEmailWithBcc" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccSoapOut">
+    <wsdl:part name="parameters" element="tns:SendEmailWithBccResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttSoapIn">
+    <wsdl:part name="parameters" element="tns:SendEmailWithAtt" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttSoapOut">
+    <wsdl:part name="parameters" element="tns:SendEmailWithAttResponse" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailHttpGetIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailHttpGetOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccHttpGetIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="bccAddress" type="s:string" />
+    <wsdl:part name="bccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccHttpGetOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttHttpGetIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="bccAddress" type="s:string" />
+    <wsdl:part name="bccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+    <wsdl:part name="priority" type="s:string" />
+    <wsdl:part name="bAtt" type="s1:StringArray" />
+    <wsdl:part name="attName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttHttpGetOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailHttpPostIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailHttpPostOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccHttpPostIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="bccAddress" type="s:string" />
+    <wsdl:part name="bccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithBccHttpPostOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttHttpPostIn">
+    <wsdl:part name="fromAddress" type="s:string" />
+    <wsdl:part name="fromName" type="s:string" />
+    <wsdl:part name="toAddress" type="s:string" />
+    <wsdl:part name="toName" type="s:string" />
+    <wsdl:part name="ccAddress" type="s:string" />
+    <wsdl:part name="ccName" type="s:string" />
+    <wsdl:part name="bccAddress" type="s:string" />
+    <wsdl:part name="bccName" type="s:string" />
+    <wsdl:part name="subject" type="s:string" />
+    <wsdl:part name="body" type="s:string" />
+    <wsdl:part name="priority" type="s:string" />
+    <wsdl:part name="bAtt" type="s1:StringArray" />
+    <wsdl:part name="attName" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="SendEmailWithAttHttpPostOut">
+    <wsdl:part name="Body" element="tns:boolean" />
+  </wsdl:message>
+  <wsdl:portType name="MailServiceSoap">
+    <wsdl:operation name="SendEmail">
+      <wsdl:input message="tns:SendEmailSoapIn" />
+      <wsdl:output message="tns:SendEmailSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <wsdl:input message="tns:SendEmailWithBccSoapIn" />
+      <wsdl:output message="tns:SendEmailWithBccSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <wsdl:input message="tns:SendEmailWithAttSoapIn" />
+      <wsdl:output message="tns:SendEmailWithAttSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="MailServiceHttpGet">
+    <wsdl:operation name="SendEmail">
+      <wsdl:input message="tns:SendEmailHttpGetIn" />
+      <wsdl:output message="tns:SendEmailHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <wsdl:input message="tns:SendEmailWithBccHttpGetIn" />
+      <wsdl:output message="tns:SendEmailWithBccHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <wsdl:input message="tns:SendEmailWithAttHttpGetIn" />
+      <wsdl:output message="tns:SendEmailWithAttHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="MailServiceHttpPost">
+    <wsdl:operation name="SendEmail">
+      <wsdl:input message="tns:SendEmailHttpPostIn" />
+      <wsdl:output message="tns:SendEmailHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <wsdl:input message="tns:SendEmailWithBccHttpPostIn" />
+      <wsdl:output message="tns:SendEmailWithBccHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <wsdl:input message="tns:SendEmailWithAttHttpPostIn" />
+      <wsdl:output message="tns:SendEmailWithAttHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="MailServiceSoap" type="tns:MailServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendEmail">
+      <soap:operation soapAction="http://tempuri.org/SendEmail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <soap:operation soapAction="http://tempuri.org/SendEmailWithBcc" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <soap:operation soapAction="http://tempuri.org/SendEmailWithAtt" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MailServiceSoap12" type="tns:MailServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="SendEmail">
+      <soap12:operation soapAction="http://tempuri.org/SendEmail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <soap12:operation soapAction="http://tempuri.org/SendEmailWithBcc" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <soap12:operation soapAction="http://tempuri.org/SendEmailWithAtt" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MailServiceHttpGet" type="tns:MailServiceHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="SendEmail">
+      <http:operation location="/SendEmail" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <http:operation location="/SendEmailWithBcc" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <http:operation location="/SendEmailWithAtt" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="MailServiceHttpPost" type="tns:MailServiceHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="SendEmail">
+      <http:operation location="/SendEmail" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithBcc">
+      <http:operation location="/SendEmailWithBcc" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="SendEmailWithAtt">
+      <http:operation location="/SendEmailWithAtt" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="MailService">
+    <wsdl:port name="MailServiceSoap" binding="tns:MailServiceSoap">
+      <soap:address location="http://iibqa.telekom.rs:7950/SelfCareWS/SendMail" />
+    </wsdl:port>
+    <wsdl:port name="MailServiceSoap12" binding="tns:MailServiceSoap12">
+      <soap12:address location="http://wsselfcaretest.telekom.rs/mailservice.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MailServiceHttpGet" binding="tns:MailServiceHttpGet">
+      <http:address location="http://wsselfcaretest.telekom.rs/mailservice.asmx" />
+    </wsdl:port>
+    <wsdl:port name="MailServiceHttpPost" binding="tns:MailServiceHttpPost">
+      <http:address location="http://wsselfcaretest.telekom.rs/mailservice.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
