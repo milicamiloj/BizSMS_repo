@@ -522,10 +522,10 @@ Za >100k redova, ne kreiraj `byte[]` (memorijski trošak). Vraćaj `FileStreamRe
 `ClosedXML.Excel.XLWorkbook.SaveAs(ms)` u pipe:
 
 ```csharp
-public IActionResult BigExport(...)
+public async Task<IActionResult> BigExport(..., CancellationToken ct)
 {
     var stream = new MemoryStream();   // ClosedXML ne podržava strict streaming — v. napomena
-    var report = _reports.GetMonthlyCost(...);
+    var report = await _reports.GetMonthlyCostAsync(..., ct);
     _xl.WriteMonthlyCost(report, stream);
     stream.Position = 0;
     return new FileStreamResult(stream, XlsxMime) { FileDownloadName = "..." };

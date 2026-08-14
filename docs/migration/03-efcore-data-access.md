@@ -341,7 +341,23 @@ internal sealed class NumberRepository : INumberRepository
 
     public async Task<int> BulkUpsertAsync(int clientId, IEnumerable<NumbersModel> numbers, CancellationToken ct)
     {
-        _db.Numbers.UpdateRange(numbers);   // za nove: će `Add`ovati; za postojeće: `Update`
+        // UpdateRange sve entitete postavlja u Modified stanje — za pravi upsert moramo
+        // eksplicitno razdvojiti nove od postojećih po ključu.
+        var incoming = numbers.ToList();
+        var incomingNumbers = incoming.Select(n => n.Number).ToArray();
+
+        var existingKeys = await _db.Numbers.AsNoTracking()
+            .Where(n => n.ClientID == clientId && incomingNumbers.Contains(n.Number))
+            .Select(n => n.Number)
+            .ToListAsync(ct);
+
+        var existingSet = existingKeys.ToHashSet(StringComparer.Ordinal);
+        var toAdd = incoming.Where(n => !existingSet.Contains(n.Number)).ToList();
+        var toUpdate = incoming.Where(n => existingSet.Contains(n.Number)).ToList();
+
+        if (toAdd.Count > 0)    _db.Numbers.AddRange(toAdd);
+        if (toUpdate.Count > 0) _db.Numbers.UpdateRange(toUpdate);
+
         return await _db.SaveChangesAsync(ct);
     }
 
@@ -398,9 +414,9 @@ public async Task ImportContractAsync(int contractId, CancellationToken ct)
     try
     {
         var affected = await _sp.RefreshNumbersAsync(contractId, ct);   // SP poziv
-        _db.ClientContracts
+        await _db.ClientContracts
            .Where(c => c.ContractId == contractId.ToString())
-           .ExecuteUpdate(u => u.SetProperty(c => c.SynchronizationDate, DateTime.UtcNow));
+           .ExecuteUpdateAsync(u => u.SetProperty(c => c.SynchronizationDate, DateTime.UtcNow), ct);
 
         await _audit.LogAsync("DeltaSync", "Success", new { ContractId = contractId, affected }, ct);
         await tx.CommitAsync(ct);

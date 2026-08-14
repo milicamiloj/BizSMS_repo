@@ -296,8 +296,8 @@ internal sealed class NumberImportService : INumberImportService
             .ToListAsync(ct);
         var existingSet = existing.Select(e => e.Number).ToHashSet(StringComparer.Ordinal);
 
-        var truToInsert = toInsert.Where(n => !existingSet.Contains(n)).ToList();
-        var duplicates = toInsert.Count - truToInsert.Count;
+        var newToInsert = toInsert.Where(n => !existingSet.Contains(n)).ToList();
+        var duplicates = toInsert.Count - newToInsert.Count;
 
         // Reaktiviraj inactive postojeće
         var toReactivate = existing.Where(e => !e.Active).Select(e => e.NumberID).ToList();
@@ -310,10 +310,10 @@ internal sealed class NumberImportService : INumberImportService
         }
 
         // Insert novi
-        if (truToInsert.Count > 0)
+        if (newToInsert.Count > 0)
         {
             var now = DateTime.UtcNow;
-            var rows = truToInsert.Select(n => new NumbersModel
+            var rows = newToInsert.Select(n => new NumbersModel
             {
                 Number = n,
                 Active = true,

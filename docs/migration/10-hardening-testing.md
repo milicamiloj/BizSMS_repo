@@ -4,7 +4,7 @@
 
 Prikupiti na jednom mestu **bezbednosne** kontrole koje uvodimo u .NET 10 verziju i **strategiju
 testiranja** (unit / integration / end-to-end / load) pre cutover-a. Cilj je da produkcija dobije
-verziju koja je bezbednija i pouzdanija od legacy-ja, sa mjerljivim testovima.
+verziju koja je bezbednija i pouzdanija od legacy-ja, sa merljivim testovima.
 
 ## Bezbednosni checklist (hardening)
 
