@@ -1,0 +1,14 @@
+@model BizSMS.Poc.Net10.Models.SmsExecutionResult
+@{
+    ViewData["Title"] = "Rezultat";
+}
+
+<h2>PoC rezultat</h2>
+
+<ul>
+    <li>Message ID: @Model.MessageId</li>
+    <li>Zakazano: @Model.Scheduled</li>
+    <li>Vreme slanja (UTC): @Model.SendDateUtc</li>
+</ul>
+
+<a asp-controller="SmsFlow" asp-action="Index" class="btn btn-primary">Novi unos</a>
