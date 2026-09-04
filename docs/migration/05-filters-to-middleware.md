@@ -127,7 +127,8 @@ public sealed class AuditLoggingMiddleware
 builder.Services.AddSingleton(Channel.CreateBounded<AuditEnvelope>(new BoundedChannelOptions(5000)
 {
     SingleReader = true,
-    SingleWriter = false
+    SingleWriter = false,
+    FullMode = BoundedChannelFullMode.DropWrite
 }));
 
 app.UseMiddleware<CorrelationIdMiddleware>();

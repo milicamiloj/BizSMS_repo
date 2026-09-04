@@ -34,6 +34,13 @@ public interface IAuditService
     Task LogAsync(string eventType, object payload, CancellationToken ct = default);
 }
 
+public static class AuditMetrics
+{
+    private static long _droppedEvents;
+    public static long DroppedEvents => Interlocked.Read(ref _droppedEvents);
+    public static void IncrementDropped() => Interlocked.Increment(ref _droppedEvents);
+}
+
 public sealed class AuditService : IAuditService
 {
     private readonly Channel<Log> _channel;
@@ -42,13 +49,14 @@ public sealed class AuditService : IAuditService
 
     public Task LogAsync(string eventType, object payload, CancellationToken ct = default)
     {
-        _channel.Writer.TryWrite(new Log
+        var written = _channel.Writer.TryWrite(new Log
         {
             LogDate = DateTime.UtcNow,
             LogLevel = "INFO",
             LogSource = eventType,
             LogMessage = JsonSerializer.Serialize(payload)
         });
+        if (!written) AuditMetrics.IncrementDropped();
         return Task.CompletedTask;
     }
 }

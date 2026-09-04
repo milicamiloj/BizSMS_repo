@@ -52,7 +52,7 @@ public class OpsController : ControllerBase
 ### Feature flag za OTP action gate
 ```csharp
 public bool IsSendOtpGateEnabled(IConfiguration cfg)
-    => cfg.GetValue<bool>("FeatureFlags:SendOtpConfirmation");
+    => cfg.GetValue<bool>("FeatureFlags:SendActionOtpGate");
 ```
 
 ## Checklist za code review
