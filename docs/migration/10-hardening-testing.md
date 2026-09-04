@@ -22,9 +22,9 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("otp", httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.User.Identity?.Name
+            partitionKey: httpContext.Request.RouteValues["username"]?.ToString()
                           ?? httpContext.Connection.RemoteIpAddress?.ToString()
-                          ?? "anonymous",
+                          ?? "otp-anonymous",
             factory: _ => new FixedWindowRateLimiterOptions
             {
                 PermitLimit = 3,
@@ -36,10 +36,10 @@ builder.Services.AddRateLimiter(options =>
 
 ```csharp
 [EnableRateLimiting("otp")]
-[HttpPost]
-public async Task<IActionResult> ResendOtp(ResendOtpRequest request)
+[HttpPost("otp/resend/{username}")]
+public async Task<IActionResult> ResendOtp(string username)
 {
-    await _otpService.ResendAsync(request.Username);
+    await _otpService.ResendAsync(username);
     return Ok();
 }
 ```

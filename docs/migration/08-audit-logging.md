@@ -88,10 +88,16 @@ public sealed class AuditWriterWorker : BackgroundService
                 await FlushAsync(batch, stoppingToken);
             }
 
-            await flushTimer.WaitForNextTickAsync(stoppingToken);
+            var hasNextTick = await flushTimer.WaitForNextTickAsync(stoppingToken);
+            if (!hasNextTick) break;
             if (batch.Count > 0)
                 await FlushAsync(batch, stoppingToken);
         }
+
+        while (_channel.Reader.TryRead(out var pending))
+            batch.Add(pending);
+        if (batch.Count > 0)
+            await FlushAsync(batch, CancellationToken.None);
     }
 
     private async Task FlushAsync(List<Log> batch, CancellationToken ct)

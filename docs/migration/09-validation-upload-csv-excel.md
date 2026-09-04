@@ -173,10 +173,17 @@ public IActionResult Upload(IFormFile file)
 
 private static bool LooksLikeXlsx(Stream stream)
 {
-    using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
-    var workbook = archive.GetEntry("xl/workbook.xml");
-    var contentTypes = archive.GetEntry("[Content_Types].xml");
-    return workbook is not null && contentTypes is not null;
+    try
+    {
+        using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+        var workbook = archive.GetEntry("xl/workbook.xml");
+        var contentTypes = archive.GetEntry("[Content_Types].xml");
+        return workbook is not null && contentTypes is not null;
+    }
+    catch (InvalidDataException)
+    {
+        return false;
+    }
 }
 ```
 
