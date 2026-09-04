@@ -138,7 +138,10 @@ public UploadValidationResult ParseExcel(Stream fileStream)
 public IActionResult Upload(IFormFile file)
 {
     using var stream = file.OpenReadStream();
-    var result = _uploadService.ParseCsv(stream);
+    var ext = Path.GetExtension(file.FileName);
+    var result = ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
+        ? _uploadService.ParseExcel(stream)
+        : _uploadService.ParseCsv(stream);
 
     if (result.Errors.Count > 0)
         return BadRequest(result.Errors);

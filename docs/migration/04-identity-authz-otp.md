@@ -57,6 +57,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
     opt.SignIn.RequireConfirmedPhoneNumber = true;
     opt.Tokens.ChangePhoneNumberTokenProvider = TokenOptions.DefaultPhoneProvider;
     opt.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
+    opt.Tokens.ProviderMap["SendActionOtp"] =
+        new TokenProviderDescriptor(typeof(PhoneNumberTokenProvider<ApplicationUser>));
 })
 .AddEntityFrameworkStores<BizSmsDbContext>()
 .AddDefaultTokenProviders()

@@ -59,7 +59,9 @@ public sealed class CorrelationIdMiddleware
 public sealed record AuditEnvelope(string EventType, object Payload);
 public static class AuditMetrics
 {
-    public static long DroppedEvents;
+    private static long _droppedEvents;
+    public static long DroppedEvents => Interlocked.Read(ref _droppedEvents);
+    public static void IncrementDropped() => Interlocked.Increment(ref _droppedEvents);
 }
 
 public sealed class AuditLoggingMiddleware
@@ -98,7 +100,7 @@ public sealed class AuditLoggingMiddleware
                     });
 
                 if (!_channel.Writer.TryWrite(evt))
-                    Interlocked.Increment(ref AuditMetrics.DroppedEvents);
+                    AuditMetrics.IncrementDropped();
             }
         }
         catch (Exception ex)
@@ -113,7 +115,7 @@ public sealed class AuditLoggingMiddleware
                 });
 
             if (!_channel.Writer.TryWrite(evt))
-                Interlocked.Increment(ref AuditMetrics.DroppedEvents);
+                AuditMetrics.IncrementDropped();
             throw;
         }
     }

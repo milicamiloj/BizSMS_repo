@@ -36,21 +36,43 @@ public interface IAuditService
 
 public sealed class AuditService : IAuditService
 {
-    private readonly BizSmsDbContext _db;
+    private readonly Channel<Log> _channel;
 
-    public AuditService(BizSmsDbContext db) => _db = db;
+    public AuditService(Channel<Log> channel) => _channel = channel;
 
-    public async Task LogAsync(string eventType, object payload, CancellationToken ct = default)
+    public Task LogAsync(string eventType, object payload, CancellationToken ct = default)
     {
-        _db.Logs.Add(new Log
+        _channel.Writer.TryWrite(new Log
         {
             LogDate = DateTime.UtcNow,
             LogLevel = "INFO",
             LogSource = eventType,
             LogMessage = JsonSerializer.Serialize(payload)
         });
+        return Task.CompletedTask;
+    }
+}
 
-        await _db.SaveChangesAsync(ct);
+public sealed class AuditWriterWorker : BackgroundService
+{
+    private readonly Channel<Log> _channel;
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public AuditWriterWorker(Channel<Log> channel, IServiceScopeFactory scopeFactory)
+    {
+        _channel = channel;
+        _scopeFactory = scopeFactory;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        await foreach (var item in _channel.Reader.ReadAllAsync(stoppingToken))
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
+            db.Logs.Add(item);
+            await db.SaveChangesAsync(stoppingToken);
+        }
     }
 }
 ```
