@@ -49,6 +49,7 @@ public sealed class AuditService : IAuditService
 
     public Task LogAsync(string eventType, object payload, CancellationToken ct = default)
     {
+        ct.ThrowIfCancellationRequested();
         var written = _channel.Writer.TryWrite(new Log
         {
             LogDate = DateTime.UtcNow,

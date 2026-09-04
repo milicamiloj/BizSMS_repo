@@ -137,8 +137,12 @@ public UploadValidationResult ParseExcel(Stream fileStream)
 [Authorize(Roles = "Administrator,BusinessUser")]
 public IActionResult Upload(IFormFile file)
 {
-    using var stream = file.OpenReadStream();
     var ext = Path.GetExtension(file.FileName);
+    var allowed = new[] { ".csv", ".xlsx" };
+    if (!allowed.Contains(ext, StringComparer.OrdinalIgnoreCase))
+        return BadRequest("Podržani formati su samo .csv i .xlsx");
+
+    using var stream = file.OpenReadStream();
     var result = ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
         ? _uploadService.ParseExcel(stream)
         : _uploadService.ParseCsv(stream);

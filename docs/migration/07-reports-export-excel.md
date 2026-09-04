@@ -118,7 +118,8 @@ public async Task<IActionResult> ExportCsv(int clientId, CancellationToken ct)
 
 ```csharp
 // Program.cs (jednom pri startup-u)
-ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // ili Commercial prema licenci
+var epplusMode = builder.Configuration["Epplus:LicenseContext"] ?? "Commercial";
+ExcelPackage.LicenseContext = Enum.Parse<LicenseContext>(epplusMode, ignoreCase: true);
 ```
 
 ## Checklist za code review

@@ -43,7 +43,10 @@ public async Task<IActionResult> ResendOtp(ResendOtpRequest request)
 ### Security hardening
 ```csharp
 app.UseHttpsRedirection();
-app.UseHsts();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
 app.UseRateLimiter();
 app.Use(async (ctx, next) =>
 {
