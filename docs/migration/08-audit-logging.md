@@ -76,23 +76,31 @@ public sealed class AuditWriterWorker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var batch = new List<Log>(100);
-        await foreach (var item in _channel.Reader.ReadAllAsync(stoppingToken))
+        var flushTimer = new PeriodicTimer(TimeSpan.FromSeconds(5));
+
+        while (!stoppingToken.IsCancellationRequested)
         {
-            batch.Add(item);
-            if (batch.Count < 100) continue;
+            while (_channel.Reader.TryRead(out var item))
+            {
+                batch.Add(item);
+                if (batch.Count < 100) continue;
 
-            using var scope = _scopeFactory.CreateScope();
-            var db = scope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
-            db.Logs.AddRange(batch);
-            await db.SaveChangesAsync(stoppingToken);
-            batch.Clear();
+                await FlushAsync(batch, stoppingToken);
+            }
+
+            await flushTimer.WaitForNextTickAsync(stoppingToken);
+            if (batch.Count > 0)
+                await FlushAsync(batch, stoppingToken);
         }
+    }
 
-        if (batch.Count == 0) return;
-        using var flushScope = _scopeFactory.CreateScope();
-        var flushDb = flushScope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
-        flushDb.Logs.AddRange(batch);
-        await flushDb.SaveChangesAsync(stoppingToken);
+    private async Task FlushAsync(List<Log> batch, CancellationToken ct)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
+        db.Logs.AddRange(batch);
+        await db.SaveChangesAsync(ct);
+        batch.Clear();
     }
 }
 ```

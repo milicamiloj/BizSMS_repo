@@ -20,12 +20,17 @@ if (user.PhoneCodeSentAt != null && user.PhoneCodeSentAt > DateTime.Now.AddSecon
 ```csharp
 builder.Services.AddRateLimiter(options =>
 {
-    options.AddFixedWindowLimiter("otp", limiter =>
-    {
-        limiter.PermitLimit = 3;
-        limiter.Window = TimeSpan.FromMinutes(1);
-        limiter.QueueLimit = 0;
-    });
+    options.AddPolicy("otp", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.User.Identity?.Name
+                          ?? httpContext.Connection.RemoteIpAddress?.ToString()
+                          ?? "anonymous",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 3,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
 });
 ```
 

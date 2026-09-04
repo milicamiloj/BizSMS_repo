@@ -123,6 +123,11 @@ if (string.IsNullOrWhiteSpace(epplusMode))
     throw new InvalidOperationException("Epplus:LicenseContext mora biti eksplicitno podešen.");
 
 ExcelPackage.LicenseContext = Enum.Parse<LicenseContext>(epplusMode, ignoreCase: true);
+
+// appsettings.Production.json:
+// Epplus:LicenseContext = "Commercial"  (za komercijalnu upotrebu, uz validnu licencu)
+// appsettings.Development.json:
+// Epplus:LicenseContext = "NonCommercial" (samo ako je to pravno dozvoljen scenario)
 ```
 
 ## Checklist za code review

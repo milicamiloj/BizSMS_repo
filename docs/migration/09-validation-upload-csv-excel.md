@@ -133,6 +133,8 @@ public UploadValidationResult ParseExcel(Stream fileStream)
 
 ### Kontroler prikaz grešaka
 ```csharp
+using System.IO.Compression;
+
 [HttpPost]
 [Authorize(Roles = "Administrator,BusinessUser")]
 public IActionResult Upload(IFormFile file)
@@ -149,10 +151,13 @@ public IActionResult Upload(IFormFile file)
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     };
     if (!allowedContentTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
-        return BadRequest("Neispravan Content-Type za upload.");
+    {
+        // advisory check: ne odbacuj odmah jer neki klijenti šalju generički MIME
+        Console.WriteLine($"Neočekivan Content-Type: {file.ContentType}");
+    }
 
     using var stream = file.OpenReadStream();
-    if (ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) && !HasZipHeader(stream))
+    if (ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) && !LooksLikeXlsx(stream))
         return BadRequest("Neispravan XLSX format.");
     stream.Position = 0;
 
@@ -166,11 +171,12 @@ public IActionResult Upload(IFormFile file)
     return Ok(result.ValidRows);
 }
 
-private static bool HasZipHeader(Stream stream)
+private static bool LooksLikeXlsx(Stream stream)
 {
-    Span<byte> sig = stackalloc byte[4];
-    if (stream.Read(sig) != 4) return false;
-    return sig[0] == 0x50 && sig[1] == 0x4B && sig[2] == 0x03 && sig[3] == 0x04;
+    using var archive = new ZipArchive(stream, ZipArchiveMode.Read, leaveOpen: true);
+    var workbook = archive.GetEntry("xl/workbook.xml");
+    var contentTypes = archive.GetEntry("[Content_Types].xml");
+    return workbook is not null && contentTypes is not null;
 }
 ```
 
