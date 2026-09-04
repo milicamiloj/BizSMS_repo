@@ -77,27 +77,32 @@ public sealed class AuditWriterWorker : BackgroundService
     {
         var batch = new List<Log>(100);
         var flushTimer = new PeriodicTimer(TimeSpan.FromSeconds(5));
-
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            while (_channel.Reader.TryRead(out var item))
+            while (!stoppingToken.IsCancellationRequested)
             {
-                batch.Add(item);
-                if (batch.Count < 100) continue;
+                while (_channel.Reader.TryRead(out var item))
+                {
+                    batch.Add(item);
+                    if (batch.Count < 100) continue;
 
-                await FlushAsync(batch, stoppingToken);
+                    await FlushAsync(batch, stoppingToken);
+                }
+
+                var hasNextTick = await flushTimer.WaitForNextTickAsync(stoppingToken);
+                if (!hasNextTick) break;
+                if (batch.Count > 0)
+                    await FlushAsync(batch, stoppingToken);
             }
-
-            var hasNextTick = await flushTimer.WaitForNextTickAsync(stoppingToken);
-            if (!hasNextTick) break;
-            if (batch.Count > 0)
-                await FlushAsync(batch, stoppingToken);
         }
-
-        while (_channel.Reader.TryRead(out var pending))
-            batch.Add(pending);
-        if (batch.Count > 0)
-            await FlushAsync(batch, CancellationToken.None);
+        catch (OperationCanceledException) { }
+        finally
+        {
+            while (_channel.Reader.TryRead(out var pending))
+                batch.Add(pending);
+            if (batch.Count > 0)
+                await FlushAsync(batch, CancellationToken.None);
+        }
     }
 
     private async Task FlushAsync(List<Log> batch, CancellationToken ct)

@@ -37,6 +37,8 @@ builder.Services.AddAuthorization(options =>
 ## Code snippets
 ### Correlation ID middleware
 ```csharp
+using System.Text.RegularExpressions;
+
 public sealed class CorrelationIdMiddleware
 {
     private const string Header = "X-Correlation-ID";
@@ -46,7 +48,10 @@ public sealed class CorrelationIdMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        var cid = context.Request.Headers[Header].FirstOrDefault() ?? Guid.NewGuid().ToString("N");
+        var incoming = context.Request.Headers[Header].FirstOrDefault();
+        var cid = Regex.IsMatch(incoming ?? string.Empty, "^[a-zA-Z0-9-]{8,64}$")
+            ? incoming!
+            : Guid.NewGuid().ToString("N");
         context.TraceIdentifier = cid;
         context.Response.Headers[Header] = cid;
         await _next(context);

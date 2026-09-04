@@ -21,8 +21,14 @@ if (user.PhoneCodeSentAt != null && user.PhoneCodeSentAt > DateTime.Now.AddSecon
 builder.Services.AddRateLimiter(options =>
 {
     options.AddPolicy("otp", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Request.RouteValues["username"]?.ToString()
+    {
+        var path = httpContext.Request.Path.Value ?? string.Empty;
+        var userSegment = path.StartsWith("/otp/resend/", StringComparison.OrdinalIgnoreCase)
+            ? path.Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault()
+            : null;
+
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: userSegment
                           ?? httpContext.Connection.RemoteIpAddress?.ToString()
                           ?? "otp-anonymous",
             factory: _ => new FixedWindowRateLimiterOptions
@@ -30,7 +36,8 @@ builder.Services.AddRateLimiter(options =>
                 PermitLimit = 3,
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
-            }));
+            });
+    });
 });
 ```
 

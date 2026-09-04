@@ -94,6 +94,12 @@ using OfficeOpenXml;
 public UploadValidationResult ParseExcel(Stream fileStream)
 {
     using var package = new ExcelPackage(fileStream);
+    if (package.Workbook.Worksheets.Count == 0)
+    {
+        return new UploadValidationResult(Array.Empty<ImportRowDto>(),
+            new[] { new UploadValidationError(1, "Sheet", "Excel fajl nema nijedan worksheet.") });
+    }
+
     var ws = package.Workbook.Worksheets.First();
 
     if (ws.Dimension is null)

@@ -103,7 +103,7 @@ public byte[] BuildCsv(IEnumerable<SentSmsReportDto> rows)
     sb.AppendLine("Year,Month,Sent,Delivered");
     foreach (var r in rows)
         sb.AppendLine($"{r.Year},{r.Month},{r.SentCount},{r.DeliveredCount}");
-    return Encoding.UTF8.GetBytes(sb.ToString());
+    return Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(sb.ToString())).ToArray();
 }
 
 [Authorize(Roles = "Administrator,BusinessUser")]
