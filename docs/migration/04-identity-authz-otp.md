@@ -60,7 +60,8 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
 })
 .AddEntityFrameworkStores<BizSmsDbContext>()
 .AddDefaultTokenProviders()
-.AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>(TokenOptions.DefaultPhoneProvider);
+.AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>(TokenOptions.DefaultPhoneProvider)
+.AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>("SendActionOtp");
 ```
 
 ### Role seed
@@ -91,10 +92,7 @@ public sealed class ApplicationUser : IdentityUser
 ```csharp
 public async Task<bool> ConfirmSendOtpAsync(ApplicationUser user, string otpCode)
 {
-    var ok = await _userManager.VerifyTwoFactorTokenAsync(
-        user,
-        TokenOptions.DefaultPhoneProvider,
-        otpCode);
+    var ok = await _userManager.VerifyUserTokenAsync(user, "SendActionOtp", "send-confirm", otpCode);
 
     if (!ok) return false;
 
@@ -107,6 +105,12 @@ public void EnsureSendOtpConfirmed(string userId)
 {
     if (!_cache.TryGetValue($"send-otp:{userId}", out bool ok) || !ok)
         throw new UnauthorizedAccessException("OTP potvrda je obavezna pre slanja/zakazivanja.");
+}
+
+public async Task SendActionOtpAsync(ApplicationUser user)
+{
+    var code = await _userManager.GenerateUserTokenAsync(user, "SendActionOtp", "send-confirm");
+    await _smsSender.SendAsync(user.PhoneNumber!, $"BizSMS potvrda slanja: {code}");
 }
 ```
 

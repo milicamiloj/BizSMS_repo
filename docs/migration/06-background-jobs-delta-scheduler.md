@@ -40,7 +40,8 @@ public sealed class DailyDeltaWorker : BackgroundService
         while (!stoppingToken.IsCancellationRequested)
         {
             var now = DateTimeOffset.Now;
-            var next = now.Date.AddDays(1).AddHours(2); // 02:00 dnevno
+            var todayAtTwo = now.Date.AddHours(2);      // 02:00 danas
+            var next = now < todayAtTwo ? todayAtTwo : todayAtTwo.AddDays(1);
             await Task.Delay(next - now, stoppingToken);
 
             using var scope = _scopeFactory.CreateScope();
@@ -157,10 +158,10 @@ public async Task<DeltaResult> ApplyDeltaAsync(int clientId, string contractId, 
 
 ### Audit za delta job
 ```csharp
-await _audit.LogAsync("DELTA_START", new { ClientId = clientId, CorrelationId = correlationId });
+await _audit.LogAsync("DELTA_START", new { ClientId = clientId, ContractId = contractId, CorrelationId = correlationId });
 try
 {
-    var res = await ApplyDeltaAsync(clientId, rows, ct);
+    var res = await ApplyDeltaAsync(clientId, contractId, rows, ct);
     await _audit.LogAsync("DELTA_END", new { ClientId = clientId, res.Inserted, res.Updated, res.Deactivated });
 }
 catch (Exception ex)

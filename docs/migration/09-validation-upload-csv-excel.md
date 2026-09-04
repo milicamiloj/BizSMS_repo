@@ -96,6 +96,12 @@ public UploadValidationResult ParseExcel(Stream fileStream)
     using var package = new ExcelPackage(fileStream);
     var ws = package.Workbook.Worksheets.First();
 
+    if (ws.Dimension is null)
+    {
+        return new UploadValidationResult(Array.Empty<ImportRowDto>(),
+            new[] { new UploadValidationError(1, "Sheet", "Excel fajl je prazan.") });
+    }
+
     var header1 = ws.Cells[1, 1].Text?.Trim();
     var header2 = ws.Cells[1, 2].Text?.Trim();
     if (!string.Equals(header1, "Number", StringComparison.OrdinalIgnoreCase) ||

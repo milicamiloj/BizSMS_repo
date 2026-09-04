@@ -57,6 +57,10 @@ public sealed class CorrelationIdMiddleware
 ### Audit logging middleware
 ```csharp
 public sealed record AuditEnvelope(string EventType, object Payload);
+public static class AuditMetrics
+{
+    public static long DroppedEvents;
+}
 
 public sealed class AuditLoggingMiddleware
 {
@@ -94,9 +98,7 @@ public sealed class AuditLoggingMiddleware
                     });
 
                 if (!_channel.Writer.TryWrite(evt))
-                {
-                    await _channel.Writer.WriteAsync(evt, ctx.RequestAborted);
-                }
+                    Interlocked.Increment(ref AuditMetrics.DroppedEvents);
             }
         }
         catch (Exception ex)
@@ -111,9 +113,7 @@ public sealed class AuditLoggingMiddleware
                 });
 
             if (!_channel.Writer.TryWrite(evt))
-            {
-                await _channel.Writer.WriteAsync(evt, ctx.RequestAborted);
-            }
+                Interlocked.Increment(ref AuditMetrics.DroppedEvents);
             throw;
         }
     }

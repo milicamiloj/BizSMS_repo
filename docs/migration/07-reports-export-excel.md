@@ -66,7 +66,6 @@ private int ResolveClientScope(int requestedClientId)
 ```csharp
 public byte[] BuildExcelWithEpplus(IEnumerable<SentSmsReportDto> rows)
 {
-    ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // ili Commercial prema licenci
     using var p = new ExcelPackage();
     var ws = p.Workbook.Worksheets.Add("Report");
     ws.Cells[1, 1].Value = "Year";
@@ -115,6 +114,11 @@ public async Task<IActionResult> ExportCsv(int clientId, CancellationToken ct)
     var bytes = _exportService.BuildCsv(rows);
     return File(bytes, "text/csv", $"bizsms-report-{allowedClientId}.csv");
 }
+```
+
+```csharp
+// Program.cs (jednom pri startup-u)
+ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // ili Commercial prema licenci
 ```
 
 ## Checklist za code review
