@@ -48,9 +48,10 @@ public UploadValidationResult ParseCsv(Stream fileStream)
     };
     parser.SetDelimiters(",");
 
-    var headerFields = parser.ReadFields();
-    var header = string.Join(",", headerFields ?? Array.Empty<string>());
-    if (!string.Equals(header, "Number,Name", StringComparison.OrdinalIgnoreCase))
+    var headerFields = parser.ReadFields() ?? Array.Empty<string>();
+    if (headerFields.Length < 2 ||
+        !string.Equals(headerFields[0].Trim(), "Number", StringComparison.OrdinalIgnoreCase) ||
+        !string.Equals(headerFields[1].Trim(), "Name", StringComparison.OrdinalIgnoreCase))
     {
         return new UploadValidationResult(Array.Empty<ImportRowDto>(),
             new[] { new UploadValidationError(1, "Header", "Očekivan header: Number,Name") });

@@ -162,7 +162,12 @@ try
 }
 catch (Exception ex)
 {
-    await _audit.LogAsync("DELTA_ERROR", new { ClientId = clientId, ex.Message });
+    await _audit.LogAsync("DELTA_ERROR", new
+    {
+        ClientId = clientId,
+        CorrelationId = correlationId,
+        ErrorType = ex.GetType().Name
+    });
     throw;
 }
 ```

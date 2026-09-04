@@ -38,6 +38,8 @@ app.Use(async (ctx, next) =>
     ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";
     ctx.Response.Headers["X-Frame-Options"] = "DENY";
     ctx.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    ctx.Response.Headers["Content-Security-Policy"] =
+        "default-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self';";
     await next();
 });
 ```

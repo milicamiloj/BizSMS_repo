@@ -44,8 +44,21 @@ public async Task<IReadOnlyList<SentSmsReportDto>> GetMonthlyReportAsync(int cli
 [Authorize(Roles = "Administrator,BusinessUser")]
 public async Task<IActionResult> MonthlyReport(int clientId, CancellationToken ct)
 {
-    var data = await _reportService.GetMonthlyReportAsync(clientId, ct);
+    var allowedClientId = ResolveClientScope(clientId);
+    var data = await _reportService.GetMonthlyReportAsync(allowedClientId, ct);
     return View(data);
+}
+
+private int ResolveClientScope(int requestedClientId)
+{
+    if (!User.IsInRole("BusinessUser"))
+        return requestedClientId;
+
+    var ownClientId = int.Parse(User.FindFirst("client_id")!.Value);
+    if (ownClientId != requestedClientId)
+        throw new UnauthorizedAccessException("BusinessUser nema pristup drugom klijentu.");
+
+    return ownClientId;
 }
 ```
 
@@ -73,13 +86,15 @@ public byte[] BuildExcelWithEpplus(IEnumerable<SentSmsReportDto> rows)
     return p.GetAsByteArray();
 }
 
+[Authorize(Roles = "Administrator,BusinessUser")]
 public async Task<IActionResult> ExportExcel(int clientId, CancellationToken ct)
 {
-    var rows = await _reportService.GetMonthlyReportAsync(clientId, ct);
+    var allowedClientId = ResolveClientScope(clientId);
+    var rows = await _reportService.GetMonthlyReportAsync(allowedClientId, ct);
     var bytes = BuildExcelWithEpplus(rows);
     return File(bytes,
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        $"bizsms-report-{clientId}.xlsx");
+        $"bizsms-report-{allowedClientId}.xlsx");
 }
 
 public byte[] BuildCsv(IEnumerable<SentSmsReportDto> rows)
@@ -91,12 +106,13 @@ public byte[] BuildCsv(IEnumerable<SentSmsReportDto> rows)
     return Encoding.UTF8.GetBytes(sb.ToString());
 }
 
-[Authorize(Roles = "Administrator")]
+[Authorize(Roles = "Administrator,BusinessUser")]
 public async Task<IActionResult> ExportCsv(int clientId, CancellationToken ct)
 {
-    var rows = await _reportService.GetMonthlyReportAsync(clientId, ct);
+    var allowedClientId = ResolveClientScope(clientId);
+    var rows = await _reportService.GetMonthlyReportAsync(allowedClientId, ct);
     var bytes = _exportService.BuildCsv(rows);
-    return File(bytes, "text/csv", $"bizsms-report-{clientId}.csv");
+    return File(bytes, "text/csv", $"bizsms-report-{allowedClientId}.csv");
 }
 ```
 
