@@ -29,10 +29,21 @@ builder.Services.AddRateLimiter(options =>
 });
 ```
 
+```csharp
+[EnableRateLimiting("otp")]
+[HttpPost]
+public async Task<IActionResult> ResendOtp(ResendOtpRequest request)
+{
+    await _otpService.ResendAsync(request.Username);
+    return Ok();
+}
+```
+
 ## Code snippets
 ### Security hardening
 ```csharp
 app.UseHsts();
+app.UseRateLimiter();
 app.Use(async (ctx, next) =>
 {
     ctx.Response.Headers["X-Content-Type-Options"] = "nosniff";

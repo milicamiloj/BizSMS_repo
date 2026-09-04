@@ -66,6 +66,7 @@ private int ResolveClientScope(int requestedClientId)
 ```csharp
 public byte[] BuildExcelWithEpplus(IEnumerable<SentSmsReportDto> rows)
 {
+    ExcelPackage.LicenseContext = LicenseContext.NonCommercial; // ili Commercial prema licenci
     using var p = new ExcelPackage();
     var ws = p.Workbook.Worksheets.Add("Report");
     ws.Cells[1, 1].Value = "Year";

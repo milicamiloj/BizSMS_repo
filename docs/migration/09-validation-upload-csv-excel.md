@@ -87,6 +87,44 @@ public UploadValidationResult ParseCsv(Stream fileStream)
 }
 ```
 
+### Excel (.xlsx) parser primer
+```csharp
+using OfficeOpenXml;
+
+public UploadValidationResult ParseExcel(Stream fileStream)
+{
+    using var package = new ExcelPackage(fileStream);
+    var ws = package.Workbook.Worksheets.First();
+
+    var header1 = ws.Cells[1, 1].Text?.Trim();
+    var header2 = ws.Cells[1, 2].Text?.Trim();
+    if (!string.Equals(header1, "Number", StringComparison.OrdinalIgnoreCase) ||
+        !string.Equals(header2, "Name", StringComparison.OrdinalIgnoreCase))
+    {
+        return new UploadValidationResult(Array.Empty<ImportRowDto>(),
+            new[] { new UploadValidationError(1, "Header", "Očekivan header: Number,Name") });
+    }
+
+    var valid = new List<ImportRowDto>();
+    var errors = new List<UploadValidationError>();
+    for (var row = 2; row <= ws.Dimension.End.Row; row++)
+    {
+        var number = ws.Cells[row, 1].Text?.Trim() ?? string.Empty;
+        var name = ws.Cells[row, 2].Text?.Trim() ?? string.Empty;
+
+        if (!IsValidMsisdn(number))
+        {
+            errors.Add(new UploadValidationError(row, "Number", $"Neispravan format: {number}"));
+            continue;
+        }
+
+        valid.Add(new ImportRowDto(number, name));
+    }
+
+    return new UploadValidationResult(valid, errors);
+}
+```
+
 ### Kontroler prikaz grešaka
 ```csharp
 [HttpPost]

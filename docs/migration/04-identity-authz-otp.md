@@ -55,10 +55,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
     opt.Lockout.MaxFailedAccessAttempts = 5;
     opt.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     opt.SignIn.RequireConfirmedPhoneNumber = true;
+    opt.Tokens.ChangePhoneNumberTokenProvider = TokenOptions.DefaultPhoneProvider;
     opt.Tokens.AuthenticatorTokenProvider = TokenOptions.DefaultAuthenticatorProvider;
 })
 .AddEntityFrameworkStores<BizSmsDbContext>()
-.AddDefaultTokenProviders();
+.AddDefaultTokenProviders()
+.AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>(TokenOptions.DefaultPhoneProvider);
 ```
 
 ### Role seed

@@ -82,7 +82,7 @@ public sealed class AuditLoggingMiddleware
 
             if (isCriticalRoute)
             {
-                await _channel.Writer.WriteAsync(new AuditEnvelope(
+                var evt = new AuditEnvelope(
                     "HTTP_REQUEST",
                     new
                     {
@@ -91,19 +91,29 @@ public sealed class AuditLoggingMiddleware
                         Status = ctx.Response.StatusCode,
                         CorrelationId = ctx.TraceIdentifier,
                         DurationMs = (DateTime.UtcNow - started).TotalMilliseconds
-                    }));
+                    });
+
+                if (!_channel.Writer.TryWrite(evt))
+                {
+                    await _channel.Writer.WriteAsync(evt, ctx.RequestAborted);
+                }
             }
         }
         catch (Exception ex)
         {
-            await _channel.Writer.WriteAsync(new AuditEnvelope(
+            var evt = new AuditEnvelope(
                 "HTTP_ERROR",
                 new
                 {
                     Path = ctx.Request.Path.Value,
                     CorrelationId = ctx.TraceIdentifier,
                     Error = ex.Message
-                }));
+                });
+
+            if (!_channel.Writer.TryWrite(evt))
+            {
+                await _channel.Writer.WriteAsync(evt, ctx.RequestAborted);
+            }
             throw;
         }
     }

@@ -31,6 +31,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<BizSmsDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("BIZSMS")));
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<BizSmsDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 app.UseHttpsRedirection();

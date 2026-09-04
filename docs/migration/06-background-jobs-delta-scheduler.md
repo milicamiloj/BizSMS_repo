@@ -103,13 +103,15 @@ public async Task<List<VpnSpRow>> GetVpnRowsViaFromSqlAsync(string contractId, C
 
 ### Diff algoritam (UPSERT + deaktivacija)
 ```csharp
-public async Task<DeltaResult> ApplyDeltaAsync(int clientId, IReadOnlyCollection<VpnSpRow> spRows, CancellationToken ct)
+public async Task<DeltaResult> ApplyDeltaAsync(int clientId, string contractId, IReadOnlyCollection<VpnSpRow> spRows, CancellationToken ct)
 {
     var result = new DeltaResult();
     await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
     var current = await _db.Numbers
-        .Where(n => n.ClientID == clientId && n.Active)
+        .Where(n => n.ClientID == clientId &&
+                    n.ContractId == contractId &&
+                    n.Active)
         .ToDictionaryAsync(n => n.Number, ct);
 
     var incoming = spRows.Select(x => x.Number).ToHashSet(StringComparer.Ordinal);
@@ -131,6 +133,7 @@ public async Task<DeltaResult> ApplyDeltaAsync(int clientId, IReadOnlyCollection
             {
                 Number = number,
                 ClientID = clientId,
+                ContractId = contractId,
                 Active = true,
                 SendAllowed = true,
                 InsertDate = DateTime.UtcNow
@@ -187,18 +190,24 @@ public async Task<IActionResult> RunDelta([FromBody] RunDeltaRequest request, Ca
 ```csharp
 public async Task ProcessScheduledMessagesAsync(CancellationToken ct)
 {
-    var due = await _db.ScheduledSms
-        .Where(s => s.CancelDate == null)
-        .Join(_db.Message.Where(m => m.Status == (int)MessageStatus.Scheduled &&
-                                     m.SendDate <= DateTime.UtcNow),
-              s => s.MessageID,
-              m => m.MessageID,
-              (s, m) => s)
+    var due = await _db.Message
+        .Where(m => m.Status == (int)MessageStatus.Scheduled && m.SendDate <= DateTime.UtcNow)
+        .Take(100)
         .ToListAsync(ct);
 
-    foreach (var item in due)
+    foreach (var message in due)
     {
-        await _messageSender.SendMessageAsync(item.MessageID, ct);
+        // atomic claim da drugi worker ne pošalje isti MessageID
+        var claimed = await _db.Database.ExecuteSqlInterpolatedAsync($@"
+            UPDATE BST_MESSAGES
+            SET Status = {(int)MessageStatus.Processing}
+            WHERE Message_ID = {message.MessageID}
+              AND Status = {(int)MessageStatus.Scheduled}", ct);
+
+        if (claimed == 0)
+            continue;
+
+        await _messageSender.SendMessageAsync(message.MessageID, ct);
     }
 }
 ```

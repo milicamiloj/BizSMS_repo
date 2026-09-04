@@ -21,8 +21,12 @@ app.UseCookieAuthentication(new CookieAuthenticationOptions
 
 ### After (.NET 10 `Program.cs`)
 ```csharp
-builder.Services.AddAuthentication(IdentityConstants.ApplicationScheme)
-    .AddCookie(IdentityConstants.ApplicationScheme, opt =>
+builder.Services
+    .AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<BizSmsDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.ConfigureApplicationCookie(opt =>
     {
         opt.LoginPath = "/Account/Login";
         opt.AccessDeniedPath = "/Error/Http403";
