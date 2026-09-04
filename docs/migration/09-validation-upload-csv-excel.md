@@ -1,0 +1,104 @@
+## Svrha
+Migracija upload i validacionog toka za CSV/Excel sa pravilima formata i prikazom grešaka.
+
+## Koraci migracije
+1. Izdvojiti parser/validator iz kontrolera (`GroupController`, `AdminManageController`).
+2. Podržati CSV i Excel, sa validacijom header-a.
+3. Validirati broj formatom `06XXXXXXXX` (tačno 10 cifara, po zahtevu).
+4. Vratiti listu grešaka po redu (`row`, `column`, `message`).
+
+## Before/After primer
+### Before (legacy regex)
+```csharp
+Match m = Regex.Match(numberFromFile, @"^(06\d{7,8})$", RegexOptions.IgnoreCase);
+if (!m.Success)
+{
+    badNumbers += numberFromFile + ", ";
+}
+```
+
+### After (stroga validacija 06XXXXXXXX)
+```csharp
+private static readonly Regex SrbMobileRegex = new(@"^06\d{8}$", RegexOptions.Compiled);
+
+public static bool IsValidMsisdn(string value)
+    => !string.IsNullOrWhiteSpace(value) && SrbMobileRegex.IsMatch(value.Trim());
+```
+
+## Code snippets
+### DTO za greške
+```csharp
+public sealed record UploadValidationError(int Row, string Field, string Message);
+
+public sealed record UploadValidationResult(
+    IReadOnlyList<ImportRowDto> ValidRows,
+    IReadOnlyList<UploadValidationError> Errors);
+```
+
+### CSV parser + header check
+```csharp
+public UploadValidationResult ParseCsv(Stream fileStream)
+{
+    using var reader = new StreamReader(fileStream, Encoding.UTF8, true);
+    var header = reader.ReadLine();
+    if (!string.Equals(header, "Number,Name", StringComparison.OrdinalIgnoreCase))
+    {
+        return new UploadValidationResult(Array.Empty<ImportRowDto>(),
+            new[] { new UploadValidationError(1, "Header", "Očekivan header: Number,Name") });
+    }
+
+    var valid = new List<ImportRowDto>();
+    var errors = new List<UploadValidationError>();
+    var row = 1;
+
+    while (!reader.EndOfStream)
+    {
+        row++;
+        var parts = (reader.ReadLine() ?? string.Empty).Split(',');
+        if (parts.Length < 2)
+        {
+            errors.Add(new UploadValidationError(row, "Row", "Nedostaju kolone Number/Name"));
+            continue;
+        }
+
+        var number = parts[0].Trim();
+        var name = parts[1].Trim();
+
+        if (!IsValidMsisdn(number))
+        {
+            errors.Add(new UploadValidationError(row, "Number", $"Neispravan format: {number}"));
+            continue;
+        }
+
+        valid.Add(new ImportRowDto(number, name));
+    }
+
+    return new UploadValidationResult(valid, errors);
+}
+```
+
+### Kontroler prikaz grešaka
+```csharp
+[HttpPost]
+[Authorize(Roles = "Administrator,BusinessUser")]
+public IActionResult Upload(IFormFile file)
+{
+    using var stream = file.OpenReadStream();
+    var result = _uploadService.ParseCsv(stream);
+
+    if (result.Errors.Count > 0)
+        return BadRequest(result.Errors);
+
+    return Ok(result.ValidRows);
+}
+```
+
+## Checklist za code review
+- [ ] Header validacija postoji.
+- [ ] Regex je usklađen sa zahtevom `06XXXXXXXX`.
+- [ ] Greške su granularne po redu i polju.
+- [ ] Duplikati i postojeći brojevi se tretiraju po poslovnom pravilu.
+
+## Najčešće greške i kako ih izbeći
+- Prihvatanje praznih redova kao validnih.
+- Korišćenje labavog regex-a koji propušta nedozvoljene formate.
