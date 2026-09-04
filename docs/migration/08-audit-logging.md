@@ -75,13 +75,24 @@ public sealed class AuditWriterWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var batch = new List<Log>(100);
         await foreach (var item in _channel.Reader.ReadAllAsync(stoppingToken))
         {
+            batch.Add(item);
+            if (batch.Count < 100) continue;
+
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
-            db.Logs.Add(item);
+            db.Logs.AddRange(batch);
             await db.SaveChangesAsync(stoppingToken);
+            batch.Clear();
         }
+
+        if (batch.Count == 0) return;
+        using var flushScope = _scopeFactory.CreateScope();
+        var flushDb = flushScope.ServiceProvider.GetRequiredService<BizSmsDbContext>();
+        flushDb.Logs.AddRange(batch);
+        await flushDb.SaveChangesAsync(stoppingToken);
     }
 }
 ```

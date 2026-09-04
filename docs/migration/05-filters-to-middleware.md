@@ -111,7 +111,7 @@ public sealed class AuditLoggingMiddleware
                 {
                     Path = ctx.Request.Path.Value,
                     CorrelationId = ctx.TraceIdentifier,
-                    Error = ex.Message
+                    ErrorType = ex.GetType().Name
                 });
 
             if (!_channel.Writer.TryWrite(evt))

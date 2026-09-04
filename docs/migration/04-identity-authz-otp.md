@@ -62,7 +62,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(opt =>
 })
 .AddEntityFrameworkStores<BizSmsDbContext>()
 .AddDefaultTokenProviders()
-.AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>(TokenOptions.DefaultPhoneProvider)
 .AddTokenProvider<PhoneNumberTokenProvider<ApplicationUser>>("SendActionOtp");
 ```
 
@@ -92,20 +91,20 @@ public sealed class ApplicationUser : IdentityUser
 
 ### OTP confirmation pre slanja/zakazivanja
 ```csharp
-public async Task<bool> ConfirmSendOtpAsync(ApplicationUser user, string otpCode)
+public async Task<bool> ConfirmSendOtpAsync(ApplicationUser user, string actionScope, string otpCode)
 {
     var ok = await _userManager.VerifyUserTokenAsync(user, "SendActionOtp", "send-confirm", otpCode);
 
     if (!ok) return false;
 
     // 2 minuta važenja potvrde akcije
-    _cache.Set($"send-otp:{user.Id}", true, TimeSpan.FromMinutes(2));
+    _cache.Set($"send-otp:{user.Id}:{actionScope}", true, TimeSpan.FromMinutes(2));
     return true;
 }
 
-public void EnsureSendOtpConfirmed(string userId)
+public void EnsureSendOtpConfirmed(string userId, string actionScope)
 {
-    if (!_cache.TryGetValue($"send-otp:{userId}", out bool ok) || !ok)
+    if (!_cache.TryGetValue($"send-otp:{userId}:{actionScope}", out bool ok) || !ok)
         throw new UnauthorizedAccessException("OTP potvrda je obavezna pre slanja/zakazivanja.");
 }
 

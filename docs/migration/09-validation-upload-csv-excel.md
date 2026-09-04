@@ -142,7 +142,20 @@ public IActionResult Upload(IFormFile file)
     if (!allowed.Contains(ext, StringComparer.OrdinalIgnoreCase))
         return BadRequest("Podržani formati su samo .csv i .xlsx");
 
+    var allowedContentTypes = new[]
+    {
+        "text/csv",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    };
+    if (!allowedContentTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
+        return BadRequest("Neispravan Content-Type za upload.");
+
     using var stream = file.OpenReadStream();
+    if (ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase) && !HasZipHeader(stream))
+        return BadRequest("Neispravan XLSX format.");
+    stream.Position = 0;
+
     var result = ext.Equals(".xlsx", StringComparison.OrdinalIgnoreCase)
         ? _uploadService.ParseExcel(stream)
         : _uploadService.ParseCsv(stream);
@@ -151,6 +164,13 @@ public IActionResult Upload(IFormFile file)
         return BadRequest(result.Errors);
 
     return Ok(result.ValidRows);
+}
+
+private static bool HasZipHeader(Stream stream)
+{
+    Span<byte> sig = stackalloc byte[4];
+    if (stream.Read(sig) != 4) return false;
+    return sig[0] == 0x50 && sig[1] == 0x4B && sig[2] == 0x03 && sig[3] == 0x04;
 }
 ```
 
