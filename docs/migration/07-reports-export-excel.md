@@ -49,7 +49,7 @@ public async Task<IActionResult> MonthlyReport(int clientId, CancellationToken c
 }
 ```
 
-### Excel (ClosedXML) + CSV fallback
+### Excel (EPPlus) + CSV fallback
 ```csharp
 public byte[] BuildExcelWithEpplus(IEnumerable<SentSmsReportDto> rows)
 {
@@ -73,9 +73,9 @@ public byte[] BuildExcelWithEpplus(IEnumerable<SentSmsReportDto> rows)
     return p.GetAsByteArray();
 }
 
-public IActionResult ExportExcel(int clientId, CancellationToken ct)
+public async Task<IActionResult> ExportExcel(int clientId, CancellationToken ct)
 {
-    var rows = _reportService.GetMonthlyReportAsync(clientId, ct).GetAwaiter().GetResult();
+    var rows = await _reportService.GetMonthlyReportAsync(clientId, ct);
     var bytes = BuildExcelWithEpplus(rows);
     return File(bytes,
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

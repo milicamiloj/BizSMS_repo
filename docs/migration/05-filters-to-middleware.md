@@ -56,33 +56,54 @@ public sealed class CorrelationIdMiddleware
 
 ### Audit logging middleware
 ```csharp
+public sealed record AuditEnvelope(string EventType, object Payload);
+
 public sealed class AuditLoggingMiddleware
 {
     private readonly RequestDelegate _next;
+    private readonly Channel<AuditEnvelope> _channel;
 
-    public AuditLoggingMiddleware(RequestDelegate next) => _next = next;
+    public AuditLoggingMiddleware(RequestDelegate next, Channel<AuditEnvelope> channel)
+    {
+        _next = next;
+        _channel = channel;
+    }
 
-    public async Task Invoke(HttpContext ctx, IAuditService audit)
+    public async Task Invoke(HttpContext ctx)
     {
         var started = DateTime.UtcNow;
         try
         {
             await _next(ctx);
-            await audit.LogAsync("HTTP_REQUEST", new {
-                Path = ctx.Request.Path.Value,
-                Method = ctx.Request.Method,
-                Status = ctx.Response.StatusCode,
-                CorrelationId = ctx.TraceIdentifier,
-                DurationMs = (DateTime.UtcNow - started).TotalMilliseconds
-            });
+
+            var isCriticalRoute = ctx.Request.Path.StartsWithSegments("/api/sms") ||
+                                  ctx.Request.Path.StartsWithSegments("/admin") ||
+                                  ctx.Response.StatusCode >= 400;
+
+            if (isCriticalRoute)
+            {
+                await _channel.Writer.WriteAsync(new AuditEnvelope(
+                    "HTTP_REQUEST",
+                    new
+                    {
+                        Path = ctx.Request.Path.Value,
+                        Method = ctx.Request.Method,
+                        Status = ctx.Response.StatusCode,
+                        CorrelationId = ctx.TraceIdentifier,
+                        DurationMs = (DateTime.UtcNow - started).TotalMilliseconds
+                    }));
+            }
         }
         catch (Exception ex)
         {
-            await audit.LogAsync("HTTP_ERROR", new {
-                Path = ctx.Request.Path.Value,
-                CorrelationId = ctx.TraceIdentifier,
-                Error = ex.Message
-            });
+            await _channel.Writer.WriteAsync(new AuditEnvelope(
+                "HTTP_ERROR",
+                new
+                {
+                    Path = ctx.Request.Path.Value,
+                    CorrelationId = ctx.TraceIdentifier,
+                    Error = ex.Message
+                }));
             throw;
         }
     }
@@ -91,6 +112,12 @@ public sealed class AuditLoggingMiddleware
 
 ### Registracija
 ```csharp
+builder.Services.AddSingleton(Channel.CreateBounded<AuditEnvelope>(new BoundedChannelOptions(5000)
+{
+    SingleReader = true,
+    SingleWriter = false
+}));
+
 app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseMiddleware<AuditLoggingMiddleware>();
 ```

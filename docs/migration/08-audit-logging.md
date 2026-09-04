@@ -57,7 +57,11 @@ public sealed class AuditService : IAuditService
 
 ### Primeri događaja
 ```csharp
-await _audit.LogAsync("LOGIN_ATTEMPT", new { Username = model.Username, Success = success });
+using System.Security.Cryptography;
+using System.Text;
+
+var userHash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(model.Username)));
+await _audit.LogAsync("LOGIN_ATTEMPT", new { UsernameHash = userHash, Success = success });
 await _audit.LogAsync("OTP_SEND_CONFIRM", new { UserId = user.Id, Action = "SendOrSchedule" });
 await _audit.LogAsync("SCHEDULE_CANCEL", new { MessageId = id, CancelBy = userId });
 ```

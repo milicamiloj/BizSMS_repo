@@ -183,7 +183,12 @@ public async Task<IActionResult> RunDelta([FromBody] RunDeltaRequest request, Ca
 public async Task ProcessScheduledMessagesAsync(CancellationToken ct)
 {
     var due = await _db.ScheduledSms
-        .Where(s => s.CancelDate == null && s.InsertDate <= DateTime.UtcNow)
+        .Where(s => s.CancelDate == null)
+        .Join(_db.Message.Where(m => m.Status == (int)MessageStatus.Scheduled &&
+                                     m.SendDate <= DateTime.UtcNow),
+              s => s.MessageID,
+              m => m.MessageID,
+              (s, m) => s)
         .ToListAsync(ct);
 
     foreach (var item in due)

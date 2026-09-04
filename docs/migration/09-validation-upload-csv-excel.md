@@ -37,10 +37,19 @@ public sealed record UploadValidationResult(
 
 ### CSV parser + header check
 ```csharp
+using Microsoft.VisualBasic.FileIO;
+
 public UploadValidationResult ParseCsv(Stream fileStream)
 {
-    using var reader = new StreamReader(fileStream, Encoding.UTF8, true);
-    var header = reader.ReadLine();
+    using var parser = new TextFieldParser(fileStream, Encoding.UTF8)
+    {
+        TextFieldType = FieldType.Delimited,
+        HasFieldsEnclosedInQuotes = true
+    };
+    parser.SetDelimiters(",");
+
+    var headerFields = parser.ReadFields();
+    var header = string.Join(",", headerFields ?? Array.Empty<string>());
     if (!string.Equals(header, "Number,Name", StringComparison.OrdinalIgnoreCase))
     {
         return new UploadValidationResult(Array.Empty<ImportRowDto>(),
@@ -51,10 +60,10 @@ public UploadValidationResult ParseCsv(Stream fileStream)
     var errors = new List<UploadValidationError>();
     var row = 1;
 
-    while (!reader.EndOfStream)
+    while (!parser.EndOfData)
     {
         row++;
-        var parts = (reader.ReadLine() ?? string.Empty).Split(',');
+        var parts = parser.ReadFields() ?? Array.Empty<string>();
         if (parts.Length < 2)
         {
             errors.Add(new UploadValidationError(row, "Row", "Nedostaju kolone Number/Name"));
