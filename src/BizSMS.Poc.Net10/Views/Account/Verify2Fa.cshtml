@@ -1,0 +1,17 @@
+@model BizSMS.Poc.Net10.Models.ViewModels.Verify2FaViewModel
+@{
+    ViewData["Title"] = "Verify 2FA";
+}
+
+<h2>OTP verifikacija prijave</h2>
+
+<form asp-action="Verify2Fa" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="Code" class="form-label">OTP kod</label>
+        <input asp-for="Code" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Potvrdi</button>
+</form>
+
+<div asp-validation-summary="All" class="text-danger mt-3"></div>

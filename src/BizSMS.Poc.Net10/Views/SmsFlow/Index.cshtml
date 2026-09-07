@@ -1,0 +1,25 @@
+@model BizSMS.Poc.Net10.Models.ViewModels.RequestSendOtpViewModel
+@{
+    ViewData["Title"] = "Send/Schedule";
+}
+
+<h2>PoC Send/Schedule + OTP potvrda</h2>
+
+<form asp-action="RequestOtp" method="post">
+    @Html.AntiForgeryToken()
+    <div class="mb-3">
+        <label asp-for="NumberId" class="form-label">Number ID</label>
+        <input asp-for="NumberId" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label asp-for="MessageText" class="form-label">Poruka</label>
+        <textarea asp-for="MessageText" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+        <label asp-for="ScheduledAtUtc" class="form-label">ScheduledAtUtc (opciono)</label>
+        <input asp-for="ScheduledAtUtc" class="form-control" type="datetime-local" />
+    </div>
+    <button type="submit" class="btn btn-primary">Pošalji OTP za potvrdu</button>
+</form>
+
+<div asp-validation-summary="All" class="text-danger mt-3"></div>

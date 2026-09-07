@@ -1,0 +1,18 @@
+@model BizSMS.Poc.Net10.Models.ViewModels.ConfirmSendOtpViewModel
+@{
+    ViewData["Title"] = "Potvrda OTP";
+}
+
+<h2>Potvrdi OTP pre slanja/zakazivanja</h2>
+
+<form asp-action="ConfirmOtp" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="ScopeId" />
+    <div class="mb-3">
+        <label asp-for="OtpCode" class="form-label">OTP kod</label>
+        <input asp-for="OtpCode" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Potvrdi i izvrši</button>
+</form>
+
+<div asp-validation-summary="All" class="text-danger mt-3"></div>
