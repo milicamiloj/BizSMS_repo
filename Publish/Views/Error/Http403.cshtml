@@ -1,0 +1,23 @@
+﻿
+@{
+    ViewBag.Title = @Resources.Resources.Unauthorized;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@Resources.Resources.Unauthorized</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+    <div class="jumbotron">
+        <div class="container">
+            <h3 class="pull-right">@Resources.Resources.Error 403</h3>
+            <h1>@Resources.Resources.Hello,</h1> <h2> @Resources.Resources.UnauthorizedMessage :(</h2>
+            <h3><a href="/Home/Index">@Resources.Resources.BackToHomePage</a></h3>
+        </div>
+    </div>
+</body>
+</html>

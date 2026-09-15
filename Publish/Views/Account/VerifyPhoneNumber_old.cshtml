@@ -1,0 +1,102 @@
+﻿@model BizSMS.Models.VerifyPhoneNumberViewModel
+@{
+    ViewBag.Title = Resources.Resources.VerifyOTP; //"Verify Phone Number";
+}
+
+<h2>@ViewBag.Title</h2>
+
+@using (Html.BeginForm("VerifyPhoneNumber", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Provider)
+    <h4></h4>
+    <h5>@ViewBag.Status</h5>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group">
+        @Html.LabelFor(m => m.Code, Resources.Resources.Code, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            @*<input type="submit" class="btn btn-default" value="@Resources.Resources.Confirm" />
+                <input type="submit" class="btn btn-default" value="@Resources.Resources.PonoviKod" />*@
+            <button type="submit" class="btn btn-default">@Resources.Resources.Confirm</button>
+            @*<button type="submit" id="resendBtn" name="action" value="resend" class="btn btn-default" formnovalidate>@Resources.Resources.PonoviKod</button>*@
+            @*<span id="resendTimer" style="margin-left:10px;"></span>*@
+        </div>
+    </div>
+}
+@using (Html.BeginForm("ResendCode", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.UserId)
+    @Html.HiddenFor(m => m.Provider)
+    <h4></h4>
+    <h5>@ViewBag.Status</h5>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @*<div class="form-group">
+        @Html.LabelFor(m => m.Code, Resources.Resources.Code, new { @class = "col-md-2 control-label" })
+        <div class="col-md-10">
+            @Html.TextBoxFor(m => m.Code, new { @class = "form-control" })
+        </div>
+    </div>*@
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            @*<input type="submit" class="btn btn-default" value="@Resources.Resources.Confirm" />
+            <input type="submit" class="btn btn-default" value="@Resources.Resources.PonoviKod" />
+        <button type="submit" class="btn btn-default">@Resources.Resources.Confirm</button>*@
+            <button type="submit" id="resendBtn" class="btn btn-default" formnovalidate>@Resources.Resources.PonoviKod</button>
+            <span id="resendTimer" style="margin-left:10px;"></span>
+        </div>
+    </div>
+}
+
+@*@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")*@
+    <script>
+        $(document).ready(function () {
+
+            var sentAt = '@ViewBag.PhoneCodeSentAt';
+            if (!sentAt) return;
+
+            var sentTime = new Date(sentAt);
+            var now = new Date();
+
+            var diffSeconds = Math.floor((now - sentTime) / 1000);
+            var remaining = 30 - diffSeconds;
+
+            if (remaining > 0) {
+                disableResend(remaining);
+            }
+
+            function disableResend(seconds) {
+                var btn = $("#resendBtn");
+                var timer = $("#resendTimer");
+
+                btn.prop("disabled", true);
+
+                var interval = setInterval(function () {
+                    timer.text(" (" + seconds + "s)");
+
+                    seconds--;
+
+                    if (seconds < 0) {
+                        clearInterval(interval);
+                        btn.prop("disabled", false);
+                        timer.text("");
+                    }
+                }, 1000);
+            }
+        });
+        window.addEventListener("pageshow", function (event) {
+            if (event.persisted || performance.getEntriesByType("navigation")[0].type === "back_forward") {
+                window.location.reload();
+            }
+        });
+    </script>
+@*}*@

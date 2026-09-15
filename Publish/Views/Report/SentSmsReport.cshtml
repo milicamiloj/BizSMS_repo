@@ -1,0 +1,133 @@
+﻿@model IEnumerable<BizSMS.Models.SentMessageReportViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.MonthReport;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2 style="padding-bottom:15px;">@ViewBag.Title @Resources.Resources.For.ToLower() @ViewBag.ClientName</h2>
+
+
+<table class="table" id="reportTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.SendMonthName)
+            </th>
+            @*<th>
+            @Html.DisplayNameFor(model => model.NumberTypeName)
+        </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfSentSMSes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfDeliveredMessages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOfDeliveredMessagesLength)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cost)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SendMonthName)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.NumberTypeName)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfSentSMSes)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDeliveredMessages)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfDeliveredMessagesLength)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Cost)
+                </td>
+                <td>
+                    @Html.ActionLink(Resources.Resources.Detail, "SentSmsDetail", new { clientId = ViewBag.ClientId,  year = item.SendYear, month = item.SendMonth, @*numberType = item.NumberTypeName,*@ charged = item.Charged }) 
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+<div>
+    @Html.ActionLink(Resources.Resources.Back, "SentSmsClientList")
+</div>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+    @Scripts.Render("~/bundles/jquery-datatables-buttons")
+
+    <script>
+        $(document).ready(function () {
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 4 ?
+                                '\u200C' + data :
+                                data;
+                        }
+                    }
+                }
+            };
+            var table_link = $("#reportTable");
+            var table = table_link.DataTable({
+                "aaSorting": [],
+                dom: '<"pull-left"f>r<"pull-right"B>tip',
+                buttons: [
+                    $.extend(true, {}, buttonCommon, {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        }
+                    }),
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        }
+                    }
+                ],
+                stateSave: true,
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                "bSortClasses": false,
+                "aoColumns": [
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+        });
+    </script>    
+}

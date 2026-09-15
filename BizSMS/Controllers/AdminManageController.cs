@@ -115,6 +115,7 @@ namespace BizSMS.Controllers
                     };
 
                     db.Client.Add(Client);
+                    db.SaveChanges();
                     logger.Info("Create new user for client: " + model.ClientName);
                     ApplicationUser user = new ApplicationUser()
                     {
@@ -125,6 +126,16 @@ namespace BizSMS.Controllers
                     };
 
                     var result = await UserManager.CreateAsync(user, model.Password);
+                    if (!result.Succeeded)
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            logger.Error("User creation failed: " + error);
+                            ModelState.AddModelError("", error);
+                        }
+                        // opciono: rollback klijenta ako ne zelis orphan klijenta
+                        return View(model);
+                    }
                     logger.Info("User created with username: " + user.UserName);
                     var lockout = await UserManager.SetLockoutEnabledAsync(user.Id, true);
                     var roles = await UserManager.AddToRoleAsync(user.Id, "Client");

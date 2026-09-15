@@ -1,0 +1,226 @@
+﻿@model IEnumerable<BizSMS.Models.SentSMSJobReportViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.Report;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table" id="reportTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Alphanumeric)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SendDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.VPN)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InMTS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OutMTS)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Message)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CanceledBy)
+            </th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.User)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Alphanumeric)
+            </td>
+            <td id="sendDate">
+                @Html.DisplayFor(modelItem => item.SendDate)
+            </td>
+            <td id="status">
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.VPN)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InMTS)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OutMTS)
+            </td>
+            <td style="max-width: 400px; height:auto; word-break: break-all; overflow-wrap: break-word;">
+                @Html.DisplayFor(modelItem => item.Message)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CanceledBy)
+            </td>
+            <td>
+                @if (item.Status == Resources.Resources.Scheduled)
+                {
+                    <a href="#" id="cancelSending"
+                       data-yes="@Resources.Resources.Yes"
+                       data-no="@Resources.Resources.No"
+                       data-question="@Resources.Resources.QuestionCancelScheduledSMS"
+                       data-message-id="@item.ID">@Resources.Resources.CancelSending</a>
+                }
+            </td>
+            <td>
+                @Html.ActionLink(Resources.Resources.Details, "SentSMSJobDetailReport", new { id = item.ID })
+            </td>
+        </tr>
+        }
+    </tbody>
+</table>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+    @Scripts.Render("~/bundles/jquery-datatables-buttons")
+
+<script>
+        $(document).ready(function () {
+            var buttonCommon = {
+                exportOptions: {
+                    format: {
+                        body: function (data, row, column, node) {
+                            return column === 2 ?
+                                '\u200C' + data :
+                                data;
+                        }
+                    }
+                }
+            };
+            var table_link = $("#reportTable");
+            var table = table_link.DataTable({
+                dom: '<"pull-left"f>r<"pull-right"B>tip',
+                "order": [[ 0, "desc" ]],
+                buttons: [
+                    $.extend(true, {}, buttonCommon, {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        }
+                    }),
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+                        }
+                    }
+                ],
+                stateSave: true,
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                "bSortClasses": false,
+                "aoColumns": [
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                 null,
+                {
+                    "bSearchable": false,
+                    "bSortable": false
+                },
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+        });
+        $(document).on("click", "#cancelSending", function (e) {
+            var link = $(e.target);
+            bootbox.confirm({
+                message: link.attr("data-question"),
+                buttons: {
+                    confirm: {
+                        label: link.attr("data-yes"),
+                        className: 'btn-primary'
+                    },
+                    cancel: {
+                        label: link.attr("data-no"),
+                        className: 'btn-default'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        var messageId = $("#cancelSending").attr("data-message-id");
+                        $.ajax({
+                            url: "/api/home/GetMessageStatus/" + messageId,
+                            method: "GET"
+                        })
+                            .done(function (data) {
+                                if (data === 4) {
+                                    $(function () {
+                                        bootbox.alert({
+                                            message: "@Resources.Resources.MessageAlreadySent",
+                                            callback: function () { location.reload(true); }
+                                        })
+                                    });
+                                } else {
+                                    $.ajax({
+                                        url: "/api/home/cancelscheduledsms/" + messageId,
+                                        method: "POST"
+                                    })
+                                        .done(function () {
+                                            location.reload(true);
+                                        })
+                                        .fail(function () {
+                                            bootbox.alert({
+                                                message: "@Resources.Resources.ErrorContactAdmin",
+                                                callback: function () { location.reload(true); }
+                                            })
+                                        });
+                                }
+                            })
+                            .fail(function (data) {
+                                bootbox.alert({
+                                    message: "@Resources.Resources.ErrorContactAdmin",
+                                    callback: function () { location.reload(true); }
+                                })
+                            });
+                    }
+                }
+            });
+        });
+</script>
+}

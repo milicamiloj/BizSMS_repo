@@ -1,0 +1,117 @@
+﻿@model IEnumerable<BizSMS.Models.MessageCostListViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.MessageCost;
+}
+
+<h2>@Resources.Resources.MessageCost</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6"></div>
+        <div class="col-md-5">
+            <span class="pull-right">@Html.ActionLink(Resources.Resources.AddMessageCost, "CreateMessageCost")</span>
+        </div>
+    </div>
+</div>
+
+@foreach (var numType in Model)
+{
+    <h4 class="bg-danger text-danger">
+        @if (numType.NumberType == "U MTS")
+        {
+            @Resources.Resources.InMTS;
+        }
+        else if (numType.NumberType == "VAN MTS")
+        {
+            @Resources.Resources.NotInMTS;
+        }
+        else
+        {
+            @Resources.Resources.VPN;
+        }
+    </h4>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Resources.Resources.NumberOfMessagesFrom
+            </th>
+            <th>
+                @Resources.Resources.NumberOfMessagesTo
+            </th>
+            <th>
+                @Resources.Resources.Price
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in numType.MessageCosts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfMessagesFrom)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NumberOfMessagesTo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
+                </td>
+                <td>
+                    @Html.ActionLink(Resources.Resources.Edit, "EditMessageCost", new { id = item.MessageCostID }) |
+                    <a href="#" class="js-delete-cost"
+                       data-yes="@Resources.Resources.Yes"
+                       data-no="@Resources.Resources.No"
+                       data-question="@Resources.Resources.QuestionDeleteMessageCost"
+                       data-cost-id="@item.MessageCostID">
+                        @Resources.Resources.Delete
+                    </a>
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@Scripts.Render("~/bundles/jquery")
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $(".js-delete-cost").click(function (e) {
+                var link = $(e.target);
+                bootbox.confirm({
+                    message: link.attr("data-question"),
+                    buttons: {
+                        confirm: {
+                            label: link.attr("data-yes"),
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: link.attr("data-no"),
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+
+                            $.ajax({
+                                url: "/api/clientmanage/deletecost/" + link.attr("data-cost-id"),
+                                method: "DELETE"
+                            })
+                            .done(function () {
+                                link.parents("tr").fadeOut(function () {
+                                    $(this).remove();
+                                });
+                            })
+                            .fail(function (data) {
+                                bootbox.alert(data, function () { });
+                            });
+                        }
+                    }
+                });
+            });
+        });
+
+</script>
+}

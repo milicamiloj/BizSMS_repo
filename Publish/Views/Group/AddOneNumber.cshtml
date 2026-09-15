@@ -1,0 +1,108 @@
+﻿@model BizSMS.Models.UserAddOneNumberViewModel
+
+@{
+    ViewBag.Title = Resources.Resources.AddNumber;
+
+}
+
+    <h2>@Resources.Resources.AddNumber @ViewBag.GroupName</h2>
+@if (!String.IsNullOrEmpty(ViewBag.SendDeniedNumber) || !String.IsNullOrEmpty(ViewBag.BadNumbers) || !String.IsNullOrEmpty(ViewBag.BadGroup) || !String.IsNullOrEmpty(ViewBag.Message))
+{
+<div class="alert alert-danger fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+    @if (!String.IsNullOrEmpty(ViewBag.SendDeniedNumber))
+    {
+        <p>
+            @Resources.Resources.SendDeniedNumbers @ViewBag.SendDeniedNumber
+        </p>
+    }
+
+    @if (!String.IsNullOrEmpty(ViewBag.BadNumbers))
+    {
+        <p>
+            @Resources.Resources.BadFormatNumbers @ViewBag.BadNumbers
+        </p>
+    }
+
+    @if (!String.IsNullOrEmpty(ViewBag.BadGroup))
+    {
+        <p>
+            @Resources.Resources.BadGroupNumbers @ViewBag.BadGroup
+        </p>
+    }
+
+    @if (!String.IsNullOrEmpty(ViewBag.Message))
+    {
+<p>
+    @Resources.Resources.ErrorTryLaterContactAdmin @ViewBag.Message
+</p>
+    }
+</div>
+    <hr />
+}
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+<div class="form-horizontal">
+    <hr />
+    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    @Html.HiddenFor(model => model.GroupID)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Number, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.Number, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.Number, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NameNumber, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.NameNumber, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.NameNumber, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-md-10">
+            <input type="submit" value="@Resources.Resources.Add" id="insertNumberButton" disabled="disabled" class="btn btn-default" />
+        </div>
+    </div>
+</div>
+}
+
+<div>
+    @Html.ActionLink(Resources.Resources.BackToList, "Numbers", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: null)
+</div>
+
+@section scripts
+{
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+
+            $('input#Number').on("input", function () {
+                $("#insertNumberButton")
+                    .removeAttr("disabled");
+            });
+
+            $("#Number").on("keyup", function () {
+                if (!$('#Number').val()) {
+                    $("#insertNumberButton").attr("disabled", "disabled");
+                }
+            });
+
+            //$("#insertNumberButton").on("click", function () {
+            //    var numberToInsert = $('input#Number').val();
+            //    var numberFormat = new RegExp('^(06\d{7,8})$');
+            //    if (!numberFormat.test(numberToInsert)) {
+            //        alert("Please input a number in format: 06xxxxxxx");
+            //    }
+            //})
+        })
+    </script>
+}

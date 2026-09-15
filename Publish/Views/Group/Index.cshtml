@@ -1,0 +1,119 @@
+﻿@model IEnumerable<BizSMS.Models.UserManageGroupsViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.Groups;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.Groups</h2>
+
+<p>
+    @Html.ActionLink(Resources.Resources.CreateGroup, "CreateGroup", "Group", null, htmlAttributes: new { @class = "pull-right" })
+</p>
+<table class="table" id="groupTable" data-language="@culture">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalOfNumbers)
+            </th>
+            <th></th>
+    </thead>
+    </tr>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalOfNumbers)
+                </td>
+                <td>
+                    @Html.ActionLink(Resources.Resources.ListNumbers, "Numbers", new { id = item.GroupID })
+                    @if (!item.isDefault)
+                    {
+                        @: |
+                        @Html.ActionLink(Resources.Resources.Edit, "EditGroup", new { id = item.GroupID }); @:|
+                        <a href="#" class="js-delete-group"
+                            data-yes="@Resources.Resources.Yes"
+                            data-no="@Resources.Resources.No"
+                            data-question="@Resources.Resources.QuestionDeleteGroup"
+                            data-group-id="@item.GroupID">
+                            @Resources.Resources.Delete
+                        </a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section scripts {
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script>
+        $(document).ready(function () {
+            var table_link = $("#groupTable");
+            var table = table_link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + table_link.attr("data-language") + ".json"
+                },
+                stateSave: true,
+                "aoColumns": [
+                 null,
+                 null,
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                }
+            });
+            $(".js-delete-group").click(function (e) {
+                var link = $(e.target);
+                bootbox.confirm({
+                    message: link.attr("data-question"),
+                    buttons: {
+                        confirm: {
+                            label: link.attr("data-yes"),
+                            className: 'btn-primary'
+                        },
+                        cancel: {
+                            label: link.attr("data-no"),
+                            className: 'btn-default'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: "/api/user/deletegroup/" + link.attr("data-group-id"),
+                                method: "DELETE"
+                            })
+                            .done(function () {
+                                link.parents("tr").fadeOut(function () {
+                                    $(this).remove();
+                                });
+                            })
+                            .fail(function (data) {
+                                alert("Error:");
+                            });
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,173 @@
+﻿@{
+    ViewBag.Title = Resources.Resources.CheckNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+    var groupId = ViewContext.RouteData.Values["id"];
+
+}
+<h1>@ViewBag.Title</h1>
+<h2>@Resources.Resources.Group: @ViewBag.GroupName</h2>
+
+@if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers) || !String.IsNullOrEmpty(ViewBag.BadNumbers) 
+    || !String.IsNullOrEmpty(ViewBag.BadGroup) || !String.IsNullOrEmpty(ViewBag.Duplicates)
+    || !String.IsNullOrEmpty(ViewBag.SendDeniedNumbers)
+    || !String.IsNullOrEmpty(ViewBag.DeactivatedNumbers))
+{
+<div class="alert alert-danger fade in">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+
+    @if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers))
+    {
+        <p>
+            @Resources.Resources.ExistingNumbers @ViewBag.ExistingNumbers
+        </p>
+    }
+
+    @if (!String.IsNullOrEmpty(ViewBag.BadNumbers))
+    {
+        <p>
+            @Resources.Resources.BadFormatNumbers @ViewBag.BadNumbers
+        </p>
+    }
+
+    @if (!String.IsNullOrEmpty(ViewBag.BadGroup))
+    {
+        <p>
+            @Resources.Resources.BadGroupNumbers @ViewBag.BadGroup
+        </p>
+    }
+    @if (!String.IsNullOrEmpty(ViewBag.Duplicates))
+    {
+        <p>
+            @Resources.Resources.DuplicateNumbers @ViewBag.Duplicates
+        </p>
+    }
+    @if (!String.IsNullOrEmpty(ViewBag.SendDeniedNumbers))
+    {
+        <p>
+            @Resources.Resources.SendDeniedNumbers @ViewBag.SendDeniedNumbers
+        </p>
+    }
+</div>
+    <hr />
+}
+
+@using (Html.BeginForm("ConfirmUploadNumbers", "Group",
+                    routeValues: new { id = ViewContext.RouteData.Values["id"] },
+                    method: FormMethod.Post, htmlAttributes: null))
+{
+    @Html.AntiForgeryToken()
+    <h3>@Resources.Resources.NumbersToBeUploaded</h3>
+
+    <table class="table" id="numbersTable" data-language="@culture">
+        <thead>
+            <tr>
+                <th>
+                    @Resources.Resources.Number
+                </th>
+                <th>
+                    @Resources.Resources.Name
+                </th>
+                <th>
+                    @Resources.Resources.NumberType
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <div class="form-group @*pull-right*@" align="center">
+        <div class="col-md-12">
+            <input type="submit" value="@Resources.Resources.ConfirmUploadNumbers" id="submitNumbers" data-fail-default="@Resources.Resources.UploadTableNumbersFail" class="btn btn-default" />
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink(Resources.Resources.Back, "UploadNumbers", routeValues: new { id = ViewContext.RouteData.Values["id"] }, htmlAttributes: null)
+</div>
+
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+
+            //Ajax poziv se radi u okviru DataTable, odkomentarisati red u Controllers/Api/Group/ConfirmUploadNumbers
+            @*var link = $("#numbersTable");
+
+            link.DataTable({
+                dom: 'rtip',
+                "ajax": "/api/group/ConfirmUploadNumbers/@groupId",
+                columns: [
+                    { "data": "Number" },
+                    { "data": "Name" },
+                    { "data": "NumberType" }
+                ],
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + link.attr("data-language") + ".json"
+                },
+                "bSort": false,
+                "initComplete": function (settings, json) {
+
+                    if (json.data.length <= 0) {
+                        $("#submitNumbers")
+                            .addClass("disabled")
+                            .attr("disabled", "disabled");
+                    }
+                }
+            });*@
+
+            //prvo se radi Ajax poziv pa se podaci prosledjuju u DataTable
+            $.ajax({
+                dom: 'rtip',
+                url: "/api/group/ConfirmUploadNumbers/@groupId",
+                method: "GET"
+            })
+                .done(function (data) {
+
+                    $("#numbersTable").DataTable({
+                        dom: 'rtip',
+                        data: data,
+                        columns: [
+                            {
+                                "data": "Number"
+                                //"title": "Numbers"
+                            },
+                            {
+                                "data": "NumberType"
+                                //"title": "Numbers"
+                            },
+                            {
+                                "data": "Name"
+                                //"title": "Numbers"
+                            },
+                        ],
+                        oLanguage: {
+                            "sUrl": "/Content/localization/" + "dt-" + $("#numbersTable").attr("data-language") + ".json"
+                        },
+                        "bSort": false
+                    });
+
+                     if (data.length <= 0) {
+                        $("#submitNumbers")
+                            .addClass("disabled")
+                            .attr("disabled", "disabled");
+                     }
+
+
+                })
+                .fail(function (data) {
+                    bootbox.alert($("#submitNumbers")
+                        .attr("data-fail-default"));
+                    $("#submitNumbers")
+                            .addClass("disabled")
+                            .attr("disabled", "disabled");
+                });
+        });
+    </script>
+}

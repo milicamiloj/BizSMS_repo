@@ -1,0 +1,84 @@
+﻿@model IEnumerable<BizSMS.Models.AdminManageGroupsViewModel>
+
+@{
+    ViewBag.Title = Resources.Resources.ClientNumbers;
+    var culture = System.Threading.Thread.CurrentThread.CurrentUICulture.Name.ToLowerInvariant();
+}
+
+<h2>@Resources.Resources.ClientNumbers</h2>
+
+@*Administratori nemaju potrebe da rade sa grupama*@
+@*<p>
+    @Html.ActionLink(Resources.Resources.CreateGroup, "CreateGroup", null, htmlAttributes: new { @class="pull-right" })
+</p>*@
+<table class="table" id="groupTable" data-language="@culture" data-search="@ViewBag.search_term">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ClientName)
+            </th>
+            @*<th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.TotalOfNumbers)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClientName)
+                </td>
+                @*<td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>*@
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalOfNumbers)
+                </td>
+                <td>
+                    @*@Html.ActionLink(Resources.Resources.Edit, "EditGroup", new { id = item.GroupID }) |*@
+                    @Html.ActionLink(Resources.Resources.ListNumbers, "Numbers", new { id=item.ClientID }) 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section styles {
+    @Styles.Render("~/Content/datatable")
+}
+
+@section Scripts{
+    @Scripts.Render("~/bundles/jquery-datatables")
+
+    <script type="text/javascript" charset="utf-8">
+        $(document).ready(function () {
+            var link = $("#groupTable");
+            var table = link.DataTable({
+                dom: '<"pull-left"f>rtip',
+                oLanguage: {
+                    "sUrl": "/Content/localization/" + "dt-" + link.attr("data-language") + ".json"
+                },
+                stateSave: true,
+                "aoColumns": [
+                 null,
+                 null,
+                 {
+                     "bSearchable": false,
+                     "bSortable": false
+                 }
+                ],
+                "iDisplayLength": 10,
+                "info": false,
+                "initComplete": function (settings, json) {
+                    $('div.dataTables_filter input').focus().select();
+                },
+                "order": [[0, "asc"]]
+            });
+        });
+    </script>
+}
