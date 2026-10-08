@@ -1,0 +1,37 @@
+@{
+    ViewData["Title"] = "Početna strana";
+}
+
+@if (ViewBag.StatusMessage != null && ViewBag.StatusMessage != "")
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @ViewBag.StatusMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+    </div>
+}
+
+<div class="jumbotron text-center py-4">
+    <h1 class="display-4">BizSMS</h1>
+    <p class="lead">Šaljite SMS poruke na brojeve telefona unutar i izvan svoje Biznet grupe</p>
+</div>
+
+@if (!User.IsInRole("Administrator"))
+{
+    <div class="row g-3 justify-content-center">
+        <div class="col-6 col-md-2">
+            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Home" asp-action="SendSMS">Pošalji SMS</a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Group" asp-action="Index">Grupe</a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Group" asp-action="ListNumbers">Brojevi</a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Home" asp-action="SentSmsReport">Mesečni izveštaj</a>
+        </div>
+        <div class="col-6 col-md-2">
+            <a class="btn btn-outline-primary w-100 py-3" asp-controller="Home" asp-action="SentSMSJobReport">Izveštaj o poslatim SMS porukama</a>
+        </div>
+    </div>
+}

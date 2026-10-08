@@ -1,0 +1,53 @@
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Dobrodošli @User.Identity.Name
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                <li>
+                    <a class="dropdown-item" asp-controller="Manage" asp-action="ChangePassword">Izmeni lozinku</a>
+                </li>
+                @* Paritet sa legacy _LoginPartial: admin management linkovi stoje u padajućem meniju,
+                   a admin ima i svoje Uputstvo (AdminManage/DownloadManual), ne klijentsko (Home/DownloadManual). *@
+                @if (User.IsInRole("Administrator"))
+                {
+                    <li><hr class="dropdown-divider" /></li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="AdminManage" asp-action="Groups">Brojevi klijenata</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="AdminManage" asp-action="MessageCost">Cene poruka</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="AdminManage" asp-action="ManageClients">Upravljaj klijentima</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="AdminManage" asp-action="DownloadManual" target="_blank">Uputstvo</a>
+                    </li>
+                }
+                @if (User.IsInRole("Client") || User.IsInRole("User"))
+                {
+                    <li>
+                        <a class="dropdown-item" asp-controller="Home" asp-action="DownloadManual" target="_blank">Uputstvo</a>
+                    </li>
+                }
+                <li><hr class="dropdown-divider" /></li>
+                <li>
+                    <form asp-controller="Account" asp-action="Logoff" method="post" id="logoutForm">
+                        <button type="submit" class="dropdown-item">Odjava</button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    </ul>
+}
+else
+{
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" asp-controller="Account" asp-action="Login">Prijava</a>
+        </li>
+    </ul>
+}

@@ -1,0 +1,105 @@
+@{
+    ViewData["Title"] = "Provera brojeva";
+    var groupId = ViewContext.RouteData.Values["id"];
+}
+
+<h1>Provera brojeva</h1>
+<h2>Grupa: @ViewBag.GroupName</h2>
+
+@if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers) || !String.IsNullOrEmpty(ViewBag.BadNumbers)
+   || !String.IsNullOrEmpty(ViewBag.BadGroup) || !String.IsNullOrEmpty(ViewBag.Duplicates)
+   || !String.IsNullOrEmpty(ViewBag.SendDeniedNumbers))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Zatvori"></button>
+
+        @if (!String.IsNullOrEmpty(ViewBag.ExistingNumbers))
+        {
+            <p>Sledeći broj/brojevi već postoje u ovoj grupi: @ViewBag.ExistingNumbers</p>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.BadNumbers))
+        {
+            <p>Brojevi lošeg fomata: @ViewBag.BadNumbers</p>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.BadGroup))
+        {
+            <p>Brojevi koji ne mogu pripadati odabranoj grupi: @ViewBag.BadGroup</p>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.Duplicates))
+        {
+            <p>Dupli brojevi pronađeni u učitanoj listi: @ViewBag.Duplicates</p>
+        }
+        @if (!String.IsNullOrEmpty(ViewBag.SendDeniedNumbers))
+        {
+            <p>Broj/brojevi koje nije moguće dodati jer su se odjavili sa liste primaoca SMS poruka:  @ViewBag.SendDeniedNumbers</p>
+        }
+    </div>
+    <hr />
+}
+
+<form asp-action="ConfirmUploadNumbers" asp-route-id="@groupId" method="post">
+    @Html.AntiForgeryToken()
+    <h3>Broj (brojevi) koji će biti učitani</h3>
+
+    <table class="table" id="numbersTable">
+        <thead>
+            <tr>
+                <th>Broj</th>
+                <th>Naziv</th>
+                <th>Tip broja</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <div class="text-center mb-3">
+        <button type="submit" id="submitNumbers" class="btn btn-primary">Potvrdi upis brojeva</button>
+    </div>
+</form>
+
+<div>
+    <a class="group-link" asp-action="UploadNumbers" asp-route-id="@groupId">Nazad</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Podaci dolaze sa /api/group/ConfirmUploadNumbers/{id} (GroupApiController).
+            // Ako lista stigne prazna ili poziv padne, dugme za potvrdu se onemogući.
+            $.ajax({
+                url: "/api/group/ConfirmUploadNumbers/@groupId",
+                method: "GET"
+            })
+                .done(function (data) {
+                    $("#numbersTable").DataTable({
+                        dom: "rt",
+                        data: data,
+                        columns: [
+                            { data: "Number" },
+                            { data: "NumberType" },
+                            { data: "Name" }
+                        ],
+                        ordering: false,
+                        language: {
+                            zeroRecords: "Nema rezultata",
+                            emptyTable: "Nema podataka u tabeli"
+                        }
+                    });
+
+                    if (!data || data.length <= 0) {
+                        $("#submitNumbers").addClass("disabled").attr("disabled", "disabled");
+                    }
+                })
+                .fail(function () {
+                    alert("Brojevi za učitavanje nisu stigli! Pokušajte malo kasnije ili kontaktirajte administratora.");
+                    $("#submitNumbers").addClass("disabled").attr("disabled", "disabled");
+                });
+        });
+    </script>
+}

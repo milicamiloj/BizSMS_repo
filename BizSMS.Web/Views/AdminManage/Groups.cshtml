@@ -1,0 +1,55 @@
+@model IEnumerable<BizSMS.Web.Models.AdminManageGroupsViewModel>
+
+@{
+    ViewData["Title"] = "Brojevi klijenata";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table" id="groupTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ClientName)</th>
+            <th>@Html.DisplayNameFor(model => model.TotalOfNumbers)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ClientName)</td>
+                <td>@Html.DisplayFor(modelItem => item.TotalOfNumbers)</td>
+                <td>
+                    <a class="group-link" asp-action="Numbers" asp-route-id="@item.ClientID">Brojevi</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#groupTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                pageLength: 10,
+                info: false,
+                order: [[0, "asc"]],
+                columnDefs: [{ targets: 2, orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,108 @@
+@{
+    ViewData["Title"] = "Brojevi";
+    var clientId = ViewBag.ClientID;
+}
+
+<h2>Naziv klijenta: @ViewBag.ClientName</h2>
+
+<div id="numbers-wraper">
+    <p>
+        <a href="#" id="importNumbers" class="group-link float-end" data-client-id="@clientId">
+            @(ViewBag.NumCount == 0 ? "Uvezi brojeve u VPN" : "Osveži VPN brojeve")
+        </a>
+    </p>
+
+    <table class="table" id="numbersTable">
+        <thead>
+            <tr>
+                <th>Tip broja</th>
+                <th>Broj</th>
+                <th>Naziv</th>
+                <th>Dozvoljeno slanje</th>
+                <th>Razlog zabrane</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <p>
+        <a class="group-link" asp-action="Groups">Nazad</a>
+    </p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#numbersTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                ajax: "/api/AdminManage/GetNumbers?clientId=@clientId",
+                columns: [
+                    { data: "NumberType" },
+                    { data: "Number" },
+                    { data: "Name" },
+                    { data: "SendAllowed" },
+                    { data: "DeniedReason" },
+                    { data: "EditSection" }
+                ],
+                language: {
+                    search: "Pretraga:",
+                    loadingRecords: "Učitavanje...",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                }
+            });
+
+            // Zabrani/dozvoli slanje na broj (bez bootbox-a: plain prompt/confirm).
+            $(document).on("click", ".stop-allow-sending", function (e) {
+                e.preventDefault();
+                var link = $(this);
+                var numberId = link.attr("data-number-id");
+
+                if (link.text() === "Zabrani slanje") {
+                    var reason = prompt("Razlog zabrane slanja:");
+                    if (reason === null) return;
+                    if (!/\S/.test(reason)) { alert("Razlog je obavezan."); return; }
+                    $.ajax({
+                        url: "/api/AdminManage/DenySending",
+                        method: "POST",
+                        data: { NumberId: numberId, Reason: reason }
+                    })
+                        .done(function () { location.reload(); })
+                        .fail(function () { alert("Greška prilikom izmene."); });
+                } else {
+                    $.ajax({
+                        url: "/api/AdminManage/DenySending",
+                        method: "POST",
+                        data: { NumberId: numberId }
+                    })
+                        .done(function () { location.reload(); })
+                        .fail(function () { alert("Greška prilikom izmene."); });
+                }
+            });
+
+            // Uvoz/osvežavanje brojeva iz TIS-a.
+            $("#importNumbers").on("click", function (e) {
+                e.preventDefault();
+                var clientId = $(this).attr("data-client-id");
+                $.ajax({ url: "/api/AdminManage/ImportNumbers/" + clientId, method: "POST" })
+                    .done(function (data) {
+                        if (data !== null && data !== "0") {
+                            alert(data + " novih brojeva je ažurirano.");
+                        } else {
+                            alert("Nema novih brojeva za ažuriranje.");
+                        }
+                        location.reload();
+                    })
+                    .fail(function () { alert("Greška. Kontaktirajte administratora."); });
+            });
+        });
+    </script>
+}

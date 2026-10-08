@@ -1,0 +1,68 @@
+@model VerifyPhoneNumberViewModel
+@{
+    ViewData["Title"] = "Verifikacija koda";
+}
+
+<h2>@ViewData["Title"]</h2>
+<p>Poslali smo vam SMS sa verifikacionim kodom. Unesite ga u polje ispod.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (TempData["Message"] != null)
+        {
+            <div class="alert alert-info">@TempData["Message"]</div>
+        }
+
+        <form asp-controller="Account" asp-action="VerifyPhoneNumber" method="post" role="form">
+            <hr />
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <input type="hidden" asp-for="RememberMe" />
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            <div class="mb-3">
+                <label asp-for="Code" class="form-label"></label>
+                <input asp-for="Code" class="form-control" autocomplete="one-time-code" autofocus />
+                <span asp-validation-for="Code" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Potvrdi</button>
+            </div>
+        </form>
+
+        <form asp-controller="Account" asp-action="ResendCode" method="post" role="form">
+            <input type="hidden" asp-for="RememberMe" />
+            <input type="hidden" asp-for="ReturnUrl" />
+            <button type="submit" class="btn btn-link p-0">Pošalji novi kod</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (Model.PhoneCodeSentAt != null)
+    {
+        <script>
+            // Odbrojavanje do isteka koda (2 min od slanja).
+            (function () {
+                var sentAt = new Date("@Model.PhoneCodeSentAt.Value.ToString("o")").getTime();
+                var expiresAt = sentAt + 2 * 60 * 1000;
+                function tick() {
+                    var remaining = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000));
+                    var min = Math.floor(remaining / 60);
+                    var sec = remaining % 60;
+                    var el = document.getElementById('otp-countdown');
+                    if (el) {
+                        el.textContent = remaining > 0
+                            ? ('Kod ističe za ' + min + ':' + (sec < 10 ? '0' : '') + sec)
+                            : 'Kod je istekao — zatražite novi.';
+                    }
+                    if (remaining > 0) setTimeout(tick, 1000);
+                }
+                tick();
+            })();
+        </script>
+        <p id="otp-countdown" class="text-muted mt-2"></p>
+    }
+}

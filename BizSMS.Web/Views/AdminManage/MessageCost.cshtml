@@ -1,0 +1,59 @@
+@model IEnumerable<BizSMS.Web.Models.MessageCostListViewModel>
+
+@{
+    ViewData["Title"] = "Cena poruka";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a class="group-link float-end" asp-action="CreateMessageCost">Dodaj cenu</a>
+</p>
+
+@foreach (var numType in Model)
+{
+    <h4 class="text-danger">
+        @(numType.NumberType == "U MTS" ? "U MTS" : numType.NumberType == "VAN MTS" ? "VAN MTS" : "VPN")
+    </h4>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Broj poruka od</th>
+                <th>Broj poruka do</th>
+                <th>Cena</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in numType.MessageCosts)
+            {
+                <tr>
+                    <td>@item.NumberOfMessagesFrom</td>
+                    <td>@item.NumberOfMessagesTo</td>
+                    <td>@item.Price</td>
+                    <td>
+                        <a class="group-link" asp-action="EditMessageCost" asp-route-id="@item.MessageCostID">Izmeni</a>
+                        <text> | </text>
+                        <a href="#" class="group-link js-delete-cost" data-cost-id="@item.MessageCostID">Obriši</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".js-delete-cost").click(function (e) {
+                e.preventDefault();
+                if (!confirm("Da li ste sigurni da želite da obrišete izabranu cenu?")) return;
+                var link = $(this);
+                $.ajax({ url: "/api/ClientManage/DeleteCost/" + link.attr("data-cost-id"), method: "DELETE" })
+                    .done(function () { link.parents("tr").fadeOut(function () { $(this).remove(); }); })
+                    .fail(function () { alert("Greška prilikom brisanja."); });
+            });
+        });
+    </script>
+}

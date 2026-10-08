@@ -1,0 +1,56 @@
+@model BizSMS.Web.Models.CreateClientUserViewModel
+
+@{
+    ViewData["Title"] = "Kreiraj korisnika";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Naziv klijenta: @ViewBag.ClientName</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="CreateUser" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="ClientId" />
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="06********" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Kreiraj</button>
+            <a class="group-link ms-2" asp-action="ClientUsers" asp-route-id="@Model.ClientId">Nazad</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $("#PhoneNumber").on("change", function () {
+                $(this).val($.trim($(this).val().replace("381", "0")));
+            });
+            $("#Username").on("change", function () {
+                $(this).val($.trim($(this).val()));
+            });
+        });
+    </script>
+}

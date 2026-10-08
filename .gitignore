@@ -2,6 +2,7 @@ bin/
 obj/
 .vs/
 packages/
+Publish/
 *.user
 *.suo
 TestResults/

@@ -1,0 +1,124 @@
+@model IEnumerable<BizSMS.Web.Models.SentSMSJobReportViewModel>
+
+@{
+    ViewData["Title"] = "Izveštaj o poslatim SMS porukama";
+}
+
+<h2>@ViewData["Title"] za @ViewBag.ClientName</h2>
+
+<table class="table" id="reportTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.ID)</th>
+            <th>@Html.DisplayNameFor(model => model.User)</th>
+            <th>@Html.DisplayNameFor(model => model.Alphanumeric)</th>
+            <th>@Html.DisplayNameFor(model => model.SendDate)</th>
+            <th>@Html.DisplayNameFor(model => model.Status)</th>
+            <th>@Html.DisplayNameFor(model => model.VPN)</th>
+            <th>@Html.DisplayNameFor(model => model.InMTS)</th>
+            <th>@Html.DisplayNameFor(model => model.OutMTS)</th>
+            <th>@Html.DisplayNameFor(model => model.Message)</th>
+            <th>@Html.DisplayNameFor(model => model.CanceledBy)</th>
+            <th></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.ID)</td>
+                <td>@Html.DisplayFor(modelItem => item.User)</td>
+                <td>@Html.DisplayFor(modelItem => item.Alphanumeric)</td>
+                <td>@Html.DisplayFor(modelItem => item.SendDate)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                <td>@Html.DisplayFor(modelItem => item.VPN)</td>
+                <td>@Html.DisplayFor(modelItem => item.InMTS)</td>
+                <td>@Html.DisplayFor(modelItem => item.OutMTS)</td>
+                <td style="max-width: 400px; word-break: break-all; overflow-wrap: break-word;">@Html.DisplayFor(modelItem => item.Message)</td>
+                <td>@Html.DisplayFor(modelItem => item.CanceledBy)</td>
+                <td>
+                    @if (item.Status == "Zakazan")
+                    {
+                        <a href="#" class="group-link js-cancel-sending" data-message-id="@item.ID">Otkaži slanje</a>
+                    }
+                </td>
+                <td>
+                    <a class="group-link" asp-action="SentSMSJobDetailReport" asp-route-clientId="@ViewBag.ClientId" asp-route-messageId="@item.ID">Detalji</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a class="group-link" asp-action="SentSmsClientList">Nazad</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables/css/buttons.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/lib/datatables/js/jszip.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.buttons.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.html5.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.print.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#reportTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                buttons: [
+                    {
+                        extend: "excel",
+                        text: "Excel",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                            // Kolona Alfanumerik (2) kao tekst (ZWNJ prefiks) — da Excel ne pretvori numerički ID u broj.
+                            format: { body: function (data, row, column) { return column === 2 ? String.fromCharCode(0x200C) + data : data; } }
+                        }
+                    },
+                    { extend: "print", text: "Štampaj", exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] } }
+                ],
+                order: [[0, "desc"]],
+                stateSave: true,
+                pageLength: 10,
+                info: false,
+                columnDefs: [{ targets: [10, 11], orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    searchPlaceholder: "",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                },
+                initComplete: function () {
+                    $("div.dataTables_filter input").trigger("focus").trigger("select");
+                }
+            });
+
+            // Otkazivanje zakazanog SMS-a (Hangfire /api/home/... endpointi dolaze u Fazi 5).
+            $("#reportTable").on("click", ".js-cancel-sending", function (e) {
+                e.preventDefault();
+                if (!confirm("Da li ste sigurni da želite da otkažete slanje zakazane poruke?")) return;
+                var messageId = $(this).attr("data-message-id");
+                $.ajax({ url: "/api/home/GetMessageStatus/" + messageId, method: "GET" })
+                    .done(function (data) {
+                        if (data === 4) {
+                            alert("Poruka je već poslata!");
+                            location.reload(true);
+                        } else {
+                            $.ajax({ url: "/api/home/cancelscheduledsms/" + messageId, method: "POST" })
+                                .done(function () { location.reload(true); })
+                                .fail(function () { alert("Došlo je do greške. Kontaktirajte administratora."); location.reload(true); });
+                        }
+                    })
+                    .fail(function () { alert("Došlo je do greške. Kontaktirajte administratora."); location.reload(true); });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,57 @@
+@model BizSMS.Web.Models.ClientContractsViewModel
+
+@{
+    ViewData["Title"] = "Ugovori klijenta";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Naziv klijenta: @Model.ClientName</h4>
+
+<p>
+    <a class="group-link float-end" asp-action="AddClientContract" asp-route-id="@Model.ClientId">Dodaj ugovor</a>
+</p>
+
+<table class="table" id="contractsTable" data-client-id="@Model.ClientId">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Broj ugovora</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<p>
+    <a class="group-link" asp-action="ManageClients">Nazad</a>
+</p>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var table = $("#contractsTable");
+            table.DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                ajax: "/api/AdminManage/GetClientContracts/" + table.attr("data-client-id"),
+                info: false,
+                columns: [
+                    { data: "ClientContractId", visible: false },
+                    { data: "ContractId" },
+                    { data: "Edit", searchable: false, orderable: false }
+                ],
+                language: {
+                    search: "Pretraga:",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,19 @@
+@{
+    ViewData["Title"] = "Pošalji SMS";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@*
+    NAPOMENA (migracija, Faza 5): puna forma za slanje SMS-a (legacy Views/Home/SendSMS.cshtml + custom.js)
+    i prateći API (SendSMS/SendGroupSMS/SendTestSMS/CancelScheduledSMS) zavise od Hangfire pozadinskih
+    poslova i SDP SOAP kampanjskog klijenta. Ti delovi se portuju zajedno u Fazi 5 (§9.2/§10.1),
+    kada slanje bude i tehnički moguće. Do tada ova stranica stoji kao placeholder da navbar link ne puca.
+*@
+<div class="alert alert-info" role="alert">
+    Slanje SMS poruka se finalizuje u Fazi 5 migracije (pozadinski poslovi + SDP integracija).
+</div>
+
+<div>
+    <a class="group-link" asp-controller="Home" asp-action="Index">Nazad na početnu stranu</a>
+</div>

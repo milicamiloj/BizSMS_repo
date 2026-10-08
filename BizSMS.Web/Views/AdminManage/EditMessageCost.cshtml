@@ -1,0 +1,42 @@
+@model BizSMS.Web.Models.EditMessageCostViewModel
+
+@{
+    ViewData["Title"] = "Izmeni cenu poruka";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>@Model.NumberType</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditMessageCost" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="NumberTypeID" />
+            <input type="hidden" asp-for="MessageCostID" />
+
+            <div class="mb-3">
+                <label asp-for="NumberOfMessagesFrom" class="form-label"></label>
+                <input asp-for="NumberOfMessagesFrom" class="form-control" />
+                <span asp-validation-for="NumberOfMessagesFrom" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="NumberOfMessagesTo" class="form-label"></label>
+                <input asp-for="NumberOfMessagesTo" class="form-control" />
+                <span asp-validation-for="NumberOfMessagesTo" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Price" class="form-label"></label>
+                <input asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sačuvaj</button>
+            <a class="group-link ms-2" asp-action="MessageCost">Nazad</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

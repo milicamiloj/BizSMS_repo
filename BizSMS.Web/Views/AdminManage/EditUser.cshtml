@@ -1,0 +1,36 @@
+@model BizSMS.Web.Models.EditUserViewModel
+
+@{
+    ViewData["Title"] = "Izmeni korisnika";
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Naziv klijenta: @ViewBag.ClientName</h4>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditUser" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="UserID" />
+            <input type="hidden" asp-for="ClientID" />
+
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label"></label>
+                <input asp-for="Username" class="form-control" disabled />
+            </div>
+            <div class="mb-3">
+                <label asp-for="PhoneNumber" class="form-label"></label>
+                <input asp-for="PhoneNumber" class="form-control" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sačuvaj</button>
+            <a class="group-link ms-2" asp-action="ClientUsers" asp-route-id="@Model.ClientID">Nazad</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

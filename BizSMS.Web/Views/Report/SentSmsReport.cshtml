@@ -1,0 +1,90 @@
+@model IEnumerable<BizSMS.Web.Models.SentMessageReportViewModel>
+
+@{
+    ViewData["Title"] = "Mesečni izveštaj";
+}
+
+<h2 class="pb-3">@ViewData["Title"] za @ViewBag.ClientName</h2>
+
+<table class="table" id="reportTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.SendMonthName)</th>
+            <th>@Html.DisplayNameFor(model => model.NumberOfSentSMSes)</th>
+            <th>@Html.DisplayNameFor(model => model.NumberOfDeliveredMessages)</th>
+            <th>@Html.DisplayNameFor(model => model.NumberOfDeliveredMessagesLength)</th>
+            <th>@Html.DisplayNameFor(model => model.Cost)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.SendMonthName)</td>
+                <td>@Html.DisplayFor(modelItem => item.NumberOfSentSMSes)</td>
+                <td>@Html.DisplayFor(modelItem => item.NumberOfDeliveredMessages)</td>
+                <td>@Html.DisplayFor(modelItem => item.NumberOfDeliveredMessagesLength)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cost)</td>
+                <td>
+                    <a class="group-link" asp-action="SentSmsDetail"
+                       asp-route-clientId="@ViewBag.ClientId" asp-route-year="@item.SendYear"
+                       asp-route-month="@item.SendMonth" asp-route-charged="@item.Charged">Detaljno</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a class="group-link" asp-action="SentSmsClientList">Nazad</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="~/lib/datatables/css/buttons.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script src="~/lib/datatables/js/jszip.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.buttons.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.bootstrap5.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.html5.min.js"></script>
+    <script src="~/lib/datatables/js/buttons.print.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#reportTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'B><'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                buttons: [
+                    {
+                        extend: "excel",
+                        text: "Excel",
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4],
+                            // Kolona Cena (4) kao tekst (ZWNJ prefiks) — da Excel ne pokvari decimalni separator.
+                            format: { body: function (data, row, column) { return column === 4 ? String.fromCharCode(0x200C) + data : data; } }
+                        }
+                    },
+                    { extend: "print", text: "Štampaj", exportOptions: { columns: [0, 1, 2, 3, 4] } }
+                ],
+                order: [],
+                stateSave: true,
+                pageLength: 10,
+                info: false,
+                columnDefs: [{ targets: 5, orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    searchPlaceholder: "",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                },
+                initComplete: function () {
+                    $("div.dataTables_filter input").trigger("focus").trigger("select");
+                }
+            });
+        });
+    </script>
+}

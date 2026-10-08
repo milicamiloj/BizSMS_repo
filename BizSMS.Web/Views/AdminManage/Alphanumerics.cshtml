@@ -1,0 +1,42 @@
+@model IEnumerable<BizSMS.Web.Models.AlphanumericModel>
+
+@{
+    ViewData["Title"] = "Alfanumerici";
+    var clientId = ViewContext.RouteData.Values["id"];
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Naziv klijenta: @ViewBag.Client</h4>
+
+<p>
+    <a class="group-link" asp-action="CreateAlphanumeric" asp-route-id="@clientId">Kreiraj novi</a>
+</p>
+
+<ul class="list-group col-md-6" id="alphanumericsList">
+    @foreach (var item in Model)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a class="group-link" asp-action="EditAlphanumeric" asp-route-id="@item.AlphanumericID">@item.Alphanumeric</a>
+            <a href="#" class="group-link js-delete-alphanumeric" data-alphanumeric-id="@item.AlphanumericID">Obriši</a>
+        </li>
+    }
+</ul>
+
+<p>
+    <a class="group-link" asp-action="ManageClients">Nazad</a>
+</p>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#alphanumericsList").on("click", ".js-delete-alphanumeric", function (e) {
+                e.preventDefault();
+                if (!confirm("Da li ste sigurni da želite da obrišete izabrani alfanumerik?")) return;
+                var link = $(this);
+                $.ajax({ url: "/api/AdminManage/DeleteAlphanumeric/" + link.attr("data-alphanumeric-id"), method: "DELETE" })
+                    .done(function () { link.parents("li").fadeOut(function () { $(this).remove(); }); })
+                    .fail(function () { alert("Greška prilikom brisanja."); });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Lista brojeva";
+}
+
+<h2>Lista brojeva</h2>
+
+<table class="table" id="numbersTable">
+    <thead>
+        <tr>
+            <th>Broj</th>
+            <th>Naziv</th>
+            <th>Tip broja</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Tabelu puni /api/Group/GetListNumbers (GroupApiController).
+            $("#numbersTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12 col-md-6'i><'col-sm-12 col-md-6'p>>",
+                ajax: "/api/Group/GetListNumbers",
+                stateSave: true,
+                pageLength: 10,
+                columns: [
+                    { data: "Number" },
+                    { data: "Name" },
+                    { data: "NumberType" },
+                    { data: "EditLink", orderable: false, searchable: false }
+                ],
+                language: {
+                    search: "Pretraga:",
+                    searchPlaceholder: "",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    info: "Prikazano _START_ - _END_ od _TOTAL_",
+                    infoEmpty: "Prikazano 0 - 0 od 0",
+                    infoFiltered: "(filtrirano iz _MAX_ ukupno)",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                },
+                initComplete: function () {
+                    $("div.dataTables_filter input").trigger("focus").trigger("select");
+                }
+            });
+        });
+    </script>
+}

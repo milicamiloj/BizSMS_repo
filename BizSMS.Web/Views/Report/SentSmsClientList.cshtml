@@ -1,0 +1,63 @@
+@model IEnumerable<BizSMS.Web.Models.AdminManageClientsViewModel>
+
+@{
+    ViewData["Title"] = "Izveštaji o slanju poruka";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<table class="table" id="clientTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.MtsID)</th>
+            <th>@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.MtsID)</td>
+                <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                <td>
+                    <a class="group-link" asp-action="SentSMSJobReport" asp-route-id="@item.ClientID">Izveštaj o poslatim SMS porukama</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="SentSmsReport" asp-route-id="@item.ClientID">Mesečni izveštaj</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#clientTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                stateSave: true,
+                pageLength: 10,
+                info: false,
+                columnDefs: [{ targets: 3, orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    searchPlaceholder: "",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                },
+                initComplete: function () {
+                    $("div.dataTables_filter input").trigger("focus").trigger("select");
+                }
+            });
+        });
+    </script>
+}

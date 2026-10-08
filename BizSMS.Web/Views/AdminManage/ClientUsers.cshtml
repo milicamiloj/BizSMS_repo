@@ -1,0 +1,86 @@
+@model IEnumerable<BizSMS.Web.Models.ClientUsersViewModel>
+
+@{
+    ViewData["Title"] = "Upravljaj korisnicima";
+    var clientId = ViewContext.RouteData.Values["id"];
+}
+
+@if (!string.IsNullOrEmpty(TempData["StatusMessage"] as string))
+{
+    <div class="alert alert-success">@TempData["StatusMessage"]</div>
+}
+
+<h2>@ViewData["Title"]</h2>
+<h4>Naziv klijenta: @ViewBag.ClientName</h4>
+
+<p>
+    @* Legacy dozvoljava najviše 5 korisnika po klijentu. *@
+    @if (Model.Count() < 5)
+    {
+        <a class="group-link float-end" asp-action="CreateUser" asp-route-id="@clientId">Kreiraj korisnika</a>
+    }
+</p>
+
+<table class="table" id="clientTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Username)</th>
+            <th>@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                <td>
+                    <a class="group-link" asp-action="EditUser" asp-route-id="@item.UserID">Izmeni</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="ResetPassword" asp-route-id="@item.UserID">Reset lozinke</a>
+                    <text> | </text>
+                    <a href="#" class="group-link js-delete-user" data-user-id="@item.UserID">Obriši</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<p>
+    <a class="group-link" asp-action="ManageClients">Nazad</a>
+</p>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#clientTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                pageLength: 10,
+                info: false,
+                columnDefs: [{ targets: 2, orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                }
+            });
+
+            $("#clientTable").on("click", ".js-delete-user", function (e) {
+                e.preventDefault();
+                if (!confirm("Da li ste sigurni da želite da obrišete izabranog korisnika?")) return;
+                var link = $(this);
+                $.ajax({ url: "/api/AdminManage/Cancel/" + link.attr("data-user-id"), method: "DELETE" })
+                    .done(function () { link.parents("tr").fadeOut(function () { $(this).remove(); }); })
+                    .fail(function () { alert("Greška prilikom brisanja."); });
+            });
+        });
+    </script>
+}

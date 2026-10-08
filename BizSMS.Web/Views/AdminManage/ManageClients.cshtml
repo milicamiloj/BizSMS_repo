@@ -1,0 +1,81 @@
+@model IEnumerable<BizSMS.Web.Models.AdminManageClientsViewModel>
+
+@{
+    ViewData["Title"] = "Upravljaj klijentima";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<p>
+    <a class="group-link float-end" asp-action="CreateClient">Kreiraj klijenta</a>
+</p>
+
+<table class="table" id="clientsTable">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Username)</th>
+            <th>@Html.DisplayNameFor(model => model.Name)</th>
+            <th>@Html.DisplayNameFor(model => model.MtsID)</th>
+            <th>@Html.DisplayNameFor(model => model.PhoneNumber)</th>
+            <th>@Html.DisplayNameFor(model => model.IsCanceled)</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.MtsID)</td>
+                <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                <td>
+                    @if (item.IsCanceled)
+                    {
+                        <strong>Da</strong>
+                    }
+                    else
+                    {
+                        <text>Ne</text>
+                    }
+                </td>
+                <td class="text-nowrap">
+                    <a class="group-link" asp-action="ClientContracts" asp-route-id="@item.ClientID">Ugovori</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="ClientUsers" asp-route-id="@item.ClientID">Korisnici</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="EditClient" asp-route-id="@item.ClientID">Izmeni</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="Alphanumerics" asp-route-id="@item.ClientID">Alfanumerici</a>
+                    <text> | </text>
+                    <a class="group-link" asp-action="ManageClients" asp-route-id="@item.ClientID">@(item.IsCanceled ? "Otključaj" : "Zaključaj")</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/datatables/css/dataTables.bootstrap5.min.css" />
+}
+
+@section Scripts {
+    <script src="~/lib/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#clientsTable").DataTable({
+                dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
+                pageLength: 10,
+                info: false,
+                columnDefs: [{ targets: 5, orderable: false, searchable: false }],
+                language: {
+                    search: "Pretraga:",
+                    zeroRecords: "Nema rezultata",
+                    emptyTable: "Nema podataka u tabeli",
+                    paginate: { first: "Prva", last: "Poslednja", next: "Sledeća", previous: "Prethodna" }
+                }
+            });
+        });
+    </script>
+}

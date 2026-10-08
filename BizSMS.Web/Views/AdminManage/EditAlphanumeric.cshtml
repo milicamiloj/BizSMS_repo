@@ -1,0 +1,32 @@
+@model BizSMS.Web.Models.AlphanumericViewModel
+
+@{
+    ViewData["Title"] = "Izmeni alfanumerik";
+}
+
+<h2>@ViewData["Title"]</h2>
+<p class="text-success">Dozvoljena su slova, brojevi, razmak, _ i - (3-11 karaktera).</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditAlphanumeric" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" asp-for="ClientID" />
+            <input type="hidden" asp-for="AlphanumericID" />
+
+            <div class="mb-3">
+                <label asp-for="Alphanumeric" class="form-label"></label>
+                <input asp-for="Alphanumeric" class="form-control" />
+                <span asp-validation-for="Alphanumeric" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Sačuvaj</button>
+            <a class="group-link ms-2" asp-action="Alphanumerics" asp-route-id="@Model.ClientID">Nazad</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
