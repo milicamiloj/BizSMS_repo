@@ -97,8 +97,7 @@
                 }
             });
 
-            // Otkazivanje zakazanog SMS-a. NAPOMENA: /api/home/... endpointi (Hangfire) dolaze u Fazi 5;
-            // zakazane poruke ionako ne mogu postojati dok slanje nije aktivno, pa je dugme prirodno neaktivno do tada.
+            // Otkazivanje zakazanog SMS-a (klijent): briše Hangfire posao i ažurira stanje u bazi (/api/home/).
             $("#reportTable").on("click", ".js-cancel-sending", function (e) {
                 e.preventDefault();
                 if (!confirm("Da li ste sigurni da želite da otkažete slanje zakazane poruke?")) return;

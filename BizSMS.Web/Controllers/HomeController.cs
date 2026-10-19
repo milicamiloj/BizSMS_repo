@@ -17,8 +17,9 @@ namespace BizSMS.Web.Controllers
 {
     // Zamena za legacy BizSMS.Controllers.HomeController (MVC deo).
     // Dashboard + izveštaji o poslatim SMS porukama + preuzimanje uputstva.
-    // NAPOMENA: slanje SMS-a (SendSMS forma + API/HomeController) zavisi od Hangfire-a i SDP SOAP
-    // kampanjskog klijenta -> to se portuje u Fazi 5 (§9.2/§10.1). SendSMS akcija ovde samo renderuje formu.
+    // SendSMS akcija renderuje čarobnjak za slanje (Views/Home/SendSMS.cshtml + wwwroot/js/send-sms.js);
+    // sama logika slanja je u HomeApiController-u. INTERIM (bez Hangfire): trenutno slanje je sinhrono,
+    // zakazivanje se odlaže za Fazu 5 (§9.2/§10.1).
     public class HomeController : BaseController
     {
         private readonly IConfiguration _config;

@@ -1,8 +1,10 @@
 using BizSMS.Web.Data;
+using BizSMS.Web.Filters;
 using BizSMS.Web.Helpers;
 using BizSMS.Web.Identity;
 using BizSMS.Web.Models;
 using BizSMS.Web.Services;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
@@ -51,6 +53,29 @@ builder.Services.AddHttpClient<ISmsSender, SdpSmsSender>();
 // Za dev/test bez pristupa iib.telekom.rs vrati se na LdapCheckerStub (vraća "VAN MTS").
 builder.Services.Configure<LdapOptions>(builder.Configuration.GetSection("Ldap"));
 builder.Services.AddHttpClient<ILdapChecker, SelfCareLdapChecker>();
+builder.Services.AddSingleton<ReceiptReq>();
+
+// Oracle/TIS CRM klijent (Faza 5 §10.2) — autofill podataka klijenta po broju ugovora (GetClientData).
+// Mora biti registrovan: AdminManageApiController ga traži u konstruktoru (bez njega pada ceo api/AdminManage).
+// Bez TIS konfiguracije klijent samo vraća null, pa je bezbedan i u dev-u.
+//builder.Services.AddScoped<ITisClient, TisClient>();
+
+// Hangfire (zakazano kampanjsko slanje, §9.2). Posao slanja (SmsDispatchJob) registruje se uvek
+// jer ga i trenutno (sinhrono) slanje poziva direktno; Hangfire storage/server se ožičava SAMO ako
+// je HangfireDB stvarno konfigurisan (bez __placeholder__), da bi app mogla da se digne u dev-u bez te baze.
+builder.Services.AddScoped<SmsDispatchJob>();
+
+var hangfireConn = builder.Configuration.GetConnectionString("HangfireDB");
+var hangfireEnabled = !string.IsNullOrWhiteSpace(hangfireConn) && !hangfireConn.Contains("__");
+if (hangfireEnabled)
+{
+    builder.Services.AddHangfire(cfg => cfg
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(hangfireConn));
+    builder.Services.AddHangfireServer();
+}
 
 builder.Services.ConfigureApplicationCookie(o =>
 {
@@ -77,10 +102,17 @@ builder.Services.AddControllersWithViews(o =>
         o.Filters.Add<BizSMS.Web.Filters.ActionLoggingFilter>())
     .AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
 
+// Logger facade (§9.1) čita ime ulogovanog korisnika per-request iz HttpContext-a (@user u SP-u).
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
-// Poveži Logger facade sa DI ILoggerFactory (Faza 5 menja internu implementaciju na log4net->SP)
-Logger.Configure(app.Services.GetRequiredService<ILoggerFactory>());
+// Poveži Logger facade sa DI (Faza 5 §9.1): konzolni ILogger + upis u SP dbo.Log_Insert.
+// Conn. string "BizSMS"; ako je prazan ili sadrži __placeholder__ → SP upis se preskače (dev bez baze).
+Logger.Configure(
+    app.Services.GetRequiredService<ILoggerFactory>(),
+    builder.Configuration.GetConnectionString("BizSMS") ?? "",
+    app.Services.GetRequiredService<IHttpContextAccessor>());
 
 // Kultura aplikacije: srpski, ali sa decimalnim separatorom "." (isto kao legacy sr-YU override).
 // Bez fiksirane kulture model binding koristi kulturu OS-a (zarez = decimala, tačka = hiljade),
@@ -113,6 +145,16 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Hangfire dashboard (/hangfire) — posle autentifikacije/autorizacije da bi filter video ulogovanog
+// korisnika. Dostupan samo Administrator-u (HangfireDashboardAuthFilter). Vidljiv samo kad je Hangfire ožičen.
+if (hangfireEnabled)
+{
+    app.UseHangfireDashboard("/hangfire", new DashboardOptions
+    {
+        Authorization = new[] { new HangfireDashboardAuthFilter() }
+    });
+}
 
 app.MapStaticAssets();
 

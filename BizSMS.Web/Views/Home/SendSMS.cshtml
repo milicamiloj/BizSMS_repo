@@ -2,18 +2,174 @@
     ViewData["Title"] = "Pošalji SMS";
 }
 
-<h2>@ViewData["Title"]</h2>
-
 @*
-    NAPOMENA (migracija, Faza 5): puna forma za slanje SMS-a (legacy Views/Home/SendSMS.cshtml + custom.js)
-    i prateći API (SendSMS/SendGroupSMS/SendTestSMS/CancelScheduledSMS) zavise od Hangfire pozadinskih
-    poslova i SDP SOAP kampanjskog klijenta. Ti delovi se portuju zajedno u Fazi 5 (§9.2/§10.1),
-    kada slanje bude i tehnički moguće. Do tada ova stranica stoji kao placeholder da navbar link ne puca.
+    Port legacy Views/Home/SendSMS.cshtml + Scripts/Custom/send.sms.js na Bootstrap 5.
+    4-koračni čarobnjak (Grupe/brojevi -> Poruka -> Test -> Slanje) koji preko /api/Home/*
+    priča sa HomeApiController-om. INTERIM: trenutno slanje je sinhrono; zakazivanje je
+    odloženo za Fazu 5 (API vrati poruku). Logika i PascalCase ključevi su usklađeni sa API-jem.
 *@
-<div class="alert alert-info" role="alert">
-    Slanje SMS poruka se finalizuje u Fazi 5 migracije (pozadinski poslovi + SDP integracija).
+
+<h2 class="mb-3">@ViewData["Title"]</h2>
+
+@Html.AntiForgeryToken()
+
+<div class="container-fluid" id="send-sms-wizard">
+    @* Indikator koraka *@
+    <ul class="nav nav-pills mb-4" id="step-indicator">
+        <li class="nav-item"><span class="nav-link active" data-step="1">1. Grupe i brojevi</span></li>
+        <li class="nav-item"><span class="nav-link disabled" data-step="2">2. Poruka</span></li>
+        <li class="nav-item"><span class="nav-link disabled" data-step="3">3. Test</span></li>
+        <li class="nav-item"><span class="nav-link disabled" data-step="4">4. Slanje</span></li>
+    </ul>
+
+    @* ----- Korak 1: grupa i izbor brojeva ----- *@
+    <div class="wizard-step" data-step="1">
+        <div class="card">
+            <div class="card-header bizsms-step-header">Grupe i brojevi</div>
+            <div class="card-body">
+                <div class="row g-3 align-items-end mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="group_select">Grupa</label>
+                        <select class="form-select" id="group_select"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-outline-primary" id="btn-send-to-group" disabled>
+                            Pošalji celoj grupi
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Brojevi u grupi</label>
+                        <input type="text" class="form-control mb-2" id="filter-available" placeholder="Pretraga...">
+                        <select class="form-select" id="available-numbers" multiple size="12"></select>
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="btn-add-numbers">
+                            Dodaj izabrane &rarr;
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Izabrani brojevi</label>
+                        <input type="text" class="form-control mb-2" id="filter-selected" placeholder="Pretraga...">
+                        <select class="form-select" id="selected-numbers" multiple size="12"></select>
+                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="btn-remove-numbers">
+                            &larr; Ukloni izabrane
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <button type="button" class="btn btn-primary wizard-next" id="btn-step1-next" disabled>Dalje &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    @* ----- Korak 2: poruka ----- *@
+    <div class="wizard-step d-none" data-step="2">
+        <div class="card">
+            <div class="card-header bizsms-step-header">Poruka</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label" for="alphanumericDropdown">Pošiljalac (alfanumerik)</label>
+                    <select class="form-select" id="alphanumericDropdown"></select>
+                </div>
+                <div class="mb-2 small text-muted">
+                    <div>Tekst odjave (U MTS): <span id="inMts"></span></div>
+                    <div>Tekst odjave (VAN MTS): <span id="notInMts"></span></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label" for="message">Tekst poruke</label>
+                    <textarea id="message" rows="8" maxlength="765" class="form-control" placeholder="Unesite poruku" required></textarea>
+                    <small id="charCount" class="text-muted">0/160 (1)</small>
+                </div>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary wizard-prev">&larr; Nazad</button>
+                <button type="button" class="btn btn-primary wizard-next" id="btn-step2-next" disabled>Dalje &rarr;</button>
+            </div>
+        </div>
+    </div>
+
+    @* ----- Korak 3: test ----- *@
+    <div class="wizard-step d-none" data-step="3">
+        <div class="card">
+            <div class="card-header bizsms-step-header">Test</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Na broj:</strong> <span id="test-number"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Pošiljalac:</strong> <span class="alpha-display"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Tekst poruke:</strong>
+                    <div class="border rounded p-2 message-display" style="white-space: pre-wrap; word-break: break-word;"></div>
+                </div>
+                <button type="button" class="btn btn-outline-primary" id="btn-send-test">Pošalji test SMS</button>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary wizard-prev">&larr; Nazad</button>
+                <div>
+                    <button type="button" class="btn btn-link wizard-next" id="btn-skip-test">Preskoči test &rarr;</button>
+                    <button type="button" class="btn btn-primary wizard-next d-none" id="btn-step3-next">Dalje &rarr;</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ----- Korak 4: slanje ----- *@
+    <div class="wizard-step d-none" data-step="4">
+        <div class="card">
+            <div class="card-header bizsms-step-header">Slanje</div>
+            <div class="card-body">
+                <div class="mb-3"><strong id="send-summary"></strong></div>
+                <div class="mb-3" id="final-numbers-wrap">
+                    <div class="border rounded p-2" id="final-numbers-list" style="max-height: 240px; overflow:auto;"></div>
+                </div>
+                <div class="mb-3 d-none" id="final-group-wrap">
+                    <div class="border rounded p-2 text-center" id="final-group-name"></div>
+                </div>
+                <div class="mb-3">
+                    <strong>Pošiljalac:</strong> <span class="alpha-display"></span>
+                </div>
+                <div class="mb-3">
+                    <strong>Tekst poruke:</strong>
+                    <div class="border rounded p-2 message-display" style="white-space: pre-wrap; word-break: break-word;"></div>
+                </div>
+
+                <div class="row g-2 align-items-end">
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-success" id="btn-send">Pošalji odmah</button>
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label mb-0" for="schedule-datetime">Zakazano vreme</label>
+                        <input type="datetime-local" class="form-control" id="schedule-datetime">
+                    </div>
+                    <div class="col-auto">
+                        <button type="button" class="btn btn-outline-success" id="btn-schedule">Zakaži slanje</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-outline-secondary wizard-prev">&larr; Nazad</button>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    <a class="group-link" asp-controller="Home" asp-action="Index">Nazad na početnu stranu</a>
+@* Modal: spinner tokom slanja test poruke *@
+<div class="modal fade" id="testModal" tabindex="-1" data-bs-backdrop="static" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Slanje test poruke</h5></div>
+            <div class="modal-body text-center">
+                <div class="spinner-border" role="status"></div>
+                <p class="mt-2">Slanje u toku...</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/send-sms.js" asp-append-version="true"></script>
+}

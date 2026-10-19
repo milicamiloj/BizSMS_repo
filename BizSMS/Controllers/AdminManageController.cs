@@ -115,7 +115,7 @@ namespace BizSMS.Controllers
                     };
 
                     db.Client.Add(Client);
-                    db.SaveChanges();
+                    //db.SaveChanges();
                     logger.Info("Create new user for client: " + model.ClientName);
                     ApplicationUser user = new ApplicationUser()
                     {

@@ -176,6 +176,10 @@ namespace BizSMS.Web.Models
         [StringLength(50)]
         public string SendSMSID { get; set; }
 
+        // Correlator poslat u ParlayX receiptRequest-u; po njemu DLR azurira ovaj red.
+        [StringLength(50)]
+        public string Correlator { get; set; }
+
         public bool Sent { get; set; }
 
         public int Delivered { get; set; }

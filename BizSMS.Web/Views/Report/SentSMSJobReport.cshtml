@@ -101,18 +101,19 @@
                 }
             });
 
-            // Otkazivanje zakazanog SMS-a (Hangfire /api/home/... endpointi dolaze u Fazi 5).
+            // Otkazivanje zakazanog SMS-a (admin). Admin nema Client,User role pa gađa /api/adminmanage/
+            // (HomeApiController je samo za Client,User); Hangfire posao se briše na serveru.
             $("#reportTable").on("click", ".js-cancel-sending", function (e) {
                 e.preventDefault();
                 if (!confirm("Da li ste sigurni da želite da otkažete slanje zakazane poruke?")) return;
                 var messageId = $(this).attr("data-message-id");
-                $.ajax({ url: "/api/home/GetMessageStatus/" + messageId, method: "GET" })
+                $.ajax({ url: "/api/adminmanage/GetMessageStatus/" + messageId, method: "GET" })
                     .done(function (data) {
                         if (data === 4) {
                             alert("Poruka je već poslata!");
                             location.reload(true);
                         } else {
-                            $.ajax({ url: "/api/home/cancelscheduledsms/" + messageId, method: "POST" })
+                            $.ajax({ url: "/api/adminmanage/cancelscheduledsms/" + messageId, method: "POST" })
                                 .done(function () { location.reload(true); })
                                 .fail(function () { alert("Došlo je do greške. Kontaktirajte administratora."); location.reload(true); });
                         }

@@ -1,19 +1,23 @@
 #nullable disable
 using System.Data;
+using System.Security.Claims;
 using BizSMS.Web.Data;
 using BizSMS.Web.Models;
+using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using BizSMS.Web.Helpers;
+using BizSMS.Web.Services;
 
 namespace BizSMS.Web.Controllers.Api
 {
     // Zamena za legacy BizSMS.Controllers.API.AdminManageController.
     // Odvojeno ime klase (kolizija sa MVC) + eksplicitna literalna ruta api/AdminManage.
-    // ODLOŽENO za Fazu 5: GetClientData (Oracle/TIS CRM), CancelScheduledSMS (Hangfire),
-    // GetClientNumbers (Oracle, u legacy-ju je bio i neupotrebljen).
+    // GetClientData (Oracle/TIS CRM) portovan u Fazi 5 (§10.2) preko ITisClient.
+    // GetClientNumbers (Oracle) namerno izostavljen — mrtav kod u legacy-ju.
     [ApiController]
     [Authorize(Roles = "Administrator")]
     [Route("api/AdminManage")]
@@ -21,7 +25,7 @@ namespace BizSMS.Web.Controllers.Api
     {
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
-
+        
         public AdminManageApiController(ApplicationDbContext db, UserManager<ApplicationUser> userManager)
         {
             this.db = db;
@@ -207,6 +211,10 @@ namespace BizSMS.Web.Controllers.Api
             return Ok(new { data = dbClientContracts });
         }
 
+        // GET /api/AdminManage/GetClientData/{id} — autofill podataka klijenta iz TIS CRM-a po broju ugovora.
+        // Verni port legacy AdminManageController.GetClientData: ako ugovor već postoji u bazi → BadRequest;
+        // inače povuci podatke iz TIS-a (null ako TIS nije dostupan/nema podataka).
+
         // GET /api/AdminManage/GetNumberStatus/{id}
         [HttpGet("GetNumberStatus/{id}")]
         public IActionResult GetNumberStatus(int id)
@@ -231,6 +239,50 @@ namespace BizSMS.Web.Controllers.Api
             {
                 var messageStatus = db.Message.Find(id).Status;
                 return Ok(messageStatus);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                return NotFound();
+            }
+        }
+
+        // POST /api/AdminManage/CancelScheduledSMS/{id} — admin otkazuje zakazano slanje (verni port
+        // legacy AdminManageController.CancelScheduledSMS): briše Hangfire posao i ažurira stanje u bazi.
+        [HttpPost("CancelScheduledSMS/{id}")]
+        public IActionResult CancelScheduledSMS(int id)
+        {
+            logger.SetControllerAction("AdminManageApiController", "CancelScheduledSMS");
+            try
+            {
+                string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                var message = db.Message.Find(id);
+                if (message == null)
+                    return NotFound();
+
+                if (message.Status == (int)MessageStatus.Finished)
+                    return Ok("Poruka je već poslata!");
+
+                message.Status = (int)MessageStatus.ScheduledSendingCanceled;
+                // Otkazana poruka ne sme biti naplaćena.
+                message.Charged = false;
+
+                var scheduled = db.ScheduledSms.FirstOrDefault(s => s.MessageID == message.MessageID);
+                if (scheduled != null)
+                {
+                    if (!string.IsNullOrEmpty(scheduled.HangfireID))
+                    {
+                        try { BackgroundJob.Delete(scheduled.HangfireID); }
+                        catch (Exception ex) { logger.Error("Brisanje Hangfire posla nije uspelo: " + ex.Message); }
+                    }
+                    scheduled.UserID = userId;
+                    scheduled.CancelDate = DateTime.Now;
+                }
+
+                db.SaveChanges();
+                logger.Info("Zakazani SMS sa messageId: " + id + " otkazan (admin).");
+                return Ok(new { message = "OK" });
             }
             catch (Exception ex)
             {

@@ -472,7 +472,7 @@ namespace BizSMS.Controllers.API
                 var userCancelId = User.Identity.GetUserId();
                 var clientID = db.Users.Find(userCancelId).ClientID;
 
-                MessageModel Message = db.Message.Find(id);
+                MessageModel Message = db.Message.Find(219549);
                 if (Message.Status == 4)
                 {
                     return Ok("Message already sent!");
