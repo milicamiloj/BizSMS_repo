@@ -14,9 +14,11 @@ namespace BizSMS.Web.Filters
             var controllerName = context.RouteData.Values["controller"]?.ToString() ?? "";
             var actionName = context.RouteData.Values["action"]?.ToString() ?? "";
 
-            var logger = new Logger();
-            logger.SetControllerAction(controllerName, actionName);
-            logger.Info("Default logging");
+            // Svi logger-i u ovom zahtevu (i u API kontrolerima bez SetControllerAction) čitaju ovo.
+            context.HttpContext.Items[Logger.ControllerItemKey] = controllerName;
+            context.HttpContext.Items[Logger.ActionItemKey] = actionName;
+
+            new Logger().Info("Default logging");
         }
 
         public void OnActionExecuted(ActionExecutedContext context)

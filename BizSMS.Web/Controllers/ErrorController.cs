@@ -13,8 +13,18 @@ namespace BizSMS.Web.Controllers
 
         public IActionResult General()
         {
+            // Verno legacy Application_Error: controller/action rute koja je pukla + inner exception.
             var feature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
-            log.Error("General: " + (feature?.Error.Message ?? "nepoznata greška"));
+            var ex = feature?.Error;
+            log.SetControllerAction(
+                feature?.RouteValues?["controller"]?.ToString() ?? " ",
+                feature?.RouteValues?["action"]?.ToString() ?? " ");
+
+            var exMessage = ex?.Message ?? "nepoznata greška";
+            if (ex?.InnerException != null)
+                exMessage += " inner ex: " + ex.InnerException.Message;
+
+            log.Error("General (" + (feature?.Path ?? "") + "): " + exMessage);
             return View();
         }
 

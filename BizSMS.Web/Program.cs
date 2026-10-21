@@ -7,12 +7,8 @@ using BizSMS.Web.Services;
 using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// EPPlus v7 licenca (⚠ NonCommercial je privremeno — komercijalna app zahteva plaćenu licencu, Faza 5 §10.3)
-ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
 // DbContext (EF Core, SQL Server, lazy loading proxies — app zavisi od lazy load-a, nema .Include())
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -50,15 +46,9 @@ builder.Services.AddHttpClient<ISmsSender, SdpSmsSender>();
 
 // LDAP provera tipa broja (U MTS / VAN MTS) preko SelfCareLdapWS SOAP-a (Faza 5, §10.1).
 // Zamena za WCF LDAPCheckSoapClient — ručni SOAP 1.1 envelope + "Integration-Auth" header.
-// Za dev/test bez pristupa iib.telekom.rs vrati se na LdapCheckerStub (vraća "VAN MTS").
 builder.Services.Configure<LdapOptions>(builder.Configuration.GetSection("Ldap"));
 builder.Services.AddHttpClient<ILdapChecker, SelfCareLdapChecker>();
 builder.Services.AddSingleton<ReceiptReq>();
-
-// Oracle/TIS CRM klijent (Faza 5 §10.2) — autofill podataka klijenta po broju ugovora (GetClientData).
-// Mora biti registrovan: AdminManageApiController ga traži u konstruktoru (bez njega pada ceo api/AdminManage).
-// Bez TIS konfiguracije klijent samo vraća null, pa je bezbedan i u dev-u.
-//builder.Services.AddScoped<ITisClient, TisClient>();
 
 // Hangfire (zakazano kampanjsko slanje, §9.2). Posao slanja (SmsDispatchJob) registruje se uvek
 // jer ga i trenutno (sinhrono) slanje poziva direktno; Hangfire storage/server se ožičava SAMO ako

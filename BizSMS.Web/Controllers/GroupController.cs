@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml;
+using ClosedXML.Excel;
 
 namespace BizSMS.Web.Controllers
 {
@@ -197,24 +197,24 @@ namespace BizSMS.Web.Controllers
             ViewBag.GroupName = groupId.Name;
             ViewBag.ClientName = groupId.Client.Name;
 
-            string filename = id.ToString() + " " + DateTime.Now.ToString("yyyyMMddhhmmss");
+            // ClosedXML određuje format po ekstenziji, pa sačuvan fajl mora da ima .xlsx.
+            string filename = id.ToString() + " " + DateTime.Now.ToString("yyyyMMddhhmmss") + ".xlsx";
             string pathToSave = UploadedFilesPath;
             Directory.CreateDirectory(pathToSave);
 
             if (file == null)
                 return BadRequest("File not loaded");
 
-            if (file.Length > 0)
-            {
-                using var stream = new FileStream(Path.Combine(pathToSave, filename), FileMode.Create);
-                await file.CopyToAsync(stream);
-            }
-            else
-            {
+            if (file.Length == 0)
                 return BadRequest("Empty file");
-            }
 
             string filePath = Path.Combine(pathToSave, filename);
+
+            // Stream se zatvara pre čitanja — inače je fajl još otvoren za upis.
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
 
             DataTable dtData = GetDataFromExcel(filePath);
 
@@ -597,30 +597,33 @@ namespace BizSMS.Web.Controllers
         private DataTable GetDataFromExcel(string filePath)
         {
             var dt = new DataTable();
-            var existingFile = new FileInfo(filePath);
+            dt.Columns.Add("Number");
+            dt.Columns.Add("Name");
 
-            using (ExcelPackage xlPackage = new ExcelPackage(existingFile))
+            using var workbook = new XLWorkbook(filePath);
+            var worksheet = workbook.Worksheets.First();
+
+            // Ekvivalent EPPlus worksheet.Dimension; prazan list → nema redova.
+            var range = worksheet.RangeUsed();
+            if (range == null)
+                return dt;
+
+            int startRow = range.FirstRow().RowNumber();
+            int endRow = range.LastRow().RowNumber();
+            int startCol = range.FirstColumn().ColumnNumber();
+            int endCol = range.LastColumn().ColumnNumber();
+
+            for (int row = startRow + 1; row <= endRow; row++)
             {
-                ExcelWorksheet worksheet = xlPackage.Workbook.Worksheets.First();
+                DataRow dr = dt.NewRow();
+                int i = 0;
 
-                ExcelCellAddress startCell = worksheet.Dimension.Start;
-                ExcelCellAddress endCell = worksheet.Dimension.End;
-
-                dt.Columns.Add("Number");
-                dt.Columns.Add("Name");
-
-                for (int row = startCell.Row + 1; row <= endCell.Row; row++)
+                for (int col = startCol; col <= endCol; col++)
                 {
-                    DataRow dr = dt.NewRow();
-                    int i = 0;
-
-                    for (int col = startCell.Column; col <= endCell.Column; col++)
-                    {
-                        var cellValue = worksheet.Cells[row, col].Value;
-                        dr[i++] = cellValue == null ? "" : cellValue.ToString();
-                    }
-                    dt.Rows.Add(dr);
+                    // Kao EPPlus Value.ToString(): broj upisan kao broj gubi vodeću nulu (isto kao legacy).
+                    dr[i++] = worksheet.Cell(row, col).Value.ToString();
                 }
+                dt.Rows.Add(dr);
             }
 
             return dt;

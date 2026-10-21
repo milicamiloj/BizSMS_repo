@@ -303,6 +303,11 @@ namespace BizSMS.Web.Models
 
         [StringLength(4000)]
         public string Exception { get; set; }
+
+        // Dodato skriptom Data/Sql/bst-log-ip-address.sql (nije u legacy EF6 migracijama).
+        [Column("IP_Address")]
+        [StringLength(45)]
+        public string IpAddress { get; set; }
     }
 
     [Table("BST_TEMP_IMPORT")]

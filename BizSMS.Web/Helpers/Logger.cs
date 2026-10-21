@@ -11,6 +11,10 @@ namespace BizSMS.Web.Helpers
     {
         private const string LogSource = "BizSMS.Web";
 
+        // Ključevi u HttpContext.Items koje puni ActionLoggingFilter za tekući zahtev.
+        public const string ControllerItemKey = "BizSMS.Log.Controller";
+        public const string ActionItemKey = "BizSMS.Log.Action";
+
         private static ILoggerFactory _factory = LoggerFactory.Create(b => b.AddConsole());
         private static string? _connectionString;
         private static IHttpContextAccessor? _httpContextAccessor;
@@ -38,32 +42,50 @@ namespace BizSMS.Web.Helpers
 
         public void Info(string message)
         {
-            _log.LogInformation("{Controller}/{Action} {Message}", _controller, _action, message);
-            WriteToDb("INFO", message);
+            var (controller, action) = ResolveContext();
+            _log.LogInformation("{Controller}/{Action} {Message}", controller, action, message);
+            WriteToDb("INFO", message, controller, action);
         }
 
         public void Warn(string message)
         {
-            _log.LogWarning("{Controller}/{Action} {Message}", _controller, _action, message);
-            WriteToDb("WARN", message);
+            var (controller, action) = ResolveContext();
+            _log.LogWarning("{Controller}/{Action} {Message}", controller, action, message);
+            WriteToDb("WARN", message, controller, action);
         }
 
         public void Error(string message)
         {
-            _log.LogError("{Controller}/{Action} {Message}", _controller, _action, message);
-            WriteToDb("ERROR", message);
+            var (controller, action) = ResolveContext();
+            _log.LogError("{Controller}/{Action} {Message}", controller, action, message);
+            WriteToDb("ERROR", message, controller, action);
+        }
+
+        // Eksplicitni SetControllerAction ima prednost; inače se uzima ruta tekućeg zahteva
+        // (per-request, za razliku od legacy GlobalContext-a koji je bio zajednički za ceo proces).
+        private (string Controller, string Action) ResolveContext()
+        {
+            if (_controller.Length > 0 || _action.Length > 0)
+                return (_controller, _action);
+
+            var items = _httpContextAccessor?.HttpContext?.Items;
+            return (items?[ControllerItemKey] as string ?? "", items?[ActionItemKey] as string ?? "");
         }
 
         // Upis u SP dbo.Log_Insert. Nikad ne sme da obori zahtev — sve greške se gutaju
         // (kao log4net koji podrazumevano ignoriše greške appender-a).
-        private void WriteToDb(string level, string message)
+        private void WriteToDb(string level, string message, string controller, string action)
         {
             if (string.IsNullOrWhiteSpace(_connectionString) || _connectionString.Contains("__"))
                 return;
 
             try
             {
-                var user = _httpContextAccessor?.HttpContext?.User?.Identity?.Name ?? "";
+                var httpContext = _httpContextAccessor?.HttpContext;
+                var user = httpContext?.User?.Identity?.Name ?? "";
+                var ip = httpContext?.Connection.RemoteIpAddress;
+                if (ip != null && ip.IsIPv4MappedToIPv6)
+                    ip = ip.MapToIPv4();
 
                 using var conn = new SqlConnection(_connectionString);
                 using var cmd = new SqlCommand("dbo.Log_Insert", conn) { CommandType = CommandType.StoredProcedure };
@@ -71,10 +93,12 @@ namespace BizSMS.Web.Helpers
                 cmd.Parameters.Add("@log_level", SqlDbType.VarChar, 50).Value = level;
                 cmd.Parameters.Add("@log_source", SqlDbType.VarChar, 300).Value = LogSource;
                 cmd.Parameters.Add("@user", SqlDbType.VarChar, 50).Value = Truncate(user, 50);
-                cmd.Parameters.Add("@controller", SqlDbType.VarChar, 100).Value = Truncate(_controller, 100);
-                cmd.Parameters.Add("@action", SqlDbType.VarChar, 100).Value = Truncate(_action, 100);
+                cmd.Parameters.Add("@controller", SqlDbType.VarChar, 100).Value = Truncate(controller, 100);
+                cmd.Parameters.Add("@action", SqlDbType.VarChar, 100).Value = Truncate(action, 100);
                 cmd.Parameters.Add("@log_message", SqlDbType.VarChar, 4000).Value = Truncate(message ?? "", 4000);
                 cmd.Parameters.Add("@exception", SqlDbType.VarChar, 4000).Value = DBNull.Value;
+                // Van HTTP zahteva (npr. Hangfire posao) IP ne postoji → NULL.
+                cmd.Parameters.Add("@IP_Address", SqlDbType.VarChar, 45).Value = (object?)ip?.ToString() ?? DBNull.Value;
 
                 conn.Open();
                 cmd.ExecuteNonQuery();

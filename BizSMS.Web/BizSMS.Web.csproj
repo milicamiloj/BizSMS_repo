@@ -6,9 +6,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>BizSMS.Web</RootNamespace>
     <UserSecretsId>ab384ad0-5b09-4a2d-99c7-93a2b62103a9</UserSecretsId>
+    <!-- Publish izlaz u folderu projekta ne sme da uđe u build/publish kao Content. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);Publish/**</DefaultItemExcludes>
   </PropertyGroup>
 
+  <!-- Šablon i uputstva iz UploadedFiles moraju u publish (.xlsx/.pdf nisu podrazumevani Content);
+       uploadovi korisnika namerno NE idu u publish. -->
   <ItemGroup>
+    <Content Include="UploadedFiles\UploadNumbersTemplate.xlsx;UploadedFiles\KorisnickoUputstvoBizSMS_*.pdf"
+             CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -16,7 +26,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
-    <PackageReference Include="EPPlus" Version="7.0.0" />
     <!-- Oracle/TIS CRM (Faza 5 §10.2) — zamena za legacy System.Data.OracleClient u GetClientDataFromCRM. -->
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.9.1" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.21" />

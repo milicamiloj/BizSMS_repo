@@ -56,7 +56,7 @@ BizSMS.sln
 
 Faze (detaljno u sekcijama ispod):
 1. Skelet projekta + konfiguracija + `Program.cs`
-2. EF Core `DbContext` + baseline nad postojećom bazom
+2. EF Core `DbContext` nad postojećom bazom (baseline je **opcioni** korak posle gašenja legacy aplikacije — sekcija 5.3)
 3. Identity (uključujući **kompatibilnost hash-eva lozinki**)
 4. Filteri/atributi → filteri/middleware
 5. Kontroleri + Views
@@ -101,7 +101,7 @@ Stari `BizSMS/BizSMS.csproj` je verbozan, sa `packages.config`, `<Reference Hint
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.*" />
     <PackageReference Include="log4net" Version="3.*" />
     <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.*" />
-    <PackageReference Include="EPPlus" Version="7.*" />
+    <PackageReference Include="ClosedXML" Version="0.105.*" />
     <PackageReference Include="RestSharp" Version="112.*" />
     <PackageReference Include="Otp.NET" Version="1.4.*" />
     <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.*" />
@@ -137,7 +137,7 @@ Stari `BizSMS/BizSMS.csproj` je verbozan, sa `packages.config`, `<Reference Hint
 | `Microsoft.AspNet.Web.Optimization`, `WebGrease` | `LigerShark.WebOptimizer.Core` ili LibMan |
 | `Hangfire.Core/SqlServer` | `Hangfire.AspNetCore` + `Hangfire.SqlServer` |
 | `log4net` | `log4net` (radi na Core) ili migracija na Serilog |
-| `EPPlus` 4.1.1 | `EPPlus` 7.x — **PAŽNJA**: od v5 obavezan `ExcelPackage.License` |
+| `EPPlus` 4.1.1 | **`ClosedXML`** (MIT) — EPPlus v5+ zahteva plaćenu komercijalnu licencu (sekcija 10.3) |
 | `RestSharp` 105 | `RestSharp` 112.x (API se promenio) |
 | `Otp.NET` | `Otp.NET` (radi na Core) |
 | Oracle (`Oracle.ManagedDataAccess`) | `Oracle.ManagedDataAccess.Core` |
@@ -480,11 +480,17 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
 - `public virtual ClientModel Client { get; set; }` — `virtual` navigacije rade lazy loading **samo** uz `Microsoft.EntityFrameworkCore.Proxies` + `UseLazyLoadingProxies()` (već dodato u `Program.cs`). Ako ne želiš proxy, izbaci `virtual` i koristi eksplicitni `Include()`.
 
-### 5.3 EF6 migracije → EF Core baseline (bez gubitka podataka)
+### 5.3 EF6 migracije → EF Core baseline (OPCIONO — posle gašenja legacy aplikacije)
 
-Imaš **110 EF6 migracija** u `Migrations/`. **Ne portuju se.** Baza već postoji sa svim tabelama. Cilj: EF Core da zna da je „sve već primenjeno", da ne pokušava da kreira tabele.
+Imaš **110 EF6 migracija** u `Migrations/`. **Ne portuju se.** Baza već postoji sa svim tabelama.
 
-Koraci:
+> **Odluka: baseline se NE radi tokom side-by-side perioda.** `BizSMS.Web` radi nad postojećom bazom bez baseline-a — EF Core ne proverava `__EFMigrationsHistory` pri pokretanju, a aplikacija ne poziva `Database.Migrate()` niti `EnsureCreated()` (i ne sme da ih poziva). Dok legacy FW aplikacija i `BizSMS.Web` dele istu bazu, izmene šeme se rade **ručnim idempotentnim SQL skriptama** u `BizSMS.Web/Data/Sql/` (primer: `bst-log-ip-address.sql`), kompatibilnim sa obe aplikacije (npr. nove kolone `NULL`, novi SP parametri sa podrazumevanom vrednošću). Svaku takvu izmenu odmah preneti i u EF Core model (anotacije/`OnModelCreating`).
+>
+> **Kada uraditi baseline:** tek kada se legacy aplikacija ugasi i odluči se da šemom od tada upravlja EF Core. Bez baseline-a, prva `dotnet ef migrations add ...` bi sadržala `CREATE TABLE` za **sve** postojeće tabele.
+
+Cilj baseline-a: EF Core da zna da je „sve već primenjeno", da ne pokušava da kreira tabele.
+
+Koraci (kada se baseline radi):
 
 ```bash
 # 1. Generiši EF Core "Initial" migraciju iz trenutnog modela (opisuje CELU šemu)
@@ -519,7 +525,7 @@ dotnet ef migrations add DodajKolonuX
 dotnet ef database update      # primenjuje SAMO nove migracije
 ```
 
-> **Validacija baseline-a:** uporedi `baseline.sql` sa stvarnom šemom (imena tabela `BST_*`, `AspNet*`, tipovi kolona). Ako se EF Core model ne poklapa 100% sa bazom, prilagodi anotacije/`OnModelCreating` **pre** nego što ubaciš red u `__EFMigrationsHistory`. Stara EF6 `__MigrationHistory` tabela se može ostaviti (ignoriše je EF Core) ili obrisati posle provere.
+> **Validacija baseline-a:** uporedi `baseline.sql` sa stvarnom šemom (imena tabela `BST_*`, `AspNet*`, tipovi kolona, uključujući sve izmene uvedene ručnim skriptama iz `Data/Sql/`, npr. `BST_LOG.IP_Address`). Ako se EF Core model ne poklapa 100% sa bazom, prilagodi anotacije/`OnModelCreating` **pre** nego što ubaciš red u `__EFMigrationsHistory`. Stara EF6 `__MigrationHistory` tabela se može ostaviti (ignoriše je EF Core) ili obrisati posle provere.
 
 ---
 
@@ -978,10 +984,21 @@ client.ClientCredentials.UserName.Password = _opt.Password;
 
 ### 10.3 Ostalo
 
-- **EPPlus**: od v5 obavezno postaviti licencu pre upotrebe:
+- **EPPlus → ClosedXML (MIT)**: legacy EPPlus 4.1.1 je bio LGPL (besplatan), ali od v5 EPPlus je pod Polyform Noncommercial licencom — za komercijalnu app zahteva plaćenu licencu. Zato je u `BizSMS.Web` EPPlus zamenjen paketom **ClosedXML** (bez licencnog podešavanja u `Program.cs`). Jedina upotreba je čitanje uploadovanog `.xlsx` u `GroupController.GetDataFromExcel`:
   ```csharp
-  ExcelPackage.License.SetNonCommercialOrganization("Telekom"); // ili komercijalna licenca
+  // PRE (EPPlus)
+  using var xl = new ExcelPackage(new FileInfo(filePath));
+  var ws = xl.Workbook.Worksheets.First();
+  var start = ws.Dimension.Start; var end = ws.Dimension.End;
+  var v = ws.Cells[row, col].Value?.ToString() ?? "";
+
+  // POSLE (ClosedXML)
+  using var wb = new XLWorkbook(filePath);
+  var ws = wb.Worksheets.First();
+  var range = ws.RangeUsed();            // null za prazan list
+  var v = ws.Cell(row, col).Value.ToString(); // prazna ćelija → ""
   ```
+  Ponašanje je isto kao legacy: broj upisan u Excel kao broj (ne tekst) gubi vodeću nulu.
 - **RestSharp**: 105 → 112 ima drugačiji API (`RestClient`/`RestRequest` konstruktori, async pozivi). Proveriti svaki poziv.
 - **JWT / Otp.NET**: rade na Core; proveriti verzije.
 
@@ -1036,19 +1053,19 @@ Preporučeni redosled:
 2. [ ] `appsettings.json` + User Secrets; **rotiraj izložene lozinke** (sekcija 3).
 3. [ ] `Program.cs` skelet (bez Identity/Hangfire za početak) — da se digne prazna app (sekcija 4).
 4. [ ] Prekopiraj entitete (`Models/*`) i `ApplicationDbContext` na EF Core (sekcija 5.1–5.2).
-5. [ ] EF Core **baseline** nad postojećom bazom; potvrdi da `baseline.sql` odgovara šemi (sekcija 5.3).
+5. [ ] ~~EF Core baseline~~ — **odloženo, opciono posle gašenja legacy aplikacije** (sekcija 5.3); do tada izmene šeme ručnim skriptama u `BizSMS.Web/Data/Sql/`.
 6. [ ] Identity: `ApplicationUser`, `AddIdentity`, cookie, **hash kompatibilnost** (sekcija 6).
 7. [ ] Filteri/atributi → filteri/middleware (sekcija 7).
 8. [ ] Prebaci kontrolere (MVC + API objedinjeno) i `BaseController` (sekcija 8).
 9. [ ] Prebaci Views + statiku u `wwwroot`; WebOptimizer bundle-ovi (sekcija 8.4).
 10. [ ] log4net (`log4net.config`) + Hangfire (sekcija 9).
-11. [ ] SOAP klijenti (svcutil) + Oracle + EPPlus/RestSharp (sekcija 10).
+11. [ ] SOAP klijenti (svcutil) + Oracle + ClosedXML (umesto EPPlus)/RestSharp (sekcija 10).
 12. [ ] Testovi + IIS deployment (sekcija 11).
 
 ### Kontrolne tačke (verifikacija)
 
 - [ ] `dotnet build` prolazi bez grešaka.
-- [ ] `dotnet ef migrations script` baseline ne sadrži `DROP`/`CREATE` za postojeće `BST_*`/`AspNet*` tabele posle usklađivanja modela.
+- [ ] *(Samo ako se radi baseline, posle gašenja legacy aplikacije)* `dotnet ef migrations script` baseline ne sadrži `DROP`/`CREATE` za postojeće `BST_*`/`AspNet*` tabele posle usklađivanja modela.
 - [ ] **Postojeći korisnik se uloguje** starom lozinkom (hash kompatibilnost radi).
 - [ ] Nakon logina, lozinka se re-hešuje u novi format (Opcija B).
 - [ ] 2FA SMS kod stiže i verifikuje se.

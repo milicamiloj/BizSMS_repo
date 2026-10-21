@@ -13,7 +13,7 @@ namespace BizSMS.Web.Services
         public string IntegrationAuth { get; set; } = "";
     }
 
-    // Prava SelfCareLdapWS SOAP provera tipa broja (U MTS / VAN MTS) — zamena za LdapCheckerStub.
+    // Prava SelfCareLdapWS SOAP provera tipa broja (U MTS / VAN MTS).
     // Legacy je koristio WCF LDAPCheckSoapClient (basicHttpBinding = SOAP 1.1) sa custom
     // "Integration-Auth" HTTP headerom; WCF/WSE3 ne radi na .NET-u pa SOAP envelope pravimo ručno
     // i šaljemo preko HttpClient-a (isti obrazac kao SdpSmsSender).
