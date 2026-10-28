@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using ClosedXML.Excel;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace BizSMS.Web.Controllers
 {
@@ -180,9 +181,18 @@ namespace BizSMS.Web.Controllers
             return View();
         }
 
+        private const long MaxUploadBytes = 1 * 1024 * 1024;
+        // Tvrdi limit zahteva je nešto veći od MaxUploadBytes, da bi fajl do 2 MB dobio poruku umesto 413.
+        private const long MaxUploadRequestBytes = 2 * 1024 * 1024;
+        // Zaštita od "zip bombe": xlsx od 1 MB može da se raspakuje u stotine MB XML-a.
+        private const long MaxUncompressedBytes = 50 * 1024 * 1024;
+        private const int MaxUploadRows = 5000;
+
         //POST /Group/CheckUploadedNumbers/{GroupID}
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [RequestSizeLimit(MaxUploadRequestBytes)]
+        [RequestFormLimits(MultipartBodyLengthLimit = MaxUploadRequestBytes)]
         public async Task<IActionResult> CheckUploadedNumbers(int? id, IFormFile file)
         {
             if (id == null)
@@ -197,26 +207,41 @@ namespace BizSMS.Web.Controllers
             ViewBag.GroupName = groupId.Name;
             ViewBag.ClientName = groupId.Client.Name;
 
-            // ClosedXML određuje format po ekstenziji, pa sačuvan fajl mora da ima .xlsx.
-            string filename = id.ToString() + " " + DateTime.Now.ToString("yyyyMMddhhmmss") + ".xlsx";
-            string pathToSave = UploadedFilesPath;
-            Directory.CreateDirectory(pathToSave);
+            if (file == null || file.Length == 0)
+                return UploadError("Fajl nije izabran ili je prazan.");
 
-            if (file == null)
-                return BadRequest("File not loaded");
+            if (!string.Equals(Path.GetExtension(file.FileName), ".xlsx", StringComparison.OrdinalIgnoreCase))
+                return UploadError("Dozvoljen je samo Excel fajl (.xlsx).");
 
-            if (file.Length == 0)
-                return BadRequest("Empty file");
+            if (file.Length > MaxUploadBytes)
+                return UploadError("Fajl je veći od 1 MB.");
 
-            string filePath = Path.Combine(pathToSave, filename);
+            // Fajl (lični podaci — brojevi telefona) se čita iz memorije i ne upisuje se na disk.
+            using var ms = new MemoryStream();
+            await file.CopyToAsync(ms);
 
-            // Stream se zatvara pre čitanja — inače je fajl još otvoren za upis.
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            if (!HasZipSignature(ms))
+                return UploadError("Fajl nije ispravan Excel dokument (.xlsx).");
+
+            DataTable dtData;
+            try
             {
-                await file.CopyToAsync(stream);
-            }
+                ms.Position = 0;
+                using (var zip = new System.IO.Compression.ZipArchive(ms, System.IO.Compression.ZipArchiveMode.Read, leaveOpen: true))
+                {
+                    if (zip.Entries.Sum(e => e.Length) > MaxUncompressedBytes)
+                        return UploadError("Fajl nije ispravan Excel dokument (.xlsx).");
+                }
 
-            DataTable dtData = GetDataFromExcel(filePath);
+                ms.Position = 0;
+                if (!TryGetDataFromExcel(ms, out dtData))
+                    return UploadError($"Fajl ima više od {MaxUploadRows} redova. Podelite listu na više fajlova.");
+            }
+            catch (Exception ex)
+            {
+                logger.Error($"Neispravan upload fajl za grupu {id}: {ex.Message}");
+                return UploadError("Fajl nije ispravan Excel dokument (.xlsx).");
+            }
 
             var (model, badNumbers, existingNumbers, duplicates, badGroup, sendDeniedNumbers) =
                 await CheckDataFromExcel((int)id, dtData);
@@ -330,19 +355,33 @@ namespace BizSMS.Web.Controllers
             int clientID = CurrentClientId;
             var groupId = db.Group.Find(model.GroupID);
 
-            if (model.NumberID == null || model.NumberID.Length == 0 || groupId == null || clientID != groupId.ClientID)
+            if (model.NumberID == null || model.NumberID.Length == 0 || groupId == null || groupId.Default || clientID != groupId.ClientID)
                 return BadRequest();
+
+            // Isti skup koji nudi GET: brojevi klijenta (aktivni, slanje dozvoljeno) koji još nisu u grupi.
+            var requestedIds = model.NumberID.Distinct().ToList();
+            var allowedIds = db.Numbers
+                .Where(n => requestedIds.Contains(n.NumberID) && n.ClientID == clientID && n.Active && n.SendAllowed)
+                .Where(n => !db.GroupNumbers.Any(gn => gn.GroupID == model.GroupID && gn.NumberID == n.NumberID))
+                .Select(n => n.NumberID)
+                .ToList();
+
+            if (allowedIds.Count != requestedIds.Count)
+            {
+                logger.Error($"AddNumber: odbijeni NumberID-jevi za grupu {model.GroupID}: {string.Join(", ", requestedIds.Except(allowedIds))}");
+                return BadRequest();  //StatusCode(StatusCodes.Status403Forbidden)
+            }
 
             int count = 1;
 
             if (ModelState.IsValid)
             {
-                for (int i = 0; i < model.NumberID.Length; i++)
+                foreach (var numberId in allowedIds)
                 {
                     GroupNumberModel GroupNumber = new GroupNumberModel()
                     {
                         GroupID = model.GroupID,
-                        NumberID = model.NumberID[i],
+                        NumberID = numberId,
                         InsertDate = DateTime.Now
                     };
 
@@ -594,31 +633,49 @@ namespace BizSMS.Web.Controllers
         }
         #endregion
 
-        private DataTable GetDataFromExcel(string filePath)
+        private IActionResult UploadError(string message)
         {
-            var dt = new DataTable();
+            ViewBag.UploadError = message;
+            return View("UploadNumbers");
+        }
+
+        private static bool HasZipSignature(Stream stream)
+        {
+            stream.Position = 0;
+            Span<byte> header = stackalloc byte[4];
+            return stream.Read(header) == 4
+                && header[0] == 0x50 && header[1] == 0x4B && header[2] == 0x03 && header[3] == 0x04;
+        }
+
+        // Vraća false ako list ima više od MaxUploadRows redova (bez zaglavlja) — pre bilo kakvog LDAP poziva.
+        private static bool TryGetDataFromExcel(Stream stream, out DataTable dt)
+        {
+            dt = new DataTable();
             dt.Columns.Add("Number");
             dt.Columns.Add("Name");
 
-            using var workbook = new XLWorkbook(filePath);
+            using var workbook = new XLWorkbook(stream);
             var worksheet = workbook.Worksheets.First();
 
             // Ekvivalent EPPlus worksheet.Dimension; prazan list → nema redova.
             var range = worksheet.RangeUsed();
             if (range == null)
-                return dt;
+                return true;
 
             int startRow = range.FirstRow().RowNumber();
             int endRow = range.LastRow().RowNumber();
             int startCol = range.FirstColumn().ColumnNumber();
             int endCol = range.LastColumn().ColumnNumber();
 
+            if (endRow - startRow > MaxUploadRows)
+                return false;
+
             for (int row = startRow + 1; row <= endRow; row++)
             {
                 DataRow dr = dt.NewRow();
                 int i = 0;
 
-                for (int col = startCol; col <= endCol; col++)
+                for (int col = startCol; col <= endCol && i < dt.Columns.Count; col++)
                 {
                     // Kao EPPlus Value.ToString(): broj upisan kao broj gubi vodeću nulu (isto kao legacy).
                     dr[i++] = worksheet.Cell(row, col).Value.ToString();
@@ -626,7 +683,7 @@ namespace BizSMS.Web.Controllers
                 dt.Rows.Add(dr);
             }
 
-            return dt;
+            return true;
         }
 
         private async Task<(ClientConfirmUploadFileViewModel model, string badNumbers, string existingNumbers,

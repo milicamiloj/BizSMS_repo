@@ -5,10 +5,14 @@ using BizSMS.Web.Identity;
 using BizSMS.Web.Models;
 using BizSMS.Web.Services;
 using Hangfire;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Ne otkrivamo web server u odgovoru (pod IIS-om to radi web.config).
+builder.WebHost.ConfigureKestrel(o => o.AddServerHeader = false);
 
 // DbContext (EF Core, SQL Server, lazy loading proxies — app zavisi od lazy load-a, nema .Include())
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -67,13 +71,37 @@ if (hangfireEnabled)
     builder.Services.AddHangfireServer();
 }
 
+// Sesija se odbacuje najkasnije minut posle promene SecurityStamp-a (reset lozinke); podrazumevano je 30 min.
+builder.Services.Configure<SecurityStampValidatorOptions>(o => o.ValidationInterval = TimeSpan.FromMinutes(1));
+
+// Cookie-ji idu samo preko HTTPS-a. Prefiks __Host- browser prihvata samo uz Secure, Path=/ i bez Domain,
+// pa cookie ne može da podmetne poddomen. U dev-u (profil "http") Secure prati protokol, a prefiksa nema
+// jer bi ga browser bez Secure-a odbio.
+var isDev = builder.Environment.IsDevelopment();
+var cookieSecure = isDev ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+var cookiePrefix = isDev ? "" : "__Host-";
+
+// AJAX pozivi šalju antiforgery token u ovom zaglavlju (globalni hook u _Layout.cshtml).
+builder.Services.AddAntiforgery(o =>
+{
+    o.HeaderName = "RequestVerificationToken";
+    o.Cookie.Name = cookiePrefix + "BizSMS.Antiforgery";
+    o.Cookie.SecurePolicy = cookieSecure;
+    o.Cookie.SameSite = SameSiteMode.Strict;
+});
+
+// Lax (a ne Strict): korisnik koji otvori link ka aplikaciji iz mejla ostaje prijavljen;
+// od CSRF-a štiti antiforgery token.
 builder.Services.ConfigureApplicationCookie(o =>
 {
     o.LoginPath = "/Account/Login";
     o.AccessDeniedPath = "/Account/Login";
     o.ExpireTimeSpan = TimeSpan.FromMinutes(15);
     o.SlidingExpiration = true;
+    o.Cookie.Name = cookiePrefix + "BizSMS";
     o.Cookie.HttpOnly = true;
+    o.Cookie.SecurePolicy = cookieSecure;
+    o.Cookie.SameSite = SameSiteMode.Lax;
     o.Events.OnRedirectToLogin = ctx =>   // API grana → 401 umesto redirecta
     {
         if (ctx.Request.Path.StartsWithSegments("/api"))
@@ -84,12 +112,35 @@ builder.Services.ConfigureApplicationCookie(o =>
     };
 });
 
+// Cookie između unosa lozinke i SMS koda nosi identitet korisnika, pa ima ista pravila kao cookie prijave.
+builder.Services.Configure<CookieAuthenticationOptions>(IdentityConstants.TwoFactorUserIdScheme, o =>
+{
+    o.Cookie.Name = cookiePrefix + "BizSMS.2FA";
+    o.Cookie.HttpOnly = true;
+    o.Cookie.SecurePolicy = cookieSecure;
+    o.Cookie.SameSite = SameSiteMode.Lax;
+});
+
+// Minimum za sve ostale cookie-je (TempData, _culture i buduće).
+builder.Services.Configure<CookiePolicyOptions>(o =>
+{
+    o.Secure = cookieSecure;
+    o.HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always;
+    o.MinimumSameSitePolicy = SameSiteMode.Lax;
+});
+
 // Add services to the container.
 // PropertyNamingPolicy = null zadržava PascalCase u JSON-u (System.Text.Json podrazumevano camelCase-uje).
 // Legacy DataTables JS koristi PascalCase ključeve (Number/Name/NumberType/EditLink) -> mora ostati PascalCase.
 builder.Services.AddControllersWithViews(o =>
+    {
         // Globalni audit log svake akcije (§7.4) — pokriva i ne-BaseController i API kontrolere.
-        o.Filters.Add<BizSMS.Web.Filters.ActionLoggingFilter>())
+        o.Filters.Add<BizSMS.Web.Filters.ActionLoggingFilter>();
+        // API kontroleri imaju samo [Authorize(Roles)] — ovaj filter blokira otkazane korisnike.
+        o.Filters.Add<BizSMS.Web.Filters.ApiNotCanceledFilter>();
+        // CSRF: token se proverava za sve ne-GET zahteve, i MVC i API ([ApiController] ga sam ne proverava).
+        o.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+    })
     .AddJsonOptions(o => o.JsonSerializerOptions.PropertyNamingPolicy = null);
 
 // Logger facade (§9.1) čita ime ulogovanog korisnika per-request iz HttpContext-a (@user u SP-u).
@@ -130,7 +181,28 @@ if (!app.Environment.IsDevelopment())
 // Mapiranje statusnih kodova (400/401/403/404) na ErrorController.Http4xx (legacy Application_Error mapiranje)
 app.UseStatusCodePagesWithReExecute("/Error/Http{0}");
 
+// Security header-i. Stoje posle UseExceptionHandler-a jer on briše header-e pre ponovnog izvršavanja,
+// pa ih ovaj middleware ponovo postavlja i na stranici greške.
+// 'unsafe-inline' ostaje dok se inline skripte u view-ovima ne prebace na nonce.
+// Dev: Visual Studio (Browser Link / hot reload) koristi websocket ka localhost-u.
+var csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
+          "img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" +
+          (app.Environment.IsDevelopment() ? "; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:*" : "");
+app.Use(async (context, next) =>
+{
+    var headers = context.Response.Headers;
+    headers["X-Content-Type-Options"] = "nosniff";
+    headers["X-Frame-Options"] = "DENY";
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    // Hangfire dashboard ima sopstvene inline skripte i stilove.
+    if (!context.Request.Path.StartsWithSegments("/hangfire"))
+        headers["Content-Security-Policy"] = csp;
+    await next();
+});
+
 app.UseHttpsRedirection();
+app.UseCookiePolicy();
 app.UseRouting();
 
 app.UseAuthentication();

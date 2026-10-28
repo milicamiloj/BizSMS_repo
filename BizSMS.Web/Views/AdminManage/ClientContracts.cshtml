@@ -42,7 +42,7 @@
                 info: false,
                 columns: [
                     { data: "ClientContractId", visible: false },
-                    { data: "ContractId" },
+                    { data: "ContractId", render: $.fn.dataTable.render.text() },
                     { data: "Edit", searchable: false, orderable: false }
                 ],
                 language: {

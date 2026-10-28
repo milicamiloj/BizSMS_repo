@@ -95,9 +95,9 @@ namespace BizSMS.Web.Controllers.Api
 
                 foreach (var row in rows)
                 {
+                    // Klik obrađuje JS u Numbers.cshtml (POST na DenySending, koji menja i SendAllowed), zato href="#".
                     string toggleLink = "<a data-number-id=\"" + row.NumberID +
-                        "\" href=\"/AdminManage/ToggleLockNumber/" + row.NumberID + "?clientId=" + clientId +
-                        "\" class=\"stop-allow-sending\">" + (row.SendAllowed ? "Zabrani slanje" : "Dozvoli slanje") + "</a>";
+                        "\" href=\"#\" class=\"stop-allow-sending\">" + (row.SendAllowed ? "Zabrani slanje" : "Dozvoli slanje") + "</a>";
 
                     string deniedReason = "";
                     if (row.LastReason != null)
@@ -163,6 +163,8 @@ namespace BizSMS.Web.Controllers.Api
                 });
             }
 
+            // Legacy je status menjao naknadnim GET-om na ToggleLockNumber; sada u istom POST-u (CSRF).
+            number.SendAllowed = !number.SendAllowed;
             db.SaveChanges();
             return Ok();
         }
@@ -261,12 +263,8 @@ namespace BizSMS.Web.Controllers.Api
                 if (message == null)
                     return NotFound();
 
-                if (message.Status == (int)MessageStatus.Finished)
-                    return Ok("Poruka je već poslata!");
-
-                message.Status = (int)MessageStatus.ScheduledSendingCanceled;
-                // Otkazana poruka ne sme biti naplaćena.
-                message.Charged = false;
+                if (!db.TryCancelScheduledMessage(id, out string notCancelable))
+                    return Ok(notCancelable);
 
                 var scheduled = db.ScheduledSms.FirstOrDefault(s => s.MessageID == message.MessageID);
                 if (scheduled != null)

@@ -6,6 +6,11 @@
 <h1>Učitaj listu brojeva</h1>
 <h2>Grupa: @ViewBag.GroupName</h2>
 
+@if (ViewBag.UploadError != null)
+{
+    <div class="alert alert-danger">@ViewBag.UploadError</div>
+}
+
 <form asp-action="CheckUploadedNumbers" asp-route-id="@groupId" method="post" enctype="multipart/form-data">
     @Html.AntiForgeryToken()
 
@@ -14,8 +19,8 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label" for="fileSelected">Izaberi fajl</label>
-        <input type="file" name="file" id="fileSelected" class="form-control" />
+        <label class="form-label" for="fileSelected">Izaberi fajl (.xlsx, najviše 1 MB i 5.000 redova)</label>
+        <input type="file" name="file" id="fileSelected" class="form-control" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
     </div>
 
     <button type="submit" id="importFileButton" class="btn btn-primary" disabled="disabled">Učitaj fajl</button>

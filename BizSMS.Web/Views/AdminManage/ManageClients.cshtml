@@ -48,7 +48,9 @@
                     <text> | </text>
                     <a class="group-link" asp-action="Alphanumerics" asp-route-id="@item.ClientID">Alfanumerici</a>
                     <text> | </text>
-                    <a class="group-link" asp-action="ManageClients" asp-route-id="@item.ClientID">@(item.IsCanceled ? "Otključaj" : "Zaključaj")</a>
+                    <form class="d-inline" asp-action="ToggleClient" asp-route-id="@item.ClientID" method="post">
+                        <button type="submit" class="btn btn-link group-link p-0 align-baseline">@(item.IsCanceled ? "Otključaj" : "Zaključaj")</button>
+                    </form>
                 </td>
             </tr>
         }

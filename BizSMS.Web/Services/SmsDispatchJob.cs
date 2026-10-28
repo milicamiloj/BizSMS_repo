@@ -2,6 +2,7 @@
 using BizSMS.Web.Data;
 using BizSMS.Web.Helpers;
 using BizSMS.Web.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BizSMS.Web.Services
 {
@@ -39,6 +40,20 @@ namespace BizSMS.Web.Services
                 logger.Error("Poruka ne postoji: " + messageId);
                 return;
             }
+
+            // Uslovni UPDATE (par TryCancelScheduledMessage-u): u Processing prelazi samo poruka koja nije
+            // otkazana ni završena, pa otkazivanje i početak slanja ne mogu oba da uspeju. Processing ostaje
+            // dozvoljen radi Hangfire retry-ja (šalju se samo još neposlati brojevi).
+            //int claimed = db.Message
+            //    .Where(m => m.MessageID == messageId
+            //        && m.Status != (int)MessageStatus.ScheduledSendingCanceled
+            //        && m.Status != (int)MessageStatus.Finished)
+            //    .ExecuteUpdate(s => s.SetProperty(m => m.Status, (int)MessageStatus.Processing));
+            //if (claimed == 0)
+            //{
+            //    logger.Info("Poruka " + messageId + " je otkazana ili već poslata — slanje se preskače.");
+            //    return;
+            //}
 
             // Otkazana ili već završena poruka se preskače (idempotentnost pri Hangfire retry-ju).
             if (message.Status == (int)MessageStatus.ScheduledSendingCanceled || message.Status == (int)MessageStatus.Finished)
@@ -81,7 +96,7 @@ namespace BizSMS.Web.Services
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("SDP slanje nije uspelo za broj " + number.Number + ": " + ex.Message);
+                    logger.Error("SDP slanje nije uspelo za broj " + Logger.MaskMsisdn(number.Number), ex);
                     msgId = "-1";
                 }
 

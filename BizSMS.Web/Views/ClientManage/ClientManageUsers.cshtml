@@ -7,14 +7,6 @@
 <h2>@ViewData["Title"]</h2>
 <p class="text-success">@ViewBag.StatusMessage</p>
 
-<p>
-    @* Legacy dozvoljava najviše 5 korisnika po klijentu. *@
-    @if (Model.Count() < 5)
-    {
-        <a class="group-link float-end" asp-action="ClientCreateUser">Kreiraj novog korisnika</a>
-    }
-</p>
-
 <table class="table" id="clientTable">
     <thead>
         <tr>

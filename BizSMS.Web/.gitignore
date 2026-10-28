@@ -1,0 +1,16 @@
+bin/
+obj/
+.vs/
+packages/
+Publish/
+*.user
+*.suo
+TestResults/
+*.zip
+*.docx
+
+# Upload fajlovi sadrže lične podatke (brojeve telefona); u repozitorijumu su samo šablon i uputstva.
+UploadedFiles/*
+!UploadedFiles/UploadNumbersTemplate.xlsx
+!UploadedFiles/KorisnickoUputstvoBizSMS_administrator.pdf
+!UploadedFiles/KorisnickoUputstvoBizSMS_klijent.pdf

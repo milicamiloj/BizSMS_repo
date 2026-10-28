@@ -43,12 +43,13 @@
             $("#numbersTable").DataTable({
                 dom: "<'row'<'col-sm-12 col-md-6'f>>rt<'row'<'col-sm-12'p>>",
                 ajax: "/api/AdminManage/GetNumbers?clientId=@clientId",
+                // Korisnički podaci se prikazuju kao tekst (zaštita od XSS-a); HTML je samo EditSection sa servera.
                 columns: [
-                    { data: "NumberType" },
-                    { data: "Number" },
-                    { data: "Name" },
-                    { data: "SendAllowed" },
-                    { data: "DeniedReason" },
+                    { data: "NumberType", render: $.fn.dataTable.render.text() },
+                    { data: "Number", render: $.fn.dataTable.render.text() },
+                    { data: "Name", render: $.fn.dataTable.render.text() },
+                    { data: "SendAllowed", render: $.fn.dataTable.render.text() },
+                    { data: "DeniedReason", render: $.fn.dataTable.render.text() },
                     { data: "EditSection" }
                 ],
                 language: {

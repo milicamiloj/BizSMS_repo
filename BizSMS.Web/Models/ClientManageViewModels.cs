@@ -20,30 +20,6 @@ namespace BizSMS.Web.Models
         public string PhoneNumber { get; set; }
     }
 
-    public class ClientCreateUserViewModel
-    {
-        [Required(ErrorMessage = "Email je obavezno polje")]
-        [EmailAddress(ErrorMessage = "Polje {0} nije validna e-mail adresa")]
-        [Display(Name = "E-mail")]
-        public string Email { get; set; }
-
-        [Required(ErrorMessage = "{0} je obavezno polje")]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "{0} mora da sadrži najmanje {2} karaktera.")]
-        [DataType(DataType.Password)]
-        [Display(Name = "Lozinka")]
-        public string Password { get; set; }
-
-        [DataType(DataType.Password)]
-        [Display(Name = "Potvrdi lozinku")]
-        [Compare("Password", ErrorMessage = "Lozinke se ne podudaraju")]
-        public string ConfirmPassword { get; set; }
-
-        [Required(ErrorMessage = "Broj telefona je obavezno polje")]
-        [RegularExpression(@"^(06\d{8,10})", ErrorMessage = "{0} polje ne predstavlja validan broj telefona")]
-        [Display(Name = "Broj telefona")]
-        public string PhoneNumber { get; set; }
-    }
-
     public class ClientEditUserViewModel
     {
         [Required]

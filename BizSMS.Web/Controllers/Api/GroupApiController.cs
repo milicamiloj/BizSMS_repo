@@ -125,6 +125,13 @@ namespace BizSMS.Web.Controllers.Api
         {
             logger.SetControllerAction("GroupApiController", "ConfirmUploadNumbers");
 
+            if (id == null)
+                return BadRequest();
+
+            int clientID = CurrentClientId;
+            if (!db.Group.Any(g => g.GroupID == id && g.ClientID == clientID))
+                return BadRequest();
+
             try
             {
                 var tempImport = db.TempImport

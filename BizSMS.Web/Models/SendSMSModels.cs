@@ -21,7 +21,6 @@ namespace BizSMS.Web.Models
     {
         public List<int> PhoneNumbers { get; set; }
         public string ScheduledDateTime { get; set; }
-        public bool VpnGroupSending { get; set; }
     }
 
     public class GroupSMSData : SMSData

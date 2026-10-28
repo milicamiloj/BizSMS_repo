@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Xml.Linq;
 using Microsoft.Extensions.Options;
@@ -12,6 +14,8 @@ namespace BizSMS.Web.Services
         public string Username { get; set; } = "";
         public string Password { get; set; } = "";
         public string Alphanumeric { get; set; } = "MTS";
+        // true = PasswordDigest (lozinka ne ide otvoreno, SDP endpoint nema HTTPS); false = legacy PasswordText.
+        public bool UsePasswordDigest { get; set; } = true;
     }
 
     public class ReceiptReq
@@ -19,7 +23,7 @@ namespace BizSMS.Web.Services
         public string Correlator { get; set; } = "16";
         public string Endpoint { get; set; } = "http://http2smsraz.telekom.rs/http2sms.asmx";
     }
-    // Salje SMS preko SDP ParlayX SMS v2.1 (operacija sendSms) sa WS-Security UsernameToken (PasswordText) headerom.
+    // Salje SMS preko SDP ParlayX SMS v2.1 (operacija sendSms) sa WS-Security UsernameToken headerom (PasswordDigest ili PasswordText).
     // Zamena za legacy SDPSendSms klijent (WSE3 Policy/CustomHeadersAssertion) koji ne radi na .NET-u:
     // SOAP envelope se pravi rucno i salje preko HttpClient-a. Struktura verno prati stari generisani proxy.
     public class SdpSmsSender : ISmsSender
@@ -29,6 +33,8 @@ namespace BizSMS.Web.Services
         private const string WsseNs = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd";
         private const string WsuNs = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
         private const string PasswordTextType = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText";
+        private const string PasswordDigestType = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest";
+        private const string Base64EncodingType = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-soap-message-security-1.0#Base64Binary";
 
         private readonly HttpClient _http;
         private readonly SdpOptions _opt;
@@ -93,7 +99,6 @@ namespace BizSMS.Web.Services
         private string BuildEnvelope(string address, string message, string senderName, string endpoint, string correlator)
         {
             var user = SecurityElement.Escape(_opt.Username);
-            var pass = SecurityElement.Escape(_opt.Password);
             var addr = SecurityElement.Escape(address);
             var sender = SecurityElement.Escape(senderName);
             var msg = SecurityElement.Escape(message);
@@ -114,8 +119,7 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
   <soap:Header>
     <wsse:Security soap:mustUnderstand=""1"" xmlns:wsse=""{WsseNs}"">
       <wsse:UsernameToken xmlns:wsu=""{WsuNs}"">
-        <wsse:Username>{user}</wsse:Username>
-        <wsse:Password Type=""{PasswordTextType}"">{pass}</wsse:Password>
+        <wsse:Username>{user}</wsse:Username>{BuildPasswordElements()}
       </wsse:UsernameToken>
     </wsse:Security>
   </soap:Header>
@@ -128,6 +132,28 @@ $@"<?xml version=""1.0"" encoding=""utf-8""?>
     </sendSms>
   </soap:Body>
 </soap:Envelope>";
+        }
+
+        // PasswordDigest = Base64(SHA1(nonce + created + password)); nonce je nov za svaki zahtev,
+        // a Created (UTC) omogućava SDP-u da odbije ponovljene (replay) i zastarele zahteve.
+        private string BuildPasswordElements()
+        {
+            if (!_opt.UsePasswordDigest)
+                return $@"
+        <wsse:Password Type=""{PasswordTextType}"">{SecurityElement.Escape(_opt.Password)}</wsse:Password>";
+
+            var nonce = RandomNumberGenerator.GetBytes(16);
+            var created = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture);
+            var digestInput = nonce
+                .Concat(Encoding.UTF8.GetBytes(created))
+                .Concat(Encoding.UTF8.GetBytes(_opt.Password))
+                .ToArray();
+            var digest = Convert.ToBase64String(SHA1.HashData(digestInput));
+
+            return $@"
+        <wsse:Password Type=""{PasswordDigestType}"">{digest}</wsse:Password>
+        <wsse:Nonce EncodingType=""{Base64EncodingType}"">{Convert.ToBase64String(nonce)}</wsse:Nonce>
+        <wsu:Created>{created}</wsu:Created>";
         }
 
         private static string ParseResult(string soapResponse)

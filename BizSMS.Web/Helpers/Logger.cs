@@ -22,6 +22,7 @@ namespace BizSMS.Web.Helpers
         private readonly ILogger _log;
         private string _controller = "";
         private string _action = "";
+        private string? _user;
 
         // Pozvati posle builder.Build() u Program.cs. connectionString je "BizSMS";
         // ako je prazan ili sadrži __placeholder__ → SP upis se preskače (dev bez baze).
@@ -40,25 +41,29 @@ namespace BizSMS.Web.Helpers
             _action = action;
         }
 
-        public void Info(string message)
+        // Za događaje pre autentifikacije (prijava, 2FA) — HttpContext.User je tada anoniman.
+        public void SetUser(string? user)
         {
-            var (controller, action) = ResolveContext();
-            _log.LogInformation("{Controller}/{Action} {Message}", controller, action, message);
-            WriteToDb("INFO", message, controller, action);
+            _user = SanitizeLine(user);
         }
 
-        public void Warn(string message)
-        {
-            var (controller, action) = ResolveContext();
-            _log.LogWarning("{Controller}/{Action} {Message}", controller, action, message);
-            WriteToDb("WARN", message, controller, action);
-        }
+        public void Info(string message) => Write(LogLevel.Information, "INFO", message, null);
 
-        public void Error(string message)
+        public void Warn(string message) => Write(LogLevel.Warning, "WARN", message, null);
+
+        public void Error(string message) => Write(LogLevel.Error, "ERROR", message, null);
+
+        public void Error(string message, Exception ex) => Write(LogLevel.Error, "ERROR", message, ex);
+
+        private void Write(LogLevel level, string dbLevel, string message, Exception? ex)
         {
             var (controller, action) = ResolveContext();
-            _log.LogError("{Controller}/{Action} {Message}", controller, action, message);
-            WriteToDb("ERROR", message, controller, action);
+            message = SanitizeLine(message);   // zaštita od log injection-a (A09) za sve pozive
+            if (_user != null)
+                _log.Log(level, ex, "{Controller}/{Action} [{User}] {Message}", controller, action, _user, message);
+            else
+                _log.Log(level, ex, "{Controller}/{Action} {Message}", controller, action, message);
+            WriteToDb(dbLevel, message, controller, action, ex);
         }
 
         // Eksplicitni SetControllerAction ima prednost; inače se uzima ruta tekućeg zahteva
@@ -74,7 +79,7 @@ namespace BizSMS.Web.Helpers
 
         // Upis u SP dbo.Log_Insert. Nikad ne sme da obori zahtev — sve greške se gutaju
         // (kao log4net koji podrazumevano ignoriše greške appender-a).
-        private void WriteToDb(string level, string message, string controller, string action)
+        private void WriteToDb(string level, string message, string controller, string action, Exception? ex)
         {
             if (string.IsNullOrWhiteSpace(_connectionString) || _connectionString.Contains("__"))
                 return;
@@ -82,7 +87,7 @@ namespace BizSMS.Web.Helpers
             try
             {
                 var httpContext = _httpContextAccessor?.HttpContext;
-                var user = httpContext?.User?.Identity?.Name ?? "";
+                var user = _user ?? httpContext?.User?.Identity?.Name ?? "";
                 var ip = httpContext?.Connection.RemoteIpAddress;
                 if (ip != null && ip.IsIPv4MappedToIPv6)
                     ip = ip.MapToIPv4();
@@ -96,18 +101,31 @@ namespace BizSMS.Web.Helpers
                 cmd.Parameters.Add("@controller", SqlDbType.VarChar, 100).Value = Truncate(controller, 100);
                 cmd.Parameters.Add("@action", SqlDbType.VarChar, 100).Value = Truncate(action, 100);
                 cmd.Parameters.Add("@log_message", SqlDbType.VarChar, 4000).Value = Truncate(message ?? "", 4000);
-                cmd.Parameters.Add("@exception", SqlDbType.VarChar, 4000).Value = DBNull.Value;
+                cmd.Parameters.Add("@exception", SqlDbType.VarChar, 4000).Value =
+                    ex == null ? DBNull.Value : (object)Truncate(ex.ToString(), 4000);
                 // Van HTTP zahteva (npr. Hangfire posao) IP ne postoji → NULL.
                 cmd.Parameters.Add("@IP_Address", SqlDbType.VarChar, 45).Value = (object?)ip?.ToString() ?? DBNull.Value;
 
                 conn.Open();
                 cmd.ExecuteNonQuery();
             }
-            catch (Exception ex)
+            catch (Exception dbEx)
             {
-                _log.LogError(ex, "Upis u dbo.Log_Insert nije uspeo");
+                _log.LogError(dbEx, "Upis u dbo.Log_Insert nije uspeo");
             }
         }
+
+        // Maskira broj telefona za log: ostavlja samo poslednje 3 cifre (PII zaštita, A09).
+        public static string MaskMsisdn(string? number)
+        {
+            if (string.IsNullOrEmpty(number)) return "";
+            var digits = new string(number.Where(char.IsDigit).ToArray());
+            return digits.Length <= 3 ? "***" : new string('*', digits.Length - 3) + digits[^3..];
+        }
+
+        // Uklanja CR/LF i kontrolne znakove iz vrednosti koje unosi korisnik (zaštita od log injection-a).
+        private static string SanitizeLine(string? value) =>
+            string.IsNullOrEmpty(value) ? "" : new string(value.Where(c => !char.IsControl(c)).ToArray());
 
         private static string Truncate(string value, int max) =>
             string.IsNullOrEmpty(value) || value.Length <= max ? value : value.Substring(0, max);

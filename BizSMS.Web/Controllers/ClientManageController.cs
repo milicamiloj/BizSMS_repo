@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BizSMS.Web.Controllers
 {
     // Zamena za legacy BizSMS.Controllers.ClientManageController.
-    // Administrator upravlja korisnicima svog klijenta (lista/kreiranje/izmena).
+    // Administrator upravlja korisnicima svog klijenta (lista/izmena).
     [AuthorizeUser(Roles = "Administrator")]
     public class ClientManageController : BaseController
     {
@@ -38,50 +38,6 @@ namespace BizSMS.Web.Controllers
                 .ToList();
 
             return View(model);
-        }
-
-        // GET: /ClientManage/ClientCreateUser
-        public IActionResult ClientCreateUser()
-        {
-            return View();
-        }
-
-        // POST: /ClientManage/ClientCreateUser
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ClientCreateUser(ClientCreateUserViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var user = await UserManager.FindByEmailAsync(model.Email);
-
-            if (user == null)
-            {
-                user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    ClientID = CurrentClientId,
-                    PhoneNumber = model.PhoneNumber
-                };
-
-                await UserManager.CreateAsync(user, model.Password);
-                await UserManager.SetLockoutEnabledAsync(user, false);
-                await UserManager.AddToRoleAsync(user, "User");
-            }
-            else if (user.IsCanceled)
-            {
-                // Reaktivacija ranije otkazanog naloga sa novom lozinkom.
-                user.IsCanceled = false;
-                user.IsDeleted = false;
-                user.PasswordHash = UserManager.PasswordHasher.HashPassword(user, model.Password);
-                await UserManager.UpdateAsync(user);
-            }
-
-            return RedirectToAction("ClientManageUsers");
         }
 
         // GET: /ClientManage/ClientEditUser/{id}

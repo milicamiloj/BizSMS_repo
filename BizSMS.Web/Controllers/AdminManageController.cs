@@ -35,23 +35,9 @@ namespace BizSMS.Web.Controllers
             return RedirectToAction("ManageClients");
         }
 
-        // GET: /AdminManage/ManageClients/{ClientID} — ako je id prisutan, prebacuje IsCanceled klijenta i njegovih korisnika
-        public IActionResult ManageClients(int? id)
+        // GET: /AdminManage/ManageClients
+        public IActionResult ManageClients()
         {
-            if (id != null)
-            {
-                var toggleClient = db.Client.Find(id);
-                toggleClient.IsCanceled = !toggleClient.IsCanceled;
-
-                var users = db.Users.Where(u => u.ClientID == id && u.IsDeleted == false).ToList();
-                foreach (var user in users)
-                {
-                    user.IsCanceled = !user.IsCanceled;
-                }
-
-                db.SaveChanges();
-            }
-
             var clients = db.Client.Where(c => c.Name != "Telekom").ToList();
             List<AdminManageClientsViewModel> model = new List<AdminManageClientsViewModel>();
 
@@ -69,6 +55,29 @@ namespace BizSMS.Web.Controllers
             }
 
             return View(model);
+        }
+
+        // POST: /AdminManage/ToggleClient/{ClientID} — prebacuje IsCanceled klijenta i njegovih korisnika.
+        // Samo POST + anti-forgery token, da promenu ne bi mogao da pokrene link ili slika sa drugog sajta (CSRF).
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ToggleClient(int id)
+        {
+            var toggleClient = db.Client.Find(id);
+            if (toggleClient == null)
+                return NotFound();
+
+            toggleClient.IsCanceled = !toggleClient.IsCanceled;
+
+            var users = db.Users.Where(u => u.ClientID == id && u.IsDeleted == false).ToList();
+            foreach (var user in users)
+            {
+                user.IsCanceled = !user.IsCanceled;
+            }
+
+            db.SaveChanges();
+
+            return RedirectToAction("ManageClients");
         }
 
         // GET: /AdminManage/CreateClient
@@ -113,7 +122,10 @@ namespace BizSMS.Web.Controllers
                     {
                         UserName = model.Username,
                         ClientID = client.ClientID,
-                        PhoneNumber = model.PhoneNumber
+                        PhoneNumber = model.PhoneNumber,
+                        // Identity traži 2FA samo ako je broj potvrđen; broj unosi administrator.
+                        PhoneNumberConfirmed = true,
+                        TwoFactorEnabled = true
                     };
 
                     var result = await UserManager.CreateAsync(user, model.Password);
@@ -497,9 +509,10 @@ namespace BizSMS.Web.Controllers
             if (user == null)
                 return BadRequest();
 
-            // Nova lozinka u Core formatu (legacy je direktno postavljao PasswordHash preko PasswordHasher-a).
-            user.PasswordHash = UserManager.PasswordHasher.HashPassword(user, model.Password);
-            var result = await UserManager.UpdateAsync(user);
+            // ResetPasswordAsync (ne direktan upis hash-a kao u legacy-ju) proverava pravila za lozinku
+            // i menja SecurityStamp, čime se postojeće sesije korisnika poništavaju.
+            var token = await UserManager.GeneratePasswordResetTokenAsync(user);
+            var result = await UserManager.ResetPasswordAsync(user, token, model.Password);
 
             if (!result.Succeeded)
             {
@@ -574,19 +587,6 @@ namespace BizSMS.Web.Controllers
                 .Count(gn => gn.Groups.ClientID == id && gn.Groups.Default);
 
             return View();
-        }
-
-        public IActionResult ToggleLockNumber(int? id, int? clientId)
-        {
-            var number = db.Numbers.Find(id);
-
-            if (number == null || clientId == null)
-                return BadRequest();
-
-            number.SendAllowed = !number.SendAllowed;
-            db.SaveChanges();
-
-            return RedirectToAction("Numbers", "AdminManage", new { id = clientId });
         }
 
         // GET: /AdminManage/CreateNumber/{ClientID}

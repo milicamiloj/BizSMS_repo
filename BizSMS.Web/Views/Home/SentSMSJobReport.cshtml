@@ -109,7 +109,7 @@
                             location.reload(true);
                         } else {
                             $.ajax({ url: "/api/home/cancelscheduledsms/" + messageId, method: "POST" })
-                                .done(function () { location.reload(true); })
+                                .done(function (d) { if (typeof d === "string") alert(d); location.reload(true); })
                                 .fail(function () { alert("Došlo je do greške. Kontaktirajte administratora."); location.reload(true); });
                         }
                     })

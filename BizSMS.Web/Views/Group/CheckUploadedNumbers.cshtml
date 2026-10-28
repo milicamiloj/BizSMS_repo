@@ -81,9 +81,10 @@
                         dom: "rt",
                         data: data,
                         columns: [
-                            { data: "Number" },
-                            { data: "NumberType" },
-                            { data: "Name" }
+                            // Podaci iz uploadovanog Excel-a se prikazuju kao tekst (zaštita od XSS-a).
+                            { data: "Number", render: $.fn.dataTable.render.text() },
+                            { data: "NumberType", render: $.fn.dataTable.render.text() },
+                            { data: "Name", render: $.fn.dataTable.render.text() }
                         ],
                         ordering: false,
                         language: {

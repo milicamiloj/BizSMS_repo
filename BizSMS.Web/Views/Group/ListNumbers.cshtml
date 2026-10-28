@@ -31,10 +31,11 @@
                 ajax: "/api/Group/GetListNumbers",
                 stateSave: true,
                 pageLength: 10,
+                // Korisnički podaci se prikazuju kao tekst (zaštita od XSS-a); HTML je samo EditLink sa servera.
                 columns: [
-                    { data: "Number" },
-                    { data: "Name" },
-                    { data: "NumberType" },
+                    { data: "Number", render: $.fn.dataTable.render.text() },
+                    { data: "Name", render: $.fn.dataTable.render.text() },
+                    { data: "NumberType", render: $.fn.dataTable.render.text() },
                     { data: "EditLink", orderable: false, searchable: false }
                 ],
                 language: {

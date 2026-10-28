@@ -67,6 +67,16 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <div id="antiforgery-token" hidden>@Html.AntiForgeryToken()</div>
+    <script>
+        // CSRF: svaki ne-GET jQuery AJAX poziv šalje antiforgery token u zaglavlju.
+        $(document).ajaxSend(function (e, xhr, settings) {
+            if ((settings.type || "GET").toUpperCase() !== "GET") {
+                xhr.setRequestHeader("RequestVerificationToken",
+                    $('#antiforgery-token input[name="__RequestVerificationToken"]').val());
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

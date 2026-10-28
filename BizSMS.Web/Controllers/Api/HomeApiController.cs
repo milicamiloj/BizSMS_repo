@@ -82,6 +82,10 @@ namespace BizSMS.Web.Controllers.Api
             if (id == null)
                 return NotFound();
 
+            int clientID = CurrentClientId;
+            if (!db.Group.Any(g => g.GroupID == id && g.ClientID == clientID))
+                return NotFound();
+
             try
             {
                 var gnumbers = db.GroupNumbers
@@ -184,10 +188,15 @@ namespace BizSMS.Web.Controllers.Api
             logger.SetControllerAction("HomeApiController", "GetMessageStatus");
             try
             {
-                var message = db.Message.Find(id);
-                if (message == null)
+                // Tuđa poruka vraća isto što i nepostojeća, da se ne otkrije da postoji.
+                int clientID = CurrentClientId;
+                var status = db.Message
+                    .Where(m => m.MessageID == id && m.User.ClientID == clientID)
+                    .Select(m => (int?)m.Status)
+                    .FirstOrDefault();
+                if (status == null)
                     return NotFound();
-                return Ok(message.Status);
+                return Ok(status);  //status.Value
             }
             catch (Exception ex)
             {
@@ -209,6 +218,7 @@ namespace BizSMS.Web.Controllers.Api
                 if (data.NumbersToCheck != null)
                 {
                     bool anyNonMts = db.Numbers.Any(n => data.NumbersToCheck.Contains(n.NumberID)
+                        && n.ClientID == clientID
                         && n.NumberTypeID == (int)NumberType.VAN_MTS && n.Active && n.SendAllowed);
                     return anyNonMts ? GetNonMtsAlphanums(clientID) : GetAlphanumerics();
                 }
@@ -286,7 +296,7 @@ namespace BizSMS.Web.Controllers.Api
                 await _sms.SendAsync(data.PhoneNumber, data.Message, sender, _receiptReq.Endpoint, _receiptReq.Correlator);
                 db.SaveChanges();
 
-                logger.Info("Test SMS poslat na broj: " + sendToNumber);
+                logger.Info("Test SMS poslat (MessageID: " + message.MessageID + ")");
                 return Ok(new { message = "OK" });
             }
             catch (Exception ex)
@@ -324,13 +334,22 @@ namespace BizSMS.Web.Controllers.Api
 
             try
             {
+                var numbers1 = db.Numbers
+                  .Where(n => data.PhoneNumbers.Contains(n.NumberID) && n.ClientID == clientID && n.SendAllowed && n.Active)
+                  .Select(n => new { n.NumberID, n.NumberTypeID })
+                  .ToList();
+
+                var numbers = db.Numbers
+                    .Where(n => data.PhoneNumbers.Contains(n.NumberID) && n.ClientID == clientID && n.SendAllowed && n.Active)
+                    //.Select(n => new { n.NumberID, n.NumberTypeID })
+                    .ToList();
+                if (numbers.Count == 0)
+                    return BadRequest("Nema izabranih brojeva.");
+
+                // Besplatna kvota se određuje isključivo po tipu brojeva iz baze, ne po podatku od klijenta
+                // (legacy VpnGroupSending / ime grupe "VPN" klijent može da podmetne).
                 bool chargeMessage = true;
-                bool sendingNumbersContainNonVpn = true;
-
-                if (!data.VpnGroupSending)
-                    sendingNumbersContainNonVpn = db.Numbers.Any(n => data.PhoneNumbers.Contains(n.NumberID) && n.NumberTypeID != 1);
-
-                if (data.VpnGroupSending || !sendingNumbersContainNonVpn)
+                if (numbers.All(n => n.NumberTypeID == (int)NumberType.VPN))
                 {
                     // Prvih 5 poruka u mesecu je besplatno (kada u bazi već ima > 4 nenaplaćene).
                     chargeMessage = db.Message.Count(m => m.User.ClientID == clientID
@@ -368,13 +387,9 @@ namespace BizSMS.Web.Controllers.Api
                 int messageLengthNT3 = GetMessageLength(data.Message + Environment.NewLine + unsubNonMts);
 
                 int count = 1;
-                foreach (var numberId in data.PhoneNumbers)
+                foreach (var number in numbers)
                 {
-                    var number = db.Numbers.FirstOrDefault(n =>
-                        n.NumberID == numberId && n.ClientID == clientID && n.SendAllowed && n.Active);
-                    if (number == null)
-                        continue;
-
+                    int numberId = number.NumberID;
                     int numberType = number.NumberTypeID;
                     // Naplaćuje se svakom broju osim VPN (type 1) kada mesečni besplatni kvota nije ispucana.
                     bool isMessageCharged = !(numberType == 1 && chargeMessage == false);
@@ -441,10 +456,8 @@ namespace BizSMS.Web.Controllers.Api
             logger.Info("Pokrenuto slanje SMS-a grupi sa id: " + data.GroupId);
 
             var group = db.Group.Find(data.GroupId);
-            if (group == null)
+            if (group == null || group.ClientID != CurrentClientId)
                 return BadRequest("Grupa ne postoji.");
-
-            data.VpnGroupSending = group.Name == NumberType.VPN.ToString();
 
             data.PhoneNumbers = db.GroupNumbers
                 .Where(gn => gn.GroupID == data.GroupId && gn.Numbers.SendAllowed && gn.Numbers.Active)
@@ -472,12 +485,8 @@ namespace BizSMS.Web.Controllers.Api
                 if (message.User.ClientID != CurrentClientId)
                     return NotFound();
 
-                if (message.Status == (int)MessageStatus.Finished)
-                    return Ok("Poruka je već poslata!");
-
-                message.Status = (int)MessageStatus.ScheduledSendingCanceled;
-                // Otkazana poruka ne sme biti naplaćena.
-                message.Charged = false;
+                if (!db.TryCancelScheduledMessage(id, out string notCancelable))
+                    return Ok(notCancelable);
 
                 var scheduled = db.ScheduledSms.FirstOrDefault(s => s.MessageID == message.MessageID);
                 if (scheduled != null)

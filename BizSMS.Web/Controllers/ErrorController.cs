@@ -7,6 +7,8 @@ namespace BizSMS.Web.Controllers
     // Zamena za legacy BizSMS.Controllers.ErrorController + Global.asax Application_Error mapiranje.
     // Plain Controller (ne BaseController): error stranice moraju da rade i za neautentifikovane korisnike.
     // Vezan preko UseExceptionHandler (General) i UseStatusCodePagesWithReExecute (Http4xx) u Program.cs.
+    // ReExecute ponavlja originalni metod (npr. POST), pa bi globalni antiforgery filter 401/404/500 pretvorio u 400.
+    [IgnoreAntiforgeryToken]
     public class ErrorController : Controller
     {
         private readonly Logger log = new Logger();
