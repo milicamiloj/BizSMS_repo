@@ -183,11 +183,10 @@ app.UseStatusCodePagesWithReExecute("/Error/Http{0}");
 
 // Security header-i. Stoje posle UseExceptionHandler-a jer on briše header-e pre ponovnog izvršavanja,
 // pa ih ovaj middleware ponovo postavlja i na stranici greške.
-// 'unsafe-inline' ostaje dok se inline skripte u view-ovima ne prebace na nonce.
+// script-src koristi nonce po zahtevu (CspNonceTagHelper ga lepi na svaki <script>), pa je izbačen
+// 'unsafe-inline' — ubačena inline skripta bez tačnog nonce-a se ne izvršava (A03/A05).
+// style-src zadržava 'unsafe-inline' (inline stilovi su niži rizik).
 // Dev: Visual Studio (Browser Link / hot reload) koristi websocket ka localhost-u.
-var csp = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; " +
-          "img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" +
-          (app.Environment.IsDevelopment() ? "; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:*" : "");
 app.Use(async (context, next) =>
 {
     var headers = context.Response.Headers;
@@ -197,7 +196,15 @@ app.Use(async (context, next) =>
     headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
     // Hangfire dashboard ima sopstvene inline skripte i stilove.
     if (!context.Request.Path.StartsWithSegments("/hangfire"))
+    {
+        // Nonce po zahtevu — view-ovi ga čitaju iz HttpContext.Items preko CspNonceTagHelper-a.
+        var nonce = Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
+        context.Items[BizSMS.Web.TagHelpers.CspNonceTagHelper.NonceItemKey] = nonce;
+        var csp = "default-src 'self'; script-src 'self' 'nonce-" + nonce + "'; style-src 'self' 'unsafe-inline'; " +
+                  "img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'" +
+                  (app.Environment.IsDevelopment() ? "; connect-src 'self' ws://localhost:* wss://localhost:* http://localhost:*" : "");
         headers["Content-Security-Policy"] = csp;
+    }
     await next();
 });
 
